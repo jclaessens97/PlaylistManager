@@ -108,6 +108,10 @@
       <Project>{A6AF3D4A-A13F-4D8B-91D1-1B1C0CC69570}</Project>
       <Name>PlaylistManager.BL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PlaylistManager.Domain\PlaylistManager.Domain.csproj">
+      <Project>{27B9CC50-0504-4D96-8D81-214963588877}</Project>
+      <Name>PlaylistManager.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

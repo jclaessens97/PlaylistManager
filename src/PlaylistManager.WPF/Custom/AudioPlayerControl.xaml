@@ -91,7 +91,7 @@
         </Style>
     </UserControl.Resources>
     
-    <Grid>
+    <Grid x:Name="GridContainer">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="40" />
             <ColumnDefinition Width="40" />
@@ -120,5 +120,5 @@
         <Button x:Name="ButtonRepeat" Grid.Row="1" Grid.Column="6" Style="{StaticResource AudioControl}">Repeat</Button>
         <Button x:Name="ButtonShuffle" Grid.Row="1" Grid.Column="7" Style="{StaticResource AudioControl}">Shuffle</Button>
         <Button x:Name="SpeakerIcon" Grid.Row="1" Grid.Column="8" VerticalAlignment="Center" Height="25" Width="25">Speaker</Button>
-        <Slider x:Name="VolumeSlider" Grid.Row="1" Grid.Column="9" VerticalAlignment="Center" Margin="0,0,15,0"></Slider>
+        <Slider x:Name="VolumeSlider" Grid.Row="1" Grid.Column="9" VerticalAlignment="Center" Margin="0,0,15,0" Minimum="0" Maximum="100"></Slider>
     </Grid></UserControl>

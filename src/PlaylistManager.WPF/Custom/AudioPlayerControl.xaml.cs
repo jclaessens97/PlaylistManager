@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PlaylistManager.BL;
+using PlaylistManager.Domain;
+using static PlaylistManager.BL.Tools;
 
 namespace PlaylistManager.WPF.Custom
 {
@@ -23,11 +25,13 @@ namespace PlaylistManager.WPF.Custom
 	/// </summary>
 	public partial class AudioPlayerControl : UserControl
 	{
-		private readonly AudioPlayer _audioPlayer = new AudioPlayer();
+		private readonly AudioManager _audioManager;
 
 		public AudioPlayerControl()
 		{
 			InitializeComponent();
+			_audioManager = new AudioManager();
+			VolumeSlider.Value = 100;
 			RegisterEventHandlers();
 		}
 
@@ -43,10 +47,13 @@ namespace PlaylistManager.WPF.Custom
 			//	GetThumb(SongSlider).DragCompleted += SongSlider_DragCompleted;
 			//}
 
+			
+
 			ButtonRepeat.Click += ButtonRepeat_Click;
 			ButtonShuffle.Click += ButtonShuffle_Click;
 
 			VolumeSlider.PreviewMouseWheel += VolumeSlider_PreviewMouseWheel;
+			VolumeSlider.ValueChanged += VolumeSlider_ValueChanged;
 			SpeakerIcon.Click += SpeakerIcon_Click;
 		}
 
@@ -59,14 +66,53 @@ namespace PlaylistManager.WPF.Custom
 		private void ButtonPrevious_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Prev button clicked!");
+			_audioManager.Prev();
 		}
 		private void ButtonPlay_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Play button clicked!");
+
+			if (_audioManager.SongPlaying != null)
+			{
+
+				if (_audioManager.IsPlaying)
+				{
+					_audioManager.Pause();
+				}
+				else
+				{
+					_audioManager.Resume();
+				}
+
+			}
+			else
+			{
+				_audioManager.LoadSong();
+
+				string formattedDuration = FormatDuration(_audioManager.SongPlaying.Duration);
+				LabelEndTime.Content = formattedDuration;
+
+				if (formattedDuration.Length > 5)
+				{
+					LabelCurrentTime.Content = "00:00:00";
+					GridContainer.ColumnDefinitions[3].Width = new GridLength(60);
+					GridContainer.ColumnDefinitions[5].Width = new GridLength(60);
+				}
+				else
+				{
+					LabelCurrentTime.Content = "00:00";
+					GridContainer.ColumnDefinitions[3].Width = new GridLength(40);
+					GridContainer.ColumnDefinitions[5].Width = new GridLength(40);
+				}
+
+				_audioManager.Play();
+			}
+
 		}
 		private void ButtonNext_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Next button clicked!");
+			_audioManager.Next();
 		}
 
 		//private void SongSlider_DragStarted(object sender, RoutedEventArgs e)
@@ -89,12 +135,26 @@ namespace PlaylistManager.WPF.Custom
 
 		private void VolumeSlider_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
 		{
-			Debug.WriteLine("Scroll wheel used!");
-			VolumeSlider.Value += VolumeSlider.SmallChange * e.Delta / 120;
+			VolumeSlider.Value += VolumeSlider.SmallChange * e.Delta / 60;
+
+			if (_audioManager.SongPlaying != null)
+			{
+				_audioManager.SetVolume(VolumeSlider.Value / 100);
+			}
+			Debug.WriteLine("Volume changed!");
+		}
+		private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			if (_audioManager.SongPlaying != null)
+			{
+				_audioManager.SetVolume(VolumeSlider.Value / 100);
+			}
+			Debug.WriteLine("Volume changed!");
 		}
 		private void SpeakerIcon_Click(object sender, RoutedEventArgs e)
 		{
-			Debug.WriteLine("SpeakerIcon clicked!");
+			_audioManager.Mute();
+			Debug.WriteLine("(Un)Muted!");
 		}
 	}
 }

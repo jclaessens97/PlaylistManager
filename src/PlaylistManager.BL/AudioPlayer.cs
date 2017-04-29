@@ -4,10 +4,12 @@ using PlaylistManager.Domain;
 
 namespace PlaylistManager.BL
 {
-	public class AudioPlayer
+	class AudioPlayer
 	{
 		private IWavePlayer _wavePlayer;
 		private AudioFileReader _audioFileReader;
+
+		private float lastVolumeLevel = -1f;
 
 		public Song CurrentSong { get; set; }
 
@@ -63,6 +65,25 @@ namespace PlaylistManager.BL
 			{
 				_wavePlayer.Dispose();
 				_wavePlayer = null;
+			}
+		}
+
+		public void SetVolume(double newVolume)
+		{
+			_audioFileReader.Volume = Convert.ToSingle(newVolume);
+		}
+
+		public void Mute()
+		{
+			if (lastVolumeLevel >= 0)
+			{
+				_audioFileReader.Volume = lastVolumeLevel;
+				lastVolumeLevel = -1f;
+			}
+			else
+			{
+				lastVolumeLevel = _audioFileReader.Volume;
+				_audioFileReader.Volume = 0f;
 			}
 		}
 	}
