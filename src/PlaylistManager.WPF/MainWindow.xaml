@@ -9,7 +9,14 @@
         MinHeight="400" 
         MinWidth="525"
         Background="#262626">
-    <Grid>
-        <Custom:Audioplayer HorizontalAlignment="Stretch" Width="auto"/>
-    </Grid>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Close"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <Custom:AudioPlayerControl HorizontalAlignment="Stretch" VerticalAlignment="Top" Width="auto" Height="100"  Background="#3d3d3d"/>
+        </Grid>
+    </DockPanel>
 </Window>

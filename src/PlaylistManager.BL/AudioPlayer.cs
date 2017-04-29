@@ -1,5 +1,6 @@
 ﻿using System;
 using NAudio.Wave;
+using PlaylistManager.Domain;
 
 namespace PlaylistManager.BL
 {

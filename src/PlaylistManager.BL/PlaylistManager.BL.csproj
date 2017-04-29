@@ -55,5 +55,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PlaylistManager.Domain\PlaylistManager.Domain.csproj">
+      <Project>{27B9CC50-0504-4D96-8D81-214963588877}</Project>
+      <Name>PlaylistManager.Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
