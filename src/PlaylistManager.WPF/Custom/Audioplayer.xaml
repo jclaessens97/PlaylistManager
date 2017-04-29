@@ -101,20 +101,24 @@
             <ColumnDefinition Width="40" />
             <ColumnDefinition Width="40" />
             <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="40" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="4" Style="{StaticResource AudioLabel}">Song</Label>
+        <Label x:Name="LabelSongTag"  Grid.Row="0" Grid.Column="4" Style="{StaticResource AudioLabel}">Song</Label>
         
-        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource AudioControl}">Prev</Button>
-        <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource AudioControl}">Play</Button>
-        <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource AudioControl}">Next</Button>
-        <Label Grid.Row="1" Grid.Column="3" Style="{StaticResource AudioTimeStamp}">00:00</Label>
-        <Slider Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" Style="{StaticResource Horizontal_Slider}"></Slider>
-        <Label Grid.Row="1" Grid.Column="5" Style="{StaticResource AudioTimeStamp}">00:00</Label>
-        <Button Grid.Row="1" Grid.Column="6" Style="{StaticResource AudioControl}">Repeat</Button>
-        <Button Grid.Row="1" Grid.Column="7" Style="{StaticResource AudioControl}">Shuffle</Button>
+        <Button x:Name="ButtonPrevious" Grid.Row="1" Grid.Column="0" Style="{StaticResource AudioControl}">Prev</Button>
+        <Button x:Name="ButtonPlay" Grid.Row="1" Grid.Column="1" Style="{StaticResource AudioControl}">Play</Button>
+        <Button x:Name="ButtonNext" Grid.Row="1" Grid.Column="2" Style="{StaticResource AudioControl}">Next</Button>
+        <Label x:Name="LabelCurrentTime" Grid.Row="1" Grid.Column="3" Style="{StaticResource AudioTimeStamp}">00:00</Label>
+        <Slider x:Name="Slider" Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" Style="{StaticResource Horizontal_Slider}"></Slider>
+        <Label x:Name="LabelEndTime" Grid.Row="1" Grid.Column="5" Style="{StaticResource AudioTimeStamp}">00:00</Label>
+        <Button x:Name="ButtonRepeat" Grid.Row="1" Grid.Column="6" Style="{StaticResource AudioControl}">Repeat</Button>
+        <Button x:Name="ButtonShuffle" Grid.Row="1" Grid.Column="7" Style="{StaticResource AudioControl}">Shuffle</Button>
+        <Slider x:Name="VolumeSlider" Grid.Row="1" Grid.Column="8" VerticalAlignment="Center"></Slider>
+        <Button x:Name="SpeakerIcon" Grid.Row="1" Grid.Column="9" VerticalAlignment="Center" Height="25" Width="25">Speaker</Button>
     </Grid></UserControl>

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PlaylistManager.WPF.Custom;
 
 namespace PlaylistManager.WPF
 {
@@ -26,5 +27,6 @@ namespace PlaylistManager.WPF
 			this.Title = "PlaylistManager v0.1";
 			this.WindowState = WindowState.Maximized;
 		}
+
 	}
 }
