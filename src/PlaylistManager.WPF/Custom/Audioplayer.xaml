@@ -8,6 +8,9 @@
     <UserControl.Resources>
         <Style x:Key="AudioLabel" TargetType="Label">
             <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Margin" Value="0,5,0,0" />
+            <Setter Property="Foreground" Value="#ffffff" />
         </Style>
         <Style x:Key="AudioControl" TargetType="Button">
             <Setter Property="Height" Value="30" />
@@ -15,6 +18,76 @@
         </Style>
         <Style x:Key="AudioTimeStamp" TargetType="Label">
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="#ffffff" />
+        </Style>
+
+        <!--Slider-->
+        <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="IsTabStop" Value="false" />
+            <Setter Property="Focusable" Value="false" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border  BorderThickness="1" BorderBrush="#404040" Background="#404040" Height="3"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SliderRepeatButton1" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border SnapsToDevicePixels="True" Background="Green"  BorderThickness="1" BorderBrush="YellowGreen" Height="3"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SliderThumb" TargetType="Thumb">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Ellipse Height="10" Width="10" Fill="#00cd00"></Ellipse>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="Slider"  TargetType="Slider">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Track Grid.Row="1" x:Name="PART_Track"   >
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderRepeatButton1}"  Command="Slider.DecreaseLarge" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource SliderThumb}"  />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderRepeatButton}" Command="Slider.IncreaseLarge" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
+            </Grid>
+        </ControlTemplate>
+        <Style x:Key="Horizontal_Slider" TargetType="Slider">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="MinHeight" Value="21" />
+                    <Setter Property="MinWidth" Value="104" />
+                    <Setter Property="Template" Value="{StaticResource Slider}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
     
@@ -40,13 +113,8 @@
         <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource AudioControl}">Play</Button>
         <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource AudioControl}">Next</Button>
         <Label Grid.Row="1" Grid.Column="3" Style="{StaticResource AudioTimeStamp}">00:00</Label>
-        <Slider Grid.Row="1" Grid.Column="4" VerticalAlignment="Center"></Slider>
+        <Slider Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" Style="{StaticResource Horizontal_Slider}"></Slider>
         <Label Grid.Row="1" Grid.Column="5" Style="{StaticResource AudioTimeStamp}">00:00</Label>
         <Button Grid.Row="1" Grid.Column="6" Style="{StaticResource AudioControl}">Repeat</Button>
         <Button Grid.Row="1" Grid.Column="7" Style="{StaticResource AudioControl}">Shuffle</Button>
-    </Grid>
-
-
-    
-
-</UserControl>
+    </Grid></UserControl>

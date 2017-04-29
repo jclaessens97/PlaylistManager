@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlaylistManager.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" MinHeight="400" MinWidth="525">
+        Title="MainWindow" 
+        MinHeight="400" 
+        MinWidth="525"
+        Background="#262626">
     <Grid>
         <Custom:Audioplayer HorizontalAlignment="Stretch" Width="auto"/>
     </Grid>
