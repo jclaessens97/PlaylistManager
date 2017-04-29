@@ -13,18 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PlaylistManager.WPF
+namespace PlaylistManager.WPF.Custom
 {
 	/// <summary>
-	/// Interaction logic for MainWindow.xaml
+	/// Interaction logic for Audioplayer.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class Audioplayer : UserControl
 	{
-		public MainWindow()
+		public Audioplayer()
 		{
 			InitializeComponent();
-			this.Title = "PlaylistManager v0.1";
-			this.WindowState = WindowState.Maximized;
 		}
 	}
 }

@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="PlaylistManager.WPF.Custom.Audioplayer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PlaylistManager.WPF.Custom"
+             mc:Ignorable="d" >
+    <UserControl.Resources>
+        <Style x:Key="AudioLabel" TargetType="Label">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="AudioControl" TargetType="Button">
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Width" Value="30" />
+        </Style>
+        <Style x:Key="AudioTimeStamp" TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="40" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="4" Style="{StaticResource AudioLabel}">Song</Label>
+        
+        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource AudioControl}">Prev</Button>
+        <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource AudioControl}">Play</Button>
+        <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource AudioControl}">Next</Button>
+        <Label Grid.Row="1" Grid.Column="3" Style="{StaticResource AudioTimeStamp}">00:00</Label>
+        <Slider Grid.Row="1" Grid.Column="4" VerticalAlignment="Center"></Slider>
+        <Label Grid.Row="1" Grid.Column="5" Style="{StaticResource AudioTimeStamp}">00:00</Label>
+        <Button Grid.Row="1" Grid.Column="6" Style="{StaticResource AudioControl}">Repeat</Button>
+        <Button Grid.Row="1" Grid.Column="7" Style="{StaticResource AudioControl}">Shuffle</Button>
+    </Grid>
+
+
+    
+
+</UserControl>
