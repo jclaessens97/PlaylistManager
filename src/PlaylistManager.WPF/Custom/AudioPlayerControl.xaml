@@ -13,14 +13,31 @@
             <Setter Property="Foreground" Value="#ffffff" />
         </Style>
         <Style x:Key="AudioControl" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"></Setter>
             <Setter Property="Height" Value="30" />
             <Setter Property="Width" Value="30" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#505050"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
         <Style x:Key="AudioTimeStamp" TargetType="Label">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Foreground" Value="#ffffff" />
         </Style>
-
+        
         <!--Slider-->
         <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
             <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -41,8 +58,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RepeatButton">
-                        <Border SnapsToDevicePixels="True" Background="YellowGreen" BorderThickness="1"
-                                BorderBrush="YellowGreen" Height="3" />
+                        <Border SnapsToDevicePixels="True" Background="#71e42b" BorderThickness="1"
+                                BorderBrush="#71e42b" Height="3" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -112,16 +129,27 @@
 
         <Label x:Name="LabelSongTag" Grid.Row="0" Grid.Column="4" Style="{StaticResource AudioLabel}">Song</Label>
 
-        <Button x:Name="ButtonPrevious" Grid.Row="1" Grid.Column="0" Style="{StaticResource AudioControl}">Prev</Button>
-        <Button x:Name="ButtonPlay" Grid.Row="1" Grid.Column="1" Style="{StaticResource AudioControl}">Play</Button>
-        <Button x:Name="ButtonNext" Grid.Row="1" Grid.Column="2" Style="{StaticResource AudioControl}">Next</Button>
+        <Button x:Name="ButtonPrevious" Grid.Row="1" Grid.Column="0" Style="{StaticResource AudioControl}">
+            <Image Source="/Images/prev.png" ></Image>
+        </Button>
+        <Button x:Name="ButtonPlay" Grid.Row="1" Grid.Column="1" Style="{StaticResource AudioControl}">
+            <Image Source="/Images/play.png"></Image>
+        </Button>
+        <Button x:Name="ButtonNext" Grid.Row="1" Grid.Column="2" Style="{StaticResource AudioControl}">
+            <Image Source="/Images/next.png"></Image>
+        </Button>
         <Label x:Name="LabelCurrentTime" Grid.Row="1" Grid.Column="3" Style="{StaticResource AudioTimeStamp}">00:00</Label>
-        <Slider x:Name="SongSlider" Grid.Row="1" Grid.Column="4" VerticalAlignment="Center"
-                Style="{StaticResource Horizontal_Slider}" />
+        <Slider x:Name="SongSlider" Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" Style="{StaticResource Horizontal_Slider}" />
         <Label x:Name="LabelEndTime" Grid.Row="1" Grid.Column="5" Style="{StaticResource AudioTimeStamp}">00:00</Label>
-        <Button x:Name="ButtonRepeat" Grid.Row="1" Grid.Column="6" Style="{StaticResource AudioControl}">Repeat</Button>
-        <Button x:Name="ButtonShuffle" Grid.Row="1" Grid.Column="7" Style="{StaticResource AudioControl}">Shuffle</Button>
-        <Button x:Name="SpeakerIcon" Grid.Row="1" Grid.Column="8" VerticalAlignment="Center" Height="25" Width="25">Speaker</Button>
+        <Button x:Name="ButtonRepeat" Grid.Row="1" Grid.Column="6" Style="{StaticResource AudioControl}">
+            <Image Source="/Images/repeat_off.png"></Image>
+        </Button>
+        <Button x:Name="ButtonShuffle" Grid.Row="1" Grid.Column="7" Style="{StaticResource AudioControl}">
+            <Image Source="/Images/shuffle_off.png"></Image>
+        </Button>
+        <Button x:Name="SpeakerIcon" Grid.Row="1" Grid.Column="8" VerticalAlignment="Center" Style="{StaticResource AudioControl}">
+            <Image Source="/Images/speaker_100.png" Height="20"></Image>
+        </Button>
         <Slider x:Name="VolumeSlider" Grid.Row="1" Grid.Column="9" VerticalAlignment="Center" Margin="0,0,15,0"
                 Minimum="0" Maximum="100" />
     </Grid>

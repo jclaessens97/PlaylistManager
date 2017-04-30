@@ -95,13 +95,25 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="Fonts\Roboto-Black.ttf" />
+    <Resource Include="Fonts\Roboto-BlackItalic.ttf" />
+    <Resource Include="Fonts\Roboto-Bold.ttf" />
+    <Resource Include="Fonts\Roboto-BoldItalic.ttf" />
+    <Resource Include="Fonts\Roboto-Italic.ttf" />
+    <Resource Include="Fonts\Roboto-Light.ttf" />
+    <Resource Include="Fonts\Roboto-LightItalic.ttf" />
+    <Resource Include="Fonts\Roboto-Medium.ttf" />
+    <Resource Include="Fonts\Roboto-MediumItalic.ttf" />
+    <Resource Include="Fonts\Roboto-Regular.ttf" />
+    <Resource Include="Fonts\Roboto-Thin.ttf" />
+    <Resource Include="Fonts\Roboto-ThinItalic.ttf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <Resource Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PlaylistManager.BL\PlaylistManager.BL.csproj">
@@ -112,6 +124,26 @@
       <Project>{27B9CC50-0504-4D96-8D81-214963588877}</Project>
       <Name>PlaylistManager.Domain</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\next.png" />
+    <Resource Include="Images\pause.png" />
+    <Resource Include="Images\play.png" />
+    <Resource Include="Images\prev.png" />
+    <Resource Include="Images\repeat_off.png" />
+    <Resource Include="Images\repeat_on.png" />
+    <Resource Include="Images\repeat_once.png" />
+    <Resource Include="Images\shuffle_off.png" />
+    <Resource Include="Images\shuffle_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Fonts\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\speaker_100.png" />
+    <Resource Include="Images\speaker_33.png" />
+    <Resource Include="Images\speaker_66.png" />
+    <Resource Include="Images\speaker_off.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
