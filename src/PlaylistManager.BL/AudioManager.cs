@@ -1,21 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Timers;
 using System.Threading.Tasks;
+using System.Windows.Data;
+using NAudio.Wave;
 using PlaylistManager.Domain;
 using TagLib.Flac;
 
 namespace PlaylistManager.BL
 {
-	public class AudioManager
+	public class AudioManager : INotifyPropertyChanged
 	{
 		private readonly AudioPlayer _audioPlayer;
-		private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Ed Sheeran - Trap Queen (cover).mp3"; //<1h
-		//private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Chill Mix 2015 (Eric Clapton).mp3"; //>1h
+		private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Ed Sheeran - Trap Queen (cover).mp3";																									  //private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Chill Mix 2015 (Eric Clapton).mp3"; //>1h
 
+		private double _currentTime;
+		private Timer _timer;
+
+		public double CurrentTime
+		{
+			get { return _currentTime; }
+			set
+			{
+				if (value.Equals(_currentTime)) return;
+				_currentTime = value;
+				OnPropertyChanged("CurrentTime");
+			}
+		}
 		public Song SongPlaying { get; set; }
-		public bool IsPlaying { get; set; }
+		public PlayState State { get; set; }
+
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		public AudioManager()
 		{
@@ -53,19 +71,37 @@ namespace PlaylistManager.BL
 		#region audiocontrols
 		public void Play()
 		{
-			IsPlaying = true;
+			State = PlayState.Playing;
+
+			_timer = new Timer();
+			_timer.Interval = 300;
+			_timer.Elapsed += Timer_Elapsed;
+			_timer.Start();
+
 			_audioPlayer.Play();
+		}
+
+		public void ToggleResumePause()
+		{
+			if (State == PlayState.Paused)
+			{
+				State = PlayState.Playing;
+				_audioPlayer.Resume();
+			}
+			else
+			{
+				State = PlayState.Paused;
+				_audioPlayer.Pause();
+			}
 		}
 
 		public void Resume()
 		{
-			IsPlaying = true;
 			_audioPlayer.Resume();
 		}
 
 		public void Pause()
 		{
-			IsPlaying = false;
 			_audioPlayer.Pause();
 		}
 
@@ -81,9 +117,14 @@ namespace PlaylistManager.BL
 
 		public void Stop()
 		{
+			State = PlayState.Stopped;
 			SongPlaying = null;
-			IsPlaying = false;
 			_audioPlayer.Stop();
+		}
+
+		public float GetVolume()
+		{
+			return _audioPlayer.GetVolume();
 		}
 
 		public void SetVolume(double newVolume)
@@ -94,6 +135,40 @@ namespace PlaylistManager.BL
 		public double Mute()
 		{
 			return _audioPlayer.Mute();
+		}
+
+		public double GetLengthInSeconds()
+		{
+			return _audioPlayer.GetLengthInSeconds();
+		}
+
+		public double GetPositionInSeconds()
+		{
+			return CurrentTime;
+		}
+
+		public void SetPosition(double position)
+		{
+			_audioPlayer.SetPosition(position);
+		}
+		#endregion
+
+		#region events
+		private void OnPropertyChanged(string name)
+		{
+			PropertyChangedEventHandler handler = PropertyChanged;
+			if (handler != null)
+			{
+				handler(this, new PropertyChangedEventArgs(name));
+			}
+		}
+
+		private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			if (State == PlayState.Playing)
+			{
+				CurrentTime = _audioPlayer.GetPositionInSeconds();
+			}
 		}
 		#endregion
 	}

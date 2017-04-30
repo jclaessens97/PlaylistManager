@@ -5,7 +5,7 @@ using PlaylistManager.Domain;
 
 namespace PlaylistManager.BL
 {
-	class AudioPlayer : INotifyPropertyChanged
+	class AudioPlayer
 	{
 		private IWavePlayer _wavePlayer;
 		private AudioFileReader _audioFileReader;
@@ -14,8 +14,6 @@ namespace PlaylistManager.BL
 		private float lastVolumeLevel = -1f;
 
 		public Song CurrentSong { get; set; }
-
-		public event PropertyChangedEventHandler PropertyChanged;
 
 		public AudioPlayer()
 		{
@@ -74,12 +72,17 @@ namespace PlaylistManager.BL
 
 		public void SetVolume(double newVolume)
 		{
-			_audioFileReader.Volume = Convert.ToSingle(newVolume);
+			_audioFileReader.Volume = Convert.ToSingle(newVolume / 100);
 
 			if (_audioFileReader.Volume > 0)
 			{
 				muted = false;
 			}
+		}
+
+		public float GetVolume()
+		{
+			return _audioFileReader != null ? _audioFileReader.Volume / 100 : 1;
 		}
 
 		public double Mute()
@@ -102,5 +105,22 @@ namespace PlaylistManager.BL
 			return Convert.ToDouble(_audioFileReader.Volume) * 100;
 		}
 
+		public double GetLengthInSeconds()
+		{
+			return _audioFileReader != null ? _audioFileReader.TotalTime.TotalSeconds : 0;
+		}
+
+		public double GetPositionInSeconds()
+		{
+			return _audioFileReader != null ? _audioFileReader.CurrentTime.TotalSeconds : 0;
+		}
+
+		public void SetPosition(double position)
+		{
+			if (_audioFileReader != null)
+			{
+				_audioFileReader.SetPosition(position);
+			} 
+		}
 	}
 }

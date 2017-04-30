@@ -31,8 +31,10 @@ namespace PlaylistManager.WPF.Custom
 		{
 			InitializeComponent();
 			_audioManager = new AudioManager();
-			VolumeSlider.Value = 100;
 			RegisterEventHandlers();
+
+			//Slider values
+			VolumeSlider.Value = 100;
 		}
 
 		private void RegisterEventHandlers()
@@ -41,26 +43,16 @@ namespace PlaylistManager.WPF.Custom
 			ButtonPlay.Click += ButtonPlay_Click;
 			ButtonNext.Click += ButtonNext_Click;
 
-			//if (GetThumb(SongSlider) != null)
-			//{
-			//	GetThumb(SongSlider).DragStarted += SongSlider_DragStarted;
-			//	GetThumb(SongSlider).DragCompleted += SongSlider_DragCompleted;
-			//}
-
+			SongSlider.ValueChanged += SongSlider_ValueChanged;
+			SongSlider.PreviewMouseDown += SongSlider_PreviewMouseDown;
+			SongSlider.PreviewMouseUp += SongSlider_PreviewMouseUp;
 			
-
 			ButtonRepeat.Click += ButtonRepeat_Click;
 			ButtonShuffle.Click += ButtonShuffle_Click;
 
 			VolumeSlider.PreviewMouseWheel += VolumeSlider_PreviewMouseWheel;
 			VolumeSlider.ValueChanged += VolumeSlider_ValueChanged;
 			SpeakerIcon.Click += SpeakerIcon_Click;
-		}
-
-		private Thumb GetThumb(Slider slider)
-		{
-			var track = slider.Template.FindName("PART_Track", slider) as Track;
-			return track == null ? null : track.Thumb;
 		}
 
 		private void ButtonPrevious_Click(object sender, RoutedEventArgs e)
@@ -74,16 +66,7 @@ namespace PlaylistManager.WPF.Custom
 
 			if (_audioManager.SongPlaying != null)
 			{
-
-				if (_audioManager.IsPlaying)
-				{
-					_audioManager.Pause();
-				}
-				else
-				{
-					_audioManager.Resume();
-				}
-
+				_audioManager.ToggleResumePause();
 			}
 			else
 			{
@@ -106,8 +89,17 @@ namespace PlaylistManager.WPF.Custom
 				}
 
 				_audioManager.Play();
-			}
 
+				Binding b = new Binding();
+				b.Source = _audioManager;
+				b.Path = new PropertyPath("CurrentTime", _audioManager);
+				b.Mode = BindingMode.OneWay;
+				b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+				SongSlider.SetBinding(Slider.ValueProperty, b);
+
+				SongSlider.Minimum = 0;
+				SongSlider.Maximum = _audioManager.GetLengthInSeconds();
+			}
 		}
 		private void ButtonNext_Click(object sender, RoutedEventArgs e)
 		{
@@ -115,14 +107,23 @@ namespace PlaylistManager.WPF.Custom
 			_audioManager.Next();
 		}
 
-		//private void SongSlider_DragStarted(object sender, RoutedEventArgs e)
-		//{
-		//	Debug.WriteLine("Drag started!");
-		//}
-		//private void SongSlider_DragCompleted(object sender, RoutedEventArgs e)
-		//{
-		//	Debug.WriteLine("Drag stopped!");
-		//}
+		private void SongSlider_ValueChanged(object sender, RoutedEventArgs e)
+		{
+			LabelCurrentTime.Content = FormatDuration(TimeSpan.FromSeconds(SongSlider.Value));
+		}
+		private void SongSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			_audioManager.Pause();
+		}
+		private void SongSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			_audioManager.SetPosition(SongSlider.Value);
+
+			if (_audioManager.State == PlayState.Playing)
+			{
+				_audioManager.Resume();
+			}
+		}
 
 		private void ButtonRepeat_Click(object sender, RoutedEventArgs e)
 		{
@@ -147,7 +148,7 @@ namespace PlaylistManager.WPF.Custom
 		{
 			if (_audioManager.SongPlaying != null)
 			{
-				_audioManager.SetVolume(VolumeSlider.Value / 100);
+				_audioManager.SetVolume(VolumeSlider.Value);
 			}
 			Debug.WriteLine("Volume changed!");
 		}
