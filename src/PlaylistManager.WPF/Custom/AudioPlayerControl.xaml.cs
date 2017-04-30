@@ -153,7 +153,7 @@ namespace PlaylistManager.WPF.Custom
 		}
 		private void SpeakerIcon_Click(object sender, RoutedEventArgs e)
 		{
-			_audioManager.Mute();
+			VolumeSlider.Value = _audioManager.Mute();
 			Debug.WriteLine("(Un)Muted!");
 		}
 	}

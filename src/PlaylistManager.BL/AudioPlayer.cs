@@ -1,17 +1,21 @@
 ﻿using System;
+using System.ComponentModel;
 using NAudio.Wave;
 using PlaylistManager.Domain;
 
 namespace PlaylistManager.BL
 {
-	class AudioPlayer
+	class AudioPlayer : INotifyPropertyChanged
 	{
 		private IWavePlayer _wavePlayer;
 		private AudioFileReader _audioFileReader;
 
+		private bool muted = false;
 		private float lastVolumeLevel = -1f;
 
 		public Song CurrentSong { get; set; }
+
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		public AudioPlayer()
 		{
@@ -71,20 +75,32 @@ namespace PlaylistManager.BL
 		public void SetVolume(double newVolume)
 		{
 			_audioFileReader.Volume = Convert.ToSingle(newVolume);
+
+			if (_audioFileReader.Volume > 0)
+			{
+				muted = false;
+			}
 		}
 
-		public void Mute()
+		public double Mute()
 		{
-			if (lastVolumeLevel >= 0)
+			if (muted)
 			{
+				//unmute
 				_audioFileReader.Volume = lastVolumeLevel;
 				lastVolumeLevel = -1f;
+				muted = false;
 			}
 			else
 			{
+				//mute
 				lastVolumeLevel = _audioFileReader.Volume;
 				_audioFileReader.Volume = 0f;
+				muted = true;
 			}
+
+			return Convert.ToDouble(_audioFileReader.Volume) * 100;
 		}
+
 	}
 }

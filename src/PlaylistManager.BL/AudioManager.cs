@@ -91,9 +91,9 @@ namespace PlaylistManager.BL
 			_audioPlayer.SetVolume(newVolume);
 		}
 
-		public void Mute()
+		public double Mute()
 		{
-			_audioPlayer.Mute();
+			return _audioPlayer.Mute();
 		}
 		#endregion
 	}
