@@ -4,10 +4,8 @@ using TagLib;
 namespace PlaylistManager.Domain
 {
 	/// <summary>
-	///
-	///		Model that holds all song properties
-	///		Same datatypes as defined in the TagLib library
-	/// 
+	///     Model that holds all song properties
+	///     (same datatypes as defined in the TagLib library)
 	/// </summary>
 	public class Song
 	{

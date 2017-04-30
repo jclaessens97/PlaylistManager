@@ -1,17 +1,19 @@
 ﻿using System;
-using System.ComponentModel;
 using NAudio.Wave;
 using PlaylistManager.Domain;
 
 namespace PlaylistManager.BL
 {
-	class AudioPlayer
+	/// <summary>
+	///     Backend class that interacts with NAudio classes and handles the media player methods
+	/// </summary>
+	internal class AudioPlayer
 	{
-		private IWavePlayer _wavePlayer;
 		private AudioFileReader _audioFileReader;
+		private IWavePlayer _wavePlayer;
 
-		private bool muted = false;
 		private float lastVolumeLevel = -1f;
+		private bool muted;
 
 		public Song CurrentSong { get; set; }
 
@@ -53,10 +55,8 @@ namespace PlaylistManager.BL
 		public void Stop()
 		{
 			if (_wavePlayer != null)
-			{
 				_wavePlayer.Stop();
-			}
-			
+
 			if (_audioFileReader != null)
 			{
 				_audioFileReader.Dispose();
@@ -75,9 +75,7 @@ namespace PlaylistManager.BL
 			_audioFileReader.Volume = Convert.ToSingle(newVolume / 100);
 
 			if (_audioFileReader.Volume > 0)
-			{
 				muted = false;
-			}
 		}
 
 		public float GetVolume()
@@ -118,9 +116,7 @@ namespace PlaylistManager.BL
 		public void SetPosition(double position)
 		{
 			if (_audioFileReader != null)
-			{
 				_audioFileReader.SetPosition(position);
-			} 
 		}
 	}
 }

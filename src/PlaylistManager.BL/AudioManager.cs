@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Timers;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using NAudio.Wave;
 using PlaylistManager.Domain;
-using TagLib.Flac;
+using TagLib;
+using Picture = TagLib.Flac.Picture;
 
 namespace PlaylistManager.BL
 {
+	/// <summary>
+	///     Class that interacts between WPF and backend classes.
+	///     Delegates methods to the right class
+	/// </summary>
 	public class AudioManager : INotifyPropertyChanged
 	{
+		private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Ed Sheeran - Trap Queen (cover).mp3"; 
+		//private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Chill Mix 2015 (Eric Clapton).mp3"; //>1h
+
 		private readonly AudioPlayer _audioPlayer;
-		private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Ed Sheeran - Trap Queen (cover).mp3";																									  //private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Chill Mix 2015 (Eric Clapton).mp3"; //>1h
 
 		private double _currentTime;
 		private Timer _timer;
 
 		public double CurrentTime
 		{
-			get { return _currentTime; }
+			get => _currentTime;
 			set
 			{
 				if (value.Equals(_currentTime)) return;
@@ -33,17 +33,17 @@ namespace PlaylistManager.BL
 		public Song SongPlaying { get; set; }
 		public PlayState State { get; set; }
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
 		public AudioManager()
 		{
 			_audioPlayer = new AudioPlayer();
 		}
 
+		public event PropertyChangedEventHandler PropertyChanged;
+
 		public Song LoadSongFromPath(string path)
 		{
-			TagLib.File audioFile = TagLib.File.Create(path);
-			Song song = new Song
+			var audioFile = File.Create(path);
+			var song = new Song
 			{
 				AlbumArtist = audioFile.Tag.Artists[0],
 				Title = audioFile.Tag.Title,
@@ -63,12 +63,13 @@ namespace PlaylistManager.BL
 		{
 			if (_audioPlayer.CurrentSong == null)
 			{
-				this.SongPlaying = LoadSongFromPath(DEBUG_SONG_PATH);
-				_audioPlayer.CurrentSong = this.SongPlaying;
+				SongPlaying = LoadSongFromPath(DEBUG_SONG_PATH);
+				_audioPlayer.CurrentSong = SongPlaying;
 			}
 		}
 
 		#region audiocontrols
+
 		public void Play()
 		{
 			State = PlayState.Playing;
@@ -151,25 +152,24 @@ namespace PlaylistManager.BL
 		{
 			_audioPlayer.SetPosition(position);
 		}
+
 		#endregion
 
 		#region events
+
 		private void OnPropertyChanged(string name)
 		{
-			PropertyChangedEventHandler handler = PropertyChanged;
+			var handler = PropertyChanged;
 			if (handler != null)
-			{
 				handler(this, new PropertyChangedEventArgs(name));
-			}
 		}
 
 		private void Timer_Elapsed(object sender, ElapsedEventArgs e)
 		{
 			if (State == PlayState.Playing)
-			{
 				CurrentTime = _audioPlayer.GetPositionInSeconds();
-			}
 		}
+
 		#endregion
 	}
 }

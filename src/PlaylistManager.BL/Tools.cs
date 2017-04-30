@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PlaylistManager.BL
 {
+	/// <summary>
+	///     Static toolbox with methods I need troughout the project and I don't
+	///     know any better place than a seperate static class
+	/// </summary>
 	public static class Tools
 	{
 		public static string FormatDuration(TimeSpan duration)
 		{
-			string durationStr = duration.ToString();
+			var durationStr = duration.ToString();
 
 			if (durationStr.StartsWith("00:"))
 			{
@@ -21,6 +21,5 @@ namespace PlaylistManager.BL
 				return durationStr.Substring(0, 8);
 			}
 		}
-
 	}
 }

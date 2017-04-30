@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PlaylistManager.Domain
 {
 	/// <summary>
-	/// 
-	///		Model that holds all playlist properties
-	/// 
+	///     Model that holds all playlist properties
 	/// </summary>
 	public class Playlist
 	{
@@ -19,7 +14,7 @@ namespace PlaylistManager.Domain
 
 		public Playlist(string name)
 		{
-			this.Name = name;
+			Name = name;
 		}
 
 		public void AddSong(Song song)

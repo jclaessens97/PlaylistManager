@@ -1,27 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using PlaylistManager.BL;
-using PlaylistManager.Domain;
 using static PlaylistManager.BL.Tools;
 
 namespace PlaylistManager.WPF.Custom
 {
 	/// <summary>
-	/// Interaction logic for AudioPlayerControl.xaml
+	///     Interaction logic for AudioPlayerControl.xaml
 	/// </summary>
 	public partial class AudioPlayerControl : UserControl
 	{
@@ -46,7 +36,7 @@ namespace PlaylistManager.WPF.Custom
 			SongSlider.ValueChanged += SongSlider_ValueChanged;
 			SongSlider.PreviewMouseDown += SongSlider_PreviewMouseDown;
 			SongSlider.PreviewMouseUp += SongSlider_PreviewMouseUp;
-			
+
 			ButtonRepeat.Click += ButtonRepeat_Click;
 			ButtonShuffle.Click += ButtonShuffle_Click;
 
@@ -55,6 +45,12 @@ namespace PlaylistManager.WPF.Custom
 			SpeakerIcon.Click += SpeakerIcon_Click;
 		}
 
+		/// <summary>
+		///     Navigation events:
+		///     * Previous: go to previous song
+		///     * Play/pause: toggle between pause and play
+		///     * Next: go to next song
+		/// </summary>
 		private void ButtonPrevious_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Prev button clicked!");
@@ -72,7 +68,7 @@ namespace PlaylistManager.WPF.Custom
 			{
 				_audioManager.LoadSong();
 
-				string formattedDuration = FormatDuration(_audioManager.SongPlaying.Duration);
+				var formattedDuration = FormatDuration(_audioManager.SongPlaying.Duration);
 				LabelEndTime.Content = formattedDuration;
 
 				if (formattedDuration.Length > 5)
@@ -90,12 +86,12 @@ namespace PlaylistManager.WPF.Custom
 
 				_audioManager.Play();
 
-				Binding b = new Binding();
+				var b = new Binding();
 				b.Source = _audioManager;
 				b.Path = new PropertyPath("CurrentTime", _audioManager);
 				b.Mode = BindingMode.OneWay;
 				b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-				SongSlider.SetBinding(Slider.ValueProperty, b);
+				SongSlider.SetBinding(RangeBase.ValueProperty, b);
 
 				SongSlider.Minimum = 0;
 				SongSlider.Maximum = _audioManager.GetLengthInSeconds();
@@ -107,6 +103,12 @@ namespace PlaylistManager.WPF.Custom
 			_audioManager.Next();
 		}
 
+		/// <summary>
+		///     SongSlider events:
+		///     * ValueChanged: update current time label
+		///     * PreviewMouseDown: indicates user want to use slider -> pause current song
+		///     * PreviewMouseUp: indicates user changed the slider -> navigate to correct position in song
+		/// </summary>
 		private void SongSlider_ValueChanged(object sender, RoutedEventArgs e)
 		{
 			LabelCurrentTime.Content = FormatDuration(TimeSpan.FromSeconds(SongSlider.Value));
@@ -120,11 +122,14 @@ namespace PlaylistManager.WPF.Custom
 			_audioManager.SetPosition(SongSlider.Value);
 
 			if (_audioManager.State == PlayState.Playing)
-			{
 				_audioManager.Resume();
-			}
 		}
 
+		/// <summary>
+		///     Songlist events:
+		///     * Repeat with 3 states: no-repeat, repeat this song and repeat list
+		///     * Shuffle with 2 states: shuffle-on, shuffle-off
+		/// </summary>
 		private void ButtonRepeat_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Repeat button clicked!");
@@ -134,22 +139,24 @@ namespace PlaylistManager.WPF.Custom
 			Debug.WriteLine("Shuffle button clicked!");
 		}
 
+		/// <summary>
+		///     Volumeslider events:
+		///     * PreviewMouseWheel: change volume slider with mousewheel when user hovers the control
+		///     * ValueChanged: change volume when user drags volume control
+		///     * SpeakerIcon: mute button and also speaker indicator
+		/// </summary>
 		private void VolumeSlider_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
 		{
 			VolumeSlider.Value += VolumeSlider.SmallChange * e.Delta / 60;
 
 			if (_audioManager.SongPlaying != null)
-			{
 				_audioManager.SetVolume(VolumeSlider.Value / 100);
-			}
 			Debug.WriteLine("Volume changed!");
 		}
 		private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (_audioManager.SongPlaying != null)
-			{
 				_audioManager.SetVolume(VolumeSlider.Value);
-			}
 			Debug.WriteLine("Volume changed!");
 		}
 		private void SpeakerIcon_Click(object sender, RoutedEventArgs e)
