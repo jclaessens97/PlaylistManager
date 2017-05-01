@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Timers;
 using PlaylistManager.Domain;
 using TagLib;
@@ -20,6 +23,13 @@ namespace PlaylistManager.BL
 		private double _currentTime;
 		private Timer _timer;
 
+		private static readonly IDictionary RepeatModeMap = new Dictionary<RepeatMode, RepeatMode>
+		{
+			{ RepeatMode.Off, RepeatMode.Once },
+			{ RepeatMode.Once, RepeatMode.On },
+			{ RepeatMode.On, RepeatMode.Off }
+		};
+
 		public double CurrentTime
 		{
 			get => _currentTime;
@@ -32,6 +42,8 @@ namespace PlaylistManager.BL
 		}
 		public Song SongPlaying { get; set; }
 		public PlayState State { get; set; }
+		public bool ShuffleEnabled { get; set; }
+		public RepeatMode RepeatMode { get; set; }
 
 		public AudioManager()
 		{
@@ -151,6 +163,11 @@ namespace PlaylistManager.BL
 		public void SetPosition(double position)
 		{
 			_audioPlayer.SetPosition(position);
+		}
+
+		public void ToggleRepeat()
+		{
+			RepeatMode = (RepeatMode) RepeatModeMap[RepeatMode];
 		}
 
 		#endregion

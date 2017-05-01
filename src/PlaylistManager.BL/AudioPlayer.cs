@@ -17,13 +17,13 @@ namespace PlaylistManager.BL
 
 		public Song CurrentSong { get; set; }
 
-		public AudioPlayer()
-		{
-			_wavePlayer = new WaveOut();
-		}
-
 		public void Play()
 		{
+			if (_wavePlayer == null)
+			{
+				_wavePlayer = new WaveOut();
+			}
+
 			if (CurrentSong != null)
 			{
 				_audioFileReader = new AudioFileReader(CurrentSong.Path);
@@ -54,8 +54,15 @@ namespace PlaylistManager.BL
 
 		public void Stop()
 		{
+			if (CurrentSong != null)
+			{
+				CurrentSong = null;
+			}
+				 
 			if (_wavePlayer != null)
+			{
 				_wavePlayer.Stop();
+			}
 
 			if (_audioFileReader != null)
 			{

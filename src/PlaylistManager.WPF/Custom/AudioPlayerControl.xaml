@@ -6,12 +6,24 @@
              xmlns:local="clr-namespace:PlaylistManager.WPF.Custom"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <Style x:Key="AudioLabel" TargetType="Label">
+        <Style x:Key="Title" TargetType="Label">
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="Margin" Value="0,5,0,0" />
+            <Setter Property="FontSize" Value="18" />
             <Setter Property="Foreground" Value="#ffffff" />
         </Style>
+        <Style x:Key="Artist" TargetType="Label">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0, -12, 0, 0"></Setter>
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="#ffffff" />
+        </Style>
+        <Style x:Key="Album" TargetType="Label">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0, -14, 0, 0"></Setter>
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="#ffffff" />
+        </Style>
+
         <Style x:Key="AudioControl" TargetType="Button">
             <Setter Property="Cursor" Value="Hand"></Setter>
             <Setter Property="Height" Value="30" />
@@ -37,8 +49,8 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Foreground" Value="#ffffff" />
         </Style>
-        
-        <!--Slider-->
+
+        <!--Song Slider-->
         <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -47,7 +59,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RepeatButton">
-                        <Border BorderThickness="1" BorderBrush="#404040" Background="#404040" Height="3" />
+                        <Border BorderThickness="1" BorderBrush="#707070" Background="#707070" Height="3" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -95,7 +107,7 @@
                 </Track>
             </Grid>
         </ControlTemplate>
-        <Style x:Key="Horizontal_Slider" TargetType="Slider">
+        <Style x:Key="Horizontal_Song_Slider" TargetType="Slider">
             <Setter Property="Focusable" Value="False" />
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -107,10 +119,101 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!--Volume slider-->
+        <Style x:Key="SliderRepeatButton2" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="IsTabStop" Value="false" />
+            <Setter Property="Focusable" Value="false" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border BorderThickness="1" BorderBrush="#707070" Background="#707070" Height="3" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SliderRepeatButton3" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border SnapsToDevicePixels="True" Background="#71e42b" BorderThickness="1"
+                                BorderBrush="#71e42b" Height="3" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SliderThumb1" TargetType="Thumb">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Rectangle Height="15" Width="5" Fill="#00cd00" />
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="Slider1" TargetType="Slider">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Track Grid.Row="1" x:Name="PART_Track">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderRepeatButton3}" Command="Slider.DecreaseLarge" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource SliderThumb1}" />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderRepeatButton2}" Command="Slider.IncreaseLarge" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
+            </Grid>
+        </ControlTemplate>
+        <Style x:Key="Horizontal_Volume_Slider" TargetType="Slider">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="MinHeight" Value="21" />
+                    <Setter Property="MinWidth" Value="104" />
+                    <Setter Property="Template" Value="{StaticResource Slider1}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--Images-->
+        <Image x:Key="Prev" Source="/Images/prev.png" />
+        <Image x:Key="PrevDisabled" Source="/Images/prev_disabled.png"></Image>
+        <Image x:Key="Play" Source="/Images/play.png" />
+        <Image x:Key="Pause" Source="/Images/pause.png" />
+        <Image x:Key="Stop" Source="/Images/stop.png" />
+        <Image x:Key="StopDisabled" Source="/Images/stop_disabled.png" />
+        <Image x:Key="Next" Source="/Images/next.png" />
+        <Image x:Key="NextDisabled" Source="/Images/next_disabled.png"></Image>
+        <Image x:Key="RepeatOff" Source="/Images/repeat_off.png" />
+        <Image x:Key="RepeatOnce" Source="/Images/repeat_once.png" />
+        <Image x:Key="RepeatOn" Source="/Images/repeat_on.png" />
+        <Image x:Key="ShuffleOff" Source="/Images/shuffle_off.png" />
+        <Image x:Key="ShuffleOn" Source="/Images/shuffle_on.png" />
+        <Image x:Key="Speaker100" Source="/Images/speaker_100.png" Height="20" />
+        <Image x:Key="Speaker66" Source="/Images/speaker_66.png" Height="20" />
+        <Image x:Key="Speaker33" Source="/Images/speaker_33.png" Height="20" />
+        <Image x:Key="SpeakerOff" Source="/Images/speaker_off.png" Height="20" />
     </UserControl.Resources>
 
     <Grid x:Name="GridContainer">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="40" />
             <ColumnDefinition Width="40" />
             <ColumnDefinition Width="40" />
             <ColumnDefinition Width="40" />
@@ -123,34 +226,43 @@
             <ColumnDefinition Width="120" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
+            <RowDefinition Height="60" />
+
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
-        <Label x:Name="LabelSongTag" Grid.Row="0" Grid.Column="4" Style="{StaticResource AudioLabel}">Song</Label>
+        <StackPanel Grid.Row="0" Grid.Column="5">
+            <Label x:Name="LabelTitle" Style="{StaticResource Title}"></Label>
+            <Label x:Name="LabelArtist" Style="{StaticResource Artist}"></Label>
+            <Label x:Name="LabelAlbum" Style="{StaticResource Album}"></Label>
+        </StackPanel>
+        
+
 
         <Button x:Name="ButtonPrevious" Grid.Row="1" Grid.Column="0" Style="{StaticResource AudioControl}">
-            <Image Source="/Images/prev.png" ></Image>
+            <DynamicResource ResourceKey="PrevDisabled" />
         </Button>
         <Button x:Name="ButtonPlay" Grid.Row="1" Grid.Column="1" Style="{StaticResource AudioControl}">
-            <Image Source="/Images/play.png"></Image>
+            <DynamicResource ResourceKey="Play" />
         </Button>
-        <Button x:Name="ButtonNext" Grid.Row="1" Grid.Column="2" Style="{StaticResource AudioControl}">
-            <Image Source="/Images/next.png"></Image>
+        <Button x:Name="ButtonStop" Grid.Row="1" Grid.Column="2" Style="{StaticResource AudioControl}">
+            <DynamicResource ResourceKey="StopDisabled" />
         </Button>
-        <Label x:Name="LabelCurrentTime" Grid.Row="1" Grid.Column="3" Style="{StaticResource AudioTimeStamp}">00:00</Label>
-        <Slider x:Name="SongSlider" Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" Style="{StaticResource Horizontal_Slider}" />
-        <Label x:Name="LabelEndTime" Grid.Row="1" Grid.Column="5" Style="{StaticResource AudioTimeStamp}">00:00</Label>
-        <Button x:Name="ButtonRepeat" Grid.Row="1" Grid.Column="6" Style="{StaticResource AudioControl}">
-            <Image Source="/Images/repeat_off.png"></Image>
+        <Button x:Name="ButtonNext" Grid.Row="1" Grid.Column="3" Style="{StaticResource AudioControl}">
+            <DynamicResource ResourceKey="NextDisabled" />
         </Button>
-        <Button x:Name="ButtonShuffle" Grid.Row="1" Grid.Column="7" Style="{StaticResource AudioControl}">
-            <Image Source="/Images/shuffle_off.png"></Image>
+        <Label x:Name="LabelCurrentTime" Grid.Row="1" Grid.Column="4" Style="{StaticResource AudioTimeStamp}">00:00</Label>
+        <Slider x:Name="SongSlider" Grid.Row="1" Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Horizontal_Song_Slider}" />
+        <Label x:Name="LabelEndTime" Grid.Row="1" Grid.Column="6" Style="{StaticResource AudioTimeStamp}">00:00</Label>
+        <Button x:Name="ButtonRepeat" Grid.Row="1" Grid.Column="7" Style="{StaticResource AudioControl}">
+            <DynamicResource ResourceKey="RepeatOff" />
         </Button>
-        <Button x:Name="SpeakerIcon" Grid.Row="1" Grid.Column="8" VerticalAlignment="Center" Style="{StaticResource AudioControl}">
-            <Image Source="/Images/speaker_100.png" Height="20"></Image>
+        <Button x:Name="ButtonShuffle" Grid.Row="1" Grid.Column="8" Style="{StaticResource AudioControl}">
+            <DynamicResource ResourceKey="ShuffleOff" />
         </Button>
-        <Slider x:Name="VolumeSlider" Grid.Row="1" Grid.Column="9" VerticalAlignment="Center" Margin="0,0,15,0"
-                Minimum="0" Maximum="100" />
+        <Button x:Name="SpeakerIcon" Grid.Row="1" Grid.Column="9" VerticalAlignment="Center" Style="{StaticResource AudioControl}">
+            <DynamicResource ResourceKey="Speaker100" />
+        </Button>
+        <Slider x:Name="VolumeSlider" Grid.Row="1" Grid.Column="10" VerticalAlignment="Center" Margin="0,0,15,0" Minimum="0" Maximum="100" Value="100" Style="{StaticResource Horizontal_Volume_Slider}"/>
     </Grid>
 </UserControl>

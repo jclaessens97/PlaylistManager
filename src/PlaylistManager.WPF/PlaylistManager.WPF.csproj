@@ -145,5 +145,13 @@
     <Resource Include="Images\speaker_66.png" />
     <Resource Include="Images\speaker_off.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\next_disabled.png" />
+    <Resource Include="Images\prev_disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\stop.png" />
+    <Resource Include="Images\stop_disabled.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

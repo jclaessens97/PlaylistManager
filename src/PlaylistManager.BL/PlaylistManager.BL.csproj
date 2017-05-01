@@ -54,6 +54,7 @@
     <Compile Include="AudioPlayer.cs" />
     <Compile Include="PlayState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepeatMode.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="WaveStreamExtensions.cs" />
   </ItemGroup>

@@ -21,24 +21,29 @@ namespace PlaylistManager.WPF.Custom
 		{
 			InitializeComponent();
 			_audioManager = new AudioManager();
+			ToggleButtons();
 			RegisterEventHandlers();
-
-			//Slider values
-			VolumeSlider.Value = 100;
 		}
 
 		private void RegisterEventHandlers()
 		{
 			ButtonPrevious.Click += ButtonPrevious_Click;
+			ButtonPrevious.IsEnabledChanged += ButtonPrevious_IsEnabledChanged;
 			ButtonPlay.Click += ButtonPlay_Click;
+			ButtonStop.Click += ButtonStop_Click;
+			ButtonStop.IsEnabledChanged += ButtonStop_IsEnabledChanged;
 			ButtonNext.Click += ButtonNext_Click;
+			ButtonNext.IsEnabledChanged += ButtonNext_IsEnabledChanged;
 
 			SongSlider.ValueChanged += SongSlider_ValueChanged;
 			SongSlider.PreviewMouseDown += SongSlider_PreviewMouseDown;
 			SongSlider.PreviewMouseUp += SongSlider_PreviewMouseUp;
 
 			ButtonRepeat.Click += ButtonRepeat_Click;
+			ButtonRepeat.IsEnabledChanged += ButtonRepeat_IsEnabledChanged;
 			ButtonShuffle.Click += ButtonShuffle_Click;
+			ButtonShuffle.IsEnabledChanged += ButtonShuffle_IsEnabledChanged;
+
 
 			VolumeSlider.PreviewMouseWheel += VolumeSlider_PreviewMouseWheel;
 			VolumeSlider.ValueChanged += VolumeSlider_ValueChanged;
@@ -56,12 +61,24 @@ namespace PlaylistManager.WPF.Custom
 			Debug.WriteLine("Prev button clicked!");
 			_audioManager.Prev();
 		}
+		private void ButtonPrevious_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (ButtonPrevious.IsEnabled)
+			{
+				ButtonPrevious.Content = FindResource("Prev");
+			}
+			else
+			{
+				ButtonPrevious.Content = FindResource("PrevDisabled");
+			}
+		}
 		private void ButtonPlay_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Play button clicked!");
 
 			if (_audioManager.SongPlaying != null)
 			{
+				ButtonPlay.Content = FindResource("Play");
 				_audioManager.ToggleResumePause();
 			}
 			else
@@ -74,17 +91,25 @@ namespace PlaylistManager.WPF.Custom
 				if (formattedDuration.Length > 5)
 				{
 					LabelCurrentTime.Content = "00:00:00";
-					GridContainer.ColumnDefinitions[3].Width = new GridLength(60);
-					GridContainer.ColumnDefinitions[5].Width = new GridLength(60);
+					GridContainer.ColumnDefinitions[4].Width = new GridLength(60);
+					GridContainer.ColumnDefinitions[6].Width = new GridLength(60);
 				}
 				else
 				{
 					LabelCurrentTime.Content = "00:00";
-					GridContainer.ColumnDefinitions[3].Width = new GridLength(40);
-					GridContainer.ColumnDefinitions[5].Width = new GridLength(40);
+					GridContainer.ColumnDefinitions[4].Width = new GridLength(40);
+					GridContainer.ColumnDefinitions[6].Width = new GridLength(40);
 				}
 
+				ToggleButtons();
+				ButtonPlay.Content = FindResource("Pause");
+
+				LabelTitle.Content = _audioManager.SongPlaying.Title;
+				LabelArtist.Content = _audioManager.SongPlaying.AlbumArtist;
+				LabelAlbum.Content = _audioManager.SongPlaying.Album;
+
 				_audioManager.Play();
+				
 
 				var b = new Binding();
 				b.Source = _audioManager;
@@ -97,10 +122,43 @@ namespace PlaylistManager.WPF.Custom
 				SongSlider.Maximum = _audioManager.GetLengthInSeconds();
 			}
 		}
+		private void ButtonStop_Click(object sender, RoutedEventArgs e)
+		{
+			_audioManager.Stop();
+			ButtonPlay.Content = FindResource("Play");
+			SongSlider.Value = 0;
+			LabelEndTime.Content = "00:00";
+			LabelTitle.Content = string.Empty;
+			LabelArtist.Content = string.Empty;
+			LabelAlbum.Content = string.Empty;
+			ToggleButtons();
+		}
+		private void ButtonStop_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (ButtonStop.IsEnabled)
+			{
+				ButtonStop.Content = FindResource("Stop");
+			}
+			else
+			{
+				ButtonStop.Content = FindResource("StopDisabled");
+			}
+		}
 		private void ButtonNext_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Next button clicked!");
 			_audioManager.Next();
+		}
+		private void ButtonNext_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (ButtonNext.IsEnabled)
+			{
+				ButtonNext.Content = FindResource("Next");
+			}
+			else
+			{
+				ButtonNext.Content = FindResource("NextDisabled");
+			}
 		}
 
 		/// <summary>
@@ -133,10 +191,75 @@ namespace PlaylistManager.WPF.Custom
 		private void ButtonRepeat_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Repeat button clicked!");
+			_audioManager.ToggleRepeat();
+
+			switch (_audioManager.RepeatMode)
+			{
+				case RepeatMode.On:
+					ButtonRepeat.Content = FindResource("RepeatOn");
+					break;
+				case RepeatMode.Once:
+					ButtonRepeat.Content = FindResource("RepeatOnce");
+					break;
+				case RepeatMode.Off:
+					ButtonRepeat.Content = FindResource("RepeatOff");
+					break;
+			}
+		}
+		private void ButtonRepeat_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (ButtonRepeat.IsEnabled)
+			{
+				switch (_audioManager.RepeatMode)
+				{
+					case RepeatMode.On:
+						ButtonRepeat.Content = FindResource("RepeatOn");
+						break;
+					case RepeatMode.Off:
+						ButtonRepeat.Content = FindResource("RepeatOff");
+						break;
+					case RepeatMode.Once:
+						ButtonRepeat.Content = FindResource("RepeatOnce");
+						break;
+				}
+			}
+			else
+			{
+				ButtonRepeat.Content = FindResource("RepeatOff");
+			}
 		}
 		private void ButtonShuffle_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Shuffle button clicked!");
+
+			_audioManager.ShuffleEnabled = !_audioManager.ShuffleEnabled;
+
+			if (_audioManager.ShuffleEnabled)
+			{
+				ButtonShuffle.Content = FindResource("ShuffleOn");
+			}
+			else
+			{
+				ButtonShuffle.Content = FindResource("ShuffleOff");
+			}
+		}
+		private void ButtonShuffle_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (ButtonShuffle.IsEnabled)
+			{
+				if (_audioManager.ShuffleEnabled)
+				{
+					ButtonShuffle.Content = FindResource("ShuffleOn");
+				}
+				else
+				{
+					ButtonShuffle.Content = FindResource("ShuffleOff");
+				}
+			}
+			else
+			{
+				ButtonShuffle.Content = FindResource("ShuffleOff");
+			}
 		}
 
 		/// <summary>
@@ -163,6 +286,16 @@ namespace PlaylistManager.WPF.Custom
 		{
 			VolumeSlider.Value = _audioManager.Mute();
 			Debug.WriteLine("(Un)Muted!");
+		}
+
+		private void ToggleButtons()
+		{
+			ButtonPrevious.IsEnabled = !ButtonPrevious.IsEnabled;
+			ButtonNext.IsEnabled = !ButtonNext.IsEnabled;
+			ButtonStop.IsEnabled = !ButtonStop.IsEnabled;
+			SongSlider.IsEnabled = !SongSlider.IsEnabled;
+			ButtonRepeat.IsEnabled = !ButtonRepeat.IsEnabled;
+			ButtonShuffle.IsEnabled = !ButtonShuffle.IsEnabled;
 		}
 	}
 }
