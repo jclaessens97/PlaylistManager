@@ -105,7 +105,7 @@ namespace PlaylistManager.WPF.Custom
 				ButtonPlay.Content = FindResource("Pause");
 
 				LabelTitle.Content = _audioManager.SongPlaying.Title;
-				LabelArtist.Content = _audioManager.SongPlaying.AlbumArtist;
+				LabelArtist.Content = _audioManager.SongPlaying.Artist;
 				LabelAlbum.Content = _audioManager.SongPlaying.Album;
 
 				_audioManager.Play();

@@ -14,7 +14,7 @@ namespace PlaylistManager.Domain
 		public TimeSpan Duration { get; set; }
 		public string Path { get; set; }
 		public string[] Genres { get; set; }
-		public string AlbumArtist { get; set; }
+		public string Artist { get; set; }
 		public uint Year { get; set; }
 		public uint TrackNumber { get; set; }
 		public IPicture AlbumArt { get; set; }

@@ -55,9 +55,10 @@ namespace PlaylistManager.BL
 		public Song LoadSongFromPath(string path)
 		{
 			var audioFile = File.Create(path);
+
 			var song = new Song
 			{
-				AlbumArtist = audioFile.Tag.Artists[0],
+				Artist = audioFile.Tag.Performers[0],
 				Title = audioFile.Tag.Title,
 				Album = audioFile.Tag.Album,
 				Duration = audioFile.Properties.Duration,
