@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -42,20 +43,18 @@ namespace PlaylistManager.BL
 				OnPropertyChanged("CurrentTime");
 			}
 		}
-		public Song SongPlaying { get; set; }
+		public Song CurrentSong { get; set; }
 		public PlayState State { get; set; }
 		public bool ShuffleEnabled { get; set; }
 		public RepeatMode RepeatMode { get; set; }
 		#endregion
 
 		private readonly Library _library;
-		public Song Song { get; set; }
 
 		public Manager()
 		{
 			_library = new Library(DEBUG_MUSIC_FOLDER_PATH, true);
 			_audioPlayer = new AudioPlayer();
-			Song = LoadSongFromPath(DEBUG_SONG_PATH);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -81,39 +80,34 @@ namespace PlaylistManager.BL
 
 		#region audioPlayer
 
-		public Song LoadSongFromPath(string path)
+		#region audiocontrols
+
+		public Song GetRandomSong()
 		{
-			var audioFile = File.Create(path);
-
-			var song = new Song
-			{
-				Artist = audioFile.Tag.Performers[0],
-				Title = audioFile.Tag.Title,
-				Album = audioFile.Tag.Album,
-				Duration = audioFile.Properties.Duration,
-				Path = path,
-				Genres = audioFile.Tag.Genres,
-				Year = audioFile.Tag.Year,
-				TrackNumber = audioFile.Tag.Track,
-				AlbumArt = audioFile.Tag.Pictures.Length > 0 ? new Picture(audioFile.Tag.Pictures[0]) : null
-			};
-
-			return song;
+			//TODO
+			return _library.Songs[0];
 		}
 
-		public void LoadSong()
+		public void PlaySong(Song song)
 		{
-			if (_audioPlayer.CurrentSong == null)
+			if (song == null)
 			{
-				SongPlaying = LoadSongFromPath(DEBUG_SONG_PATH);
-				_audioPlayer.CurrentSong = SongPlaying;
+				Debug.WriteLine("Song is null in PlaySong method (Manager.cs)");
+				//TODO start random song
+			}
+			else
+			{
+				CurrentSong = song;
+				this.Play();
 			}
 		}
 
-		#region audiocontrols
-
 		public void Play()
 		{
+#if DEBUG
+			if (CurrentSong == null) throw new NullReferenceException("CurrentSong should never be null!");
+#endif
+
 			State = PlayState.Playing;
 
 			_timer = new Timer();
@@ -121,7 +115,7 @@ namespace PlaylistManager.BL
 			_timer.Elapsed += Timer_Elapsed;
 			_timer.Start();
 
-			_audioPlayer.Play();
+			_audioPlayer.Play(CurrentSong);
 		}
 
 		public void ToggleResumePause()
@@ -161,7 +155,7 @@ namespace PlaylistManager.BL
 		public void Stop()
 		{
 			State = PlayState.Stopped;
-			SongPlaying = null;
+			CurrentSong = null;
 			_audioPlayer.Stop();
 		}
 
@@ -182,7 +176,7 @@ namespace PlaylistManager.BL
 
 		public double GetLengthInSeconds()
 		{
-			return _audioPlayer.GetLengthInSeconds();
+			return CurrentSong.Duration.TotalSeconds;
 		}
 
 		public double GetPositionInSeconds()

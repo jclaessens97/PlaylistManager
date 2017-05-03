@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using PlaylistManager.BL;
+using PlaylistManager.Domain;
 using static PlaylistManager.BL.Tools;
 
 namespace PlaylistManager.WPF.Custom
@@ -15,12 +16,18 @@ namespace PlaylistManager.WPF.Custom
 	/// </summary>
 	public partial class AudioPlayerControl : UserControl
 	{
-		private readonly Manager _manager;
+		private Manager _manager;
+
+		public Manager Manager
+		{
+			get => _manager;
+			set => _manager = value;
+		}
 
 		public AudioPlayerControl()
 		{
 			InitializeComponent();
-			_manager = new Manager();
+
 			ToggleButtons();
 			RegisterEventHandlers();
 		}
@@ -61,6 +68,7 @@ namespace PlaylistManager.WPF.Custom
 			Debug.WriteLine("Prev button clicked!");
 			_manager.Prev();
 		}
+
 		private void ButtonPrevious_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (ButtonPrevious.IsEnabled)
@@ -72,67 +80,30 @@ namespace PlaylistManager.WPF.Custom
 				ButtonPrevious.Content = FindResource("PrevDisabled");
 			}
 		}
+
 		private void ButtonPlay_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Play button clicked!");
 
-			if (_manager.SongPlaying != null)
+			//TODO: if row selected in datagrid
+
+			if (_manager.CurrentSong != null)
 			{
 				ButtonPlay.Content = FindResource("Play");
 				_manager.ToggleResumePause();
 			}
 			else
 			{
-				_manager.LoadSong();
-
-				var formattedDuration = FormatDuration(_manager.SongPlaying.Duration);
-				LabelEndTime.Content = formattedDuration;
-
-				if (formattedDuration.Length > 5)
-				{
-					LabelCurrentTime.Content = "00:00:00";
-					GridContainer.ColumnDefinitions[4].Width = new GridLength(60);
-					GridContainer.ColumnDefinitions[6].Width = new GridLength(60);
-				}
-				else
-				{
-					LabelCurrentTime.Content = "00:00";
-					GridContainer.ColumnDefinitions[4].Width = new GridLength(40);
-					GridContainer.ColumnDefinitions[6].Width = new GridLength(40);
-				}
-
-				ToggleButtons();
-				ButtonPlay.Content = FindResource("Pause");
-
-				LabelTitle.Content = _manager.SongPlaying.Title;
-				LabelArtist.Content = _manager.SongPlaying.Artist;
-				LabelAlbum.Content = _manager.SongPlaying.Album;
-
-				_manager.Play();
-				
-
-				var b = new Binding();
-				b.Source = _manager;
-				b.Path = new PropertyPath("CurrentTime", _manager);
-				b.Mode = BindingMode.OneWay;
-				b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-				SongSlider.SetBinding(RangeBase.ValueProperty, b);
-
-				SongSlider.Minimum = 0;
-				SongSlider.Maximum = _manager.GetLengthInSeconds();
+				StartPlaying(null);
 			}
 		}
+
 		private void ButtonStop_Click(object sender, RoutedEventArgs e)
 		{
 			_manager.Stop();
-			ButtonPlay.Content = FindResource("Play");
-			SongSlider.Value = 0;
-			LabelEndTime.Content = "00:00";
-			LabelTitle.Content = string.Empty;
-			LabelArtist.Content = string.Empty;
-			LabelAlbum.Content = string.Empty;
-			ToggleButtons();
+			ResetPlayer();
 		}
+
 		private void ButtonStop_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (ButtonStop.IsEnabled)
@@ -144,11 +115,13 @@ namespace PlaylistManager.WPF.Custom
 				ButtonStop.Content = FindResource("StopDisabled");
 			}
 		}
+
 		private void ButtonNext_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Next button clicked!");
 			_manager.Next();
 		}
+
 		private void ButtonNext_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (ButtonNext.IsEnabled)
@@ -171,10 +144,12 @@ namespace PlaylistManager.WPF.Custom
 		{
 			LabelCurrentTime.Content = FormatDuration(TimeSpan.FromSeconds(SongSlider.Value));
 		}
+
 		private void SongSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			_manager.Pause();
 		}
+
 		private void SongSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
 		{
 			_manager.SetPosition(SongSlider.Value);
@@ -206,6 +181,7 @@ namespace PlaylistManager.WPF.Custom
 					break;
 			}
 		}
+
 		private void ButtonRepeat_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (ButtonRepeat.IsEnabled)
@@ -228,6 +204,7 @@ namespace PlaylistManager.WPF.Custom
 				ButtonRepeat.Content = FindResource("RepeatOff");
 			}
 		}
+
 		private void ButtonShuffle_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Shuffle button clicked!");
@@ -243,6 +220,7 @@ namespace PlaylistManager.WPF.Custom
 				ButtonShuffle.Content = FindResource("ShuffleOff");
 			}
 		}
+
 		private void ButtonShuffle_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (ButtonShuffle.IsEnabled)
@@ -272,24 +250,29 @@ namespace PlaylistManager.WPF.Custom
 		{
 			VolumeSlider.Value += VolumeSlider.SmallChange * e.Delta / 60;
 
-			if (_manager.SongPlaying != null)
+			if (_manager.CurrentSong != null)
 				_manager.SetVolume(VolumeSlider.Value / 100);
 			Debug.WriteLine("Volume changed!");
 		}
+
 		private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			if (_manager.SongPlaying != null)
+			if (_manager.CurrentSong != null)
 				_manager.SetVolume(VolumeSlider.Value);
 			Debug.WriteLine("Volume changed!");
 		}
+
 		private void SpeakerIcon_Click(object sender, RoutedEventArgs e)
 		{
 			VolumeSlider.Value = _manager.Mute();
 			Debug.WriteLine("(Un)Muted!");
 		}
 
+		#region auxilary methods
+
 		private void ToggleButtons()
 		{
+			//TODO: improve
 			ButtonPrevious.IsEnabled = !ButtonPrevious.IsEnabled;
 			ButtonNext.IsEnabled = !ButtonNext.IsEnabled;
 			ButtonStop.IsEnabled = !ButtonStop.IsEnabled;
@@ -297,5 +280,70 @@ namespace PlaylistManager.WPF.Custom
 			ButtonRepeat.IsEnabled = !ButtonRepeat.IsEnabled;
 			ButtonShuffle.IsEnabled = !ButtonShuffle.IsEnabled;
 		}
+
+		public void StartPlaying(Song song)
+		{
+			if (song == null)
+			{
+				song = _manager.GetRandomSong();
+			}
+
+			_manager.CurrentSong = song;
+
+			RetrieveSongInfo();
+			ToggleButtons();
+			ButtonPlay.Content = FindResource("Pause");
+
+			_manager.Play();
+		}
+
+		private void RetrieveSongInfo()
+		{
+			//Retrieve & format time
+			var formattedDuration = FormatDuration(_manager.CurrentSong.Duration);
+			LabelEndTime.Content = formattedDuration;
+
+			if (formattedDuration.Length > 5)
+			{
+				LabelCurrentTime.Content = "00:00:00";
+				GridContainer.ColumnDefinitions[4].Width = new GridLength(60);
+				GridContainer.ColumnDefinitions[6].Width = new GridLength(60);
+			}
+			else
+			{
+				LabelCurrentTime.Content = "00:00";
+				GridContainer.ColumnDefinitions[4].Width = new GridLength(40);
+				GridContainer.ColumnDefinitions[6].Width = new GridLength(40);
+			}
+
+			SongSlider.Minimum = 0;
+			SongSlider.Maximum = _manager.GetLengthInSeconds();
+
+			var b = new Binding();
+			b.Source = _manager;
+			b.Path = new PropertyPath("CurrentTime", _manager);
+			b.Mode = BindingMode.OneWay;
+			b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+			SongSlider.SetBinding(RangeBase.ValueProperty, b);
+
+			//Retrieve & set other song information of song playing
+			LabelTitle.Content = _manager.CurrentSong.Title;
+			LabelArtist.Content = _manager.CurrentSong.Artist;
+			LabelAlbum.Content = _manager.CurrentSong.Album;
+		}
+
+		private void ResetPlayer()
+		{
+			ButtonPlay.Content = FindResource("Play");
+			SongSlider.Value = 0;
+			LabelEndTime.Content = "00:00";
+			LabelTitle.Content = string.Empty;
+			LabelArtist.Content = string.Empty;
+			LabelAlbum.Content = string.Empty;
+			ToggleButtons();
+		}
+
+		#endregion
+
 	}
 }

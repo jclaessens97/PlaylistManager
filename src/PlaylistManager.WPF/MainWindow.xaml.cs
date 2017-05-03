@@ -1,7 +1,11 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using PlaylistManager.BL;
+using PlaylistManager.Domain;
+using PlaylistManager.WPF.Custom;
 
 namespace PlaylistManager.WPF
 {
@@ -10,7 +14,12 @@ namespace PlaylistManager.WPF
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private Manager _manager;
+		private readonly Manager _manager;
+
+		public Manager Manager
+		{
+			get => _manager;
+		}
 
 		public MainWindow()
 		{
@@ -19,6 +28,8 @@ namespace PlaylistManager.WPF
 			WindowState = WindowState.Maximized;
 
 			_manager = new Manager();
+			AudioPlayerControl.Manager = _manager;
+
 			LoadLibrary();
 			AddEventHandlers();
 		}
@@ -41,6 +52,13 @@ namespace PlaylistManager.WPF
 		private void AddEventHandlers()
 		{
 			LibraryView.Loaded += LibraryView_Loaded;
+			
+			//Datagrid events
+			Style rowStyle = new Style(typeof(DataGridRow));
+
+			rowStyle.Setters.Add(new EventSetter(DataGridRow.MouseDoubleClickEvent, new MouseButtonEventHandler(LibraryViewRow_DoubleClick)));
+			
+			LibraryView.RowStyle = rowStyle;
 		}
 
 		private void LibraryView_Loaded(object sender, RoutedEventArgs e)
@@ -49,6 +67,19 @@ namespace PlaylistManager.WPF
 			{
 					col.Width = new DataGridLength(col.ActualWidth, DataGridLengthUnitType.Pixel);
 			}
+		}
+
+		private void LibraryViewRow_DoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			DataGridRow row = sender as DataGridRow;
+			Song song = row.Item as Song;
+
+			if (_manager.CurrentSong != null)
+			{
+				_manager.Stop();
+			}
+
+			AudioPlayerControl.StartPlaying(song);
 		}
 	}
 }

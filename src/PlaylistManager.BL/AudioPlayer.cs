@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using NAudio.Wave;
 using PlaylistManager.Domain;
 
@@ -15,21 +16,25 @@ namespace PlaylistManager.BL
 		private float lastVolumeLevel = -1f;
 		private bool muted;
 
-		public Song CurrentSong { get; set; }
-
-		public void Play()
+		public void Play(Song song)
 		{
 			if (_wavePlayer == null)
 			{
 				_wavePlayer = new WaveOut();
 			}
 
-			if (CurrentSong != null)
+			if (song != null)
 			{
-				_audioFileReader = new AudioFileReader(CurrentSong.Path);
+				_audioFileReader = new AudioFileReader(song.Path);
 				_wavePlayer.Init(_audioFileReader);
 				_wavePlayer.Play();
 			}
+		} 
+
+		public void Play()
+		{
+			if (_wavePlayer == null) return;
+			_wavePlayer.Play();
 		}
 
 		public void Resume()
@@ -53,12 +58,7 @@ namespace PlaylistManager.BL
 		}
 
 		public void Stop()
-		{
-			if (CurrentSong != null)
-			{
-				CurrentSong = null;
-			}
-				 
+		{		 
 			if (_wavePlayer != null)
 			{
 				_wavePlayer.Stop();
