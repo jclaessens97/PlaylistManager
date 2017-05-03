@@ -13,11 +13,13 @@ namespace PlaylistManager.BL
 	///     Class that interacts between WPF and backend classes.
 	///     Delegates methods to the right class
 	/// </summary>
-	public class AudioManager : INotifyPropertyChanged
+	public class Manager : INotifyPropertyChanged
 	{
-		private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Ed Sheeran - Trap Queen (cover).mp3"; 
+		private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Ed Sheeran - Trap Queen (cover).mp3";
 		//private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Chill Mix 2015 (Eric Clapton).mp3"; //>1h
+		private const string DEBUG_MUSIC_FOLDER_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\";
 
+		#region audioplayer declarations
 		private readonly AudioPlayer _audioPlayer;
 
 		private double _currentTime;
@@ -44,13 +46,40 @@ namespace PlaylistManager.BL
 		public PlayState State { get; set; }
 		public bool ShuffleEnabled { get; set; }
 		public RepeatMode RepeatMode { get; set; }
+		#endregion
 
-		public AudioManager()
+		private readonly Library _library;
+		public Song Song { get; set; }
+
+		public Manager()
 		{
+			_library = new Library(DEBUG_MUSIC_FOLDER_PATH, true);
 			_audioPlayer = new AudioPlayer();
+			Song = LoadSongFromPath(DEBUG_SONG_PATH);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		#region library
+
+		public bool CheckLibrary()
+		{
+			if (_library.Folder == string.Empty || _library.Songs.Count == 0)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		public List<Song> GetLibrarySongs()
+		{
+			return _library.Songs;
+		}
+
+		#endregion
+
+		#region audioPlayer
 
 		public Song LoadSongFromPath(string path)
 		{
@@ -168,7 +197,15 @@ namespace PlaylistManager.BL
 
 		public void ToggleRepeat()
 		{
-			RepeatMode = (RepeatMode) RepeatModeMap[RepeatMode];
+			RepeatMode = (RepeatMode)RepeatModeMap[RepeatMode];
+		}
+
+		#endregion
+
+		private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			if (State == PlayState.Playing)
+				CurrentTime = _audioPlayer.GetPositionInSeconds();
 		}
 
 		#endregion
@@ -180,12 +217,6 @@ namespace PlaylistManager.BL
 			var handler = PropertyChanged;
 			if (handler != null)
 				handler(this, new PropertyChangedEventArgs(name));
-		}
-
-		private void Timer_Elapsed(object sender, ElapsedEventArgs e)
-		{
-			if (State == PlayState.Playing)
-				CurrentTime = _audioPlayer.GetPositionInSeconds();
 		}
 
 		#endregion

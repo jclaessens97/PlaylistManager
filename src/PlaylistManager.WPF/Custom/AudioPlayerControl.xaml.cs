@@ -15,12 +15,12 @@ namespace PlaylistManager.WPF.Custom
 	/// </summary>
 	public partial class AudioPlayerControl : UserControl
 	{
-		private readonly AudioManager _audioManager;
+		private readonly Manager _manager;
 
 		public AudioPlayerControl()
 		{
 			InitializeComponent();
-			_audioManager = new AudioManager();
+			_manager = new Manager();
 			ToggleButtons();
 			RegisterEventHandlers();
 		}
@@ -59,7 +59,7 @@ namespace PlaylistManager.WPF.Custom
 		private void ButtonPrevious_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Prev button clicked!");
-			_audioManager.Prev();
+			_manager.Prev();
 		}
 		private void ButtonPrevious_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
@@ -76,16 +76,16 @@ namespace PlaylistManager.WPF.Custom
 		{
 			Debug.WriteLine("Play button clicked!");
 
-			if (_audioManager.SongPlaying != null)
+			if (_manager.SongPlaying != null)
 			{
 				ButtonPlay.Content = FindResource("Play");
-				_audioManager.ToggleResumePause();
+				_manager.ToggleResumePause();
 			}
 			else
 			{
-				_audioManager.LoadSong();
+				_manager.LoadSong();
 
-				var formattedDuration = FormatDuration(_audioManager.SongPlaying.Duration);
+				var formattedDuration = FormatDuration(_manager.SongPlaying.Duration);
 				LabelEndTime.Content = formattedDuration;
 
 				if (formattedDuration.Length > 5)
@@ -104,27 +104,27 @@ namespace PlaylistManager.WPF.Custom
 				ToggleButtons();
 				ButtonPlay.Content = FindResource("Pause");
 
-				LabelTitle.Content = _audioManager.SongPlaying.Title;
-				LabelArtist.Content = _audioManager.SongPlaying.Artist;
-				LabelAlbum.Content = _audioManager.SongPlaying.Album;
+				LabelTitle.Content = _manager.SongPlaying.Title;
+				LabelArtist.Content = _manager.SongPlaying.Artist;
+				LabelAlbum.Content = _manager.SongPlaying.Album;
 
-				_audioManager.Play();
+				_manager.Play();
 				
 
 				var b = new Binding();
-				b.Source = _audioManager;
-				b.Path = new PropertyPath("CurrentTime", _audioManager);
+				b.Source = _manager;
+				b.Path = new PropertyPath("CurrentTime", _manager);
 				b.Mode = BindingMode.OneWay;
 				b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
 				SongSlider.SetBinding(RangeBase.ValueProperty, b);
 
 				SongSlider.Minimum = 0;
-				SongSlider.Maximum = _audioManager.GetLengthInSeconds();
+				SongSlider.Maximum = _manager.GetLengthInSeconds();
 			}
 		}
 		private void ButtonStop_Click(object sender, RoutedEventArgs e)
 		{
-			_audioManager.Stop();
+			_manager.Stop();
 			ButtonPlay.Content = FindResource("Play");
 			SongSlider.Value = 0;
 			LabelEndTime.Content = "00:00";
@@ -147,7 +147,7 @@ namespace PlaylistManager.WPF.Custom
 		private void ButtonNext_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Next button clicked!");
-			_audioManager.Next();
+			_manager.Next();
 		}
 		private void ButtonNext_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
@@ -173,14 +173,14 @@ namespace PlaylistManager.WPF.Custom
 		}
 		private void SongSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			_audioManager.Pause();
+			_manager.Pause();
 		}
 		private void SongSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
 		{
-			_audioManager.SetPosition(SongSlider.Value);
+			_manager.SetPosition(SongSlider.Value);
 
-			if (_audioManager.State == PlayState.Playing)
-				_audioManager.Resume();
+			if (_manager.State == PlayState.Playing)
+				_manager.Resume();
 		}
 
 		/// <summary>
@@ -191,9 +191,9 @@ namespace PlaylistManager.WPF.Custom
 		private void ButtonRepeat_Click(object sender, RoutedEventArgs e)
 		{
 			Debug.WriteLine("Repeat button clicked!");
-			_audioManager.ToggleRepeat();
+			_manager.ToggleRepeat();
 
-			switch (_audioManager.RepeatMode)
+			switch (_manager.RepeatMode)
 			{
 				case RepeatMode.On:
 					ButtonRepeat.Content = FindResource("RepeatOn");
@@ -210,7 +210,7 @@ namespace PlaylistManager.WPF.Custom
 		{
 			if (ButtonRepeat.IsEnabled)
 			{
-				switch (_audioManager.RepeatMode)
+				switch (_manager.RepeatMode)
 				{
 					case RepeatMode.On:
 						ButtonRepeat.Content = FindResource("RepeatOn");
@@ -232,9 +232,9 @@ namespace PlaylistManager.WPF.Custom
 		{
 			Debug.WriteLine("Shuffle button clicked!");
 
-			_audioManager.ShuffleEnabled = !_audioManager.ShuffleEnabled;
+			_manager.ShuffleEnabled = !_manager.ShuffleEnabled;
 
-			if (_audioManager.ShuffleEnabled)
+			if (_manager.ShuffleEnabled)
 			{
 				ButtonShuffle.Content = FindResource("ShuffleOn");
 			}
@@ -247,7 +247,7 @@ namespace PlaylistManager.WPF.Custom
 		{
 			if (ButtonShuffle.IsEnabled)
 			{
-				if (_audioManager.ShuffleEnabled)
+				if (_manager.ShuffleEnabled)
 				{
 					ButtonShuffle.Content = FindResource("ShuffleOn");
 				}
@@ -272,19 +272,19 @@ namespace PlaylistManager.WPF.Custom
 		{
 			VolumeSlider.Value += VolumeSlider.SmallChange * e.Delta / 60;
 
-			if (_audioManager.SongPlaying != null)
-				_audioManager.SetVolume(VolumeSlider.Value / 100);
+			if (_manager.SongPlaying != null)
+				_manager.SetVolume(VolumeSlider.Value / 100);
 			Debug.WriteLine("Volume changed!");
 		}
 		private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			if (_audioManager.SongPlaying != null)
-				_audioManager.SetVolume(VolumeSlider.Value);
+			if (_manager.SongPlaying != null)
+				_manager.SetVolume(VolumeSlider.Value);
 			Debug.WriteLine("Volume changed!");
 		}
 		private void SpeakerIcon_Click(object sender, RoutedEventArgs e)
 		{
-			VolumeSlider.Value = _audioManager.Mute();
+			VolumeSlider.Value = _manager.Mute();
 			Debug.WriteLine("(Un)Muted!");
 		}
 

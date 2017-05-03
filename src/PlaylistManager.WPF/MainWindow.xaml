@@ -9,6 +9,62 @@
         MinHeight="400"
         MinWidth="525"
         Background="#262626">
+    <Window.Resources>
+        <Style TargetType="{x:Type DataGrid}">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="AlternationCount" Value="2" />
+            <Setter Property="AlternatingRowBackground" Value="#707070" />
+            <Setter Property="RowBackground" Value="#444444" />
+            <Setter Property="RowHeight" Value="20" />
+            <Setter Property="MinColumnWidth" Value="100"></Setter>
+        </Style>
+        <Style TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Background" Value="#71e42b" />
+            <Setter Property="BorderThickness" Value="0.5" />
+            <Setter Property="BorderBrush" Value="#ffffff" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style TargetType="{x:Type DataGridCell}">
+            <Setter Property="Foreground" Value="#ffffff" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#4e9323" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type TabItem}">
+            <Setter Property="Foreground" Value="#707070" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Grid>
+                            <ContentPresenter x:Name="ContentSite"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center"
+                                              ContentSource="Header"
+                                              Margin="10"
+                                              RecognizesAccessKey="True" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Panel.ZIndex" Value="100" />
+                                <Setter Property="Foreground" Value="#71e42b" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
@@ -16,8 +72,60 @@
             </MenuItem>
         </Menu>
         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            
             <Custom:AudioPlayerControl HorizontalAlignment="Stretch" VerticalAlignment="Top" Width="auto" Height="100"
-                                       Background="#3d3d3d" />
+                                       Background="#3d3d3d" Grid.ColumnSpan="2"/>
+
+            <TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                <TabItem Header="Library">
+
+                    <DataGrid x:Name="LibraryView" AutoGenerateColumns="False"  
+                              CanUserResizeRows="False"
+                              RowHeaderWidth="0"
+                              Margin="-4,-5"
+                              GridLinesVisibility="None">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn x:Name="TitleColumn"
+                                                Header="Title"
+                                                Binding="{Binding Title}" />
+                            <DataGridTextColumn x:Name="ArtistColumn"
+                                                Header="Artist"
+                                                Binding="{Binding Artist}"/>
+                            <DataGridTextColumn x:Name="DurationColumn"
+                                                Header="Duration"
+                                                Binding="{Binding Duration, StringFormat=hh\\:mm\\:ss}"/>
+                            <DataGridTextColumn x:Name="AlbumColumn"
+                                                Header="Album"
+                                                Binding="{Binding Album}"/>
+                            <DataGridTextColumn x:Name="GenreColumn"
+                                                Header="Genres"
+                                                Binding="{Binding Genres[0]}"/>
+                            <DataGridTextColumn x:Name="YearColumn"
+                                                Header="Year"
+                                                Binding="{Binding Year}"/>
+                            <DataGridTextColumn x:Name="TrackNumberColumn"
+                                                Header="TrackNumber"
+                                                Binding="{Binding TrackNumber}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                </TabItem>
+                <TabItem Header="Playlists">
+
+                </TabItem>
+                <TabItem Header="Settings">
+
+                </TabItem>
+            </TabControl>
         </Grid>
+        
     </DockPanel>
 </Window>
