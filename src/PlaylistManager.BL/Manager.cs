@@ -153,8 +153,8 @@ namespace PlaylistManager.BL
 			_audioPlayer.Stop();
 			_audioPlayer.Play(CurrentSong);
 
-			Debug.WriteLine("Now playing:" + CurrentSong);
-			Debug.WriteLine("Index: " + _library.NowPlayingList.IndexOf(CurrentSong));
+			//Debug.WriteLine("Now playing:" + CurrentSong);
+			//Debug.WriteLine("Index: " + _library.NowPlayingList.IndexOf(CurrentSong));
 		}
 
 		public void Prev()
@@ -220,6 +220,24 @@ namespace PlaylistManager.BL
 		public void SetPosition(double position)
 		{
 			_audioPlayer.SetPosition(position);
+		}
+
+		public void ToggleShuffle()
+		{
+			ShuffleEnabled = !ShuffleEnabled;
+
+			if (ShuffleEnabled && (State == PlayState.Playing || State == PlayState.Paused))
+			{
+				_library.NowPlayingList.ShuffleFromCurrent(CurrentSong);
+			}
+			else if (ShuffleEnabled && State == PlayState.Stopped)
+			{
+				_library.NowPlayingList.ShuffleAll();
+			}
+			else
+			{
+				_library.NowPlayingList = _library.Songs;
+			}
 		}
 
 		public void ToggleRepeat()

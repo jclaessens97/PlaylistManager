@@ -194,12 +194,14 @@ namespace PlaylistManager.WPF.Custom
 		{
 			Debug.WriteLine("Shuffle button clicked!");
 
-			Manager.ShuffleEnabled = !Manager.ShuffleEnabled;
+			Manager.ToggleShuffle();
 			ButtonShuffle.Content = FindResource(Manager.ShuffleEnabled ? "ShuffleOn" : "ShuffleOff");
 		}
 
 		private void ButtonShuffle_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
+			Debug.WriteLine("Shuffle changed state");
+
 			if (ButtonShuffle.IsEnabled)
 			{
 				ButtonShuffle.Content = FindResource(Manager.ShuffleEnabled ? "ShuffleOn" : "ShuffleOff");
@@ -241,32 +243,34 @@ namespace PlaylistManager.WPF.Custom
 
 		private void ToggleButtons()
 		{
-			if (Manager.CurrentSong == null || Manager.State == PlayState.Stopped)
+			switch (Manager.State)
 			{
-				ButtonPrevious.IsEnabled = false;
-				ButtonPlay.IsEnabled = true;
-				ButtonPlay.Content = FindResource("Play");
-				ButtonNext.IsEnabled = false;
-				ButtonStop.IsEnabled = false;
-				SongSlider.IsEnabled = false;
-				ButtonRepeat.IsEnabled = false;
-				ButtonShuffle.IsEnabled = false;
-				return;
-			}
+				case PlayState.Playing:
+					ButtonPrevious.IsEnabled = Manager.HasPrev();
+					ButtonNext.IsEnabled = Manager.HasNext();
+					ButtonPlay.IsEnabled = true;
+					ButtonPlay.Content = FindResource("Pause");
+					//ButtonRepeat.IsEnabled = true;
+					//ButtonShuffle.IsEnabled = true;
+					break;
 
-			if (Manager.State == PlayState.Paused)
-			{
-				ButtonPrevious.IsEnabled = false;
-				ButtonPlay.IsEnabled = true;
-				ButtonPlay.Content = FindResource("Play");
-				ButtonNext.IsEnabled = false;
-			} else if (Manager.State == PlayState.Playing)
-			{
-				ButtonPrevious.IsEnabled = Manager.HasPrev();
-				ButtonNext.IsEnabled = Manager.HasNext();
+				case PlayState.Paused:
+					ButtonPrevious.IsEnabled = false;
+					ButtonPlay.IsEnabled = true;
+					ButtonPlay.Content = FindResource("Play");
+					ButtonNext.IsEnabled = false;
+					break;
 
-				ButtonPlay.IsEnabled = true;
-				ButtonPlay.Content = FindResource("Pause");
+				case PlayState.Stopped:
+					ButtonPrevious.IsEnabled = false;
+					ButtonPlay.IsEnabled = true;
+					ButtonPlay.Content = FindResource("Play");
+					ButtonNext.IsEnabled = false;
+					ButtonStop.IsEnabled = false;
+					SongSlider.IsEnabled = false;
+					//ButtonRepeat.IsEnabled = false;
+					//ButtonShuffle.IsEnabled = false;
+					return;
 			}
 
 			ButtonStop.IsEnabled = true;
