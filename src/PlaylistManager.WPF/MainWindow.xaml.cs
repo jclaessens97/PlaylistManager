@@ -1,11 +1,8 @@
-﻿using System.Diagnostics;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using PlaylistManager.BL;
 using PlaylistManager.Domain;
-using PlaylistManager.WPF.Custom;
 
 namespace PlaylistManager.WPF
 {
@@ -14,12 +11,7 @@ namespace PlaylistManager.WPF
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private readonly Manager _manager;
-
-		public Manager Manager
-		{
-			get => _manager;
-		}
+		public Manager Manager { get; }
 
 		public MainWindow()
 		{
@@ -27,8 +19,8 @@ namespace PlaylistManager.WPF
 			Title = "PlaylistManager v0.1";
 			WindowState = WindowState.Maximized;
 
-			_manager = new Manager();
-			AudioPlayerControl.Manager = _manager;
+			Manager = new Manager();
+			AudioPlayerControl.Manager = Manager;
 
 			LoadLibrary();
 			AddEventHandlers();
@@ -36,9 +28,9 @@ namespace PlaylistManager.WPF
 
 		private void LoadLibrary()
 		{
-			if (_manager.CheckLibrary())
+			if (Manager.CheckLibrary())
 			{
-				foreach (var song in _manager.GetLibrarySongs())
+				foreach (var song in Manager.GetLibrarySongs())
 				{
 					LibraryView.Items.Add(song);
 				}
@@ -56,7 +48,7 @@ namespace PlaylistManager.WPF
 			//Datagrid events
 			Style rowStyle = new Style(typeof(DataGridRow));
 
-			rowStyle.Setters.Add(new EventSetter(DataGridRow.MouseDoubleClickEvent, new MouseButtonEventHandler(LibraryViewRow_DoubleClick)));
+			rowStyle.Setters.Add(new EventSetter(MouseDoubleClickEvent, new MouseButtonEventHandler(LibraryViewRow_DoubleClick)));
 			
 			LibraryView.RowStyle = rowStyle;
 		}
@@ -72,14 +64,17 @@ namespace PlaylistManager.WPF
 		private void LibraryViewRow_DoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			DataGridRow row = sender as DataGridRow;
-			Song song = row.Item as Song;
-
-			if (_manager.CurrentSong != null)
+			if (row != null)
 			{
-				_manager.Stop();
-			}
+				Song song = row.Item as Song;
 
-			AudioPlayerControl.StartPlaying(song);
+				if (Manager.CurrentSong != null)
+				{
+					Manager.Stop();
+				}
+
+				AudioPlayerControl.StartPlaying(song);
+			}
 		}
 	}
 }

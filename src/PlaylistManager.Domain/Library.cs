@@ -15,6 +15,7 @@ namespace PlaylistManager.Domain
 
 		public List<Song> Songs { get; private set; }
 		public List<Playlist> Playlists { get; set; }
+		public List<Song> NowPlayingList { get; set; }
 
 		public Library(string folder, bool includeSubDirs)
 		{
@@ -25,10 +26,10 @@ namespace PlaylistManager.Domain
 		private void LoadSongs(bool includeSubdirs)
 		{
 			this.Songs = new List<Song>();
-			string[] files;
 
 			try
 			{
+				string[] files;
 				if (includeSubdirs)
 				{
 					files = Directory.GetFiles(Folder, "*.*", SearchOption.AllDirectories);
@@ -61,7 +62,7 @@ namespace PlaylistManager.Domain
 			}
 			catch (IOException ex)
 			{
-				Console.WriteLine(ex.Message);
+				Debug.WriteLine(ex.Message);
 			}
 		}
 

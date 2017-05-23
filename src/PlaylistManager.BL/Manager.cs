@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Timers;
 using PlaylistManager.Domain;
-using TagLib;
-using Picture = TagLib.Flac.Picture;
+
 
 namespace PlaylistManager.BL
 {
@@ -64,9 +64,7 @@ namespace PlaylistManager.BL
 		public bool CheckLibrary()
 		{
 			if (_library.Folder == string.Empty || _library.Songs.Count == 0)
-			{
 				return false;
-			}
 
 			return true;
 		}
@@ -82,31 +80,11 @@ namespace PlaylistManager.BL
 
 		#region audiocontrols
 
-		public Song GetRandomSong()
-		{
-			//TODO
-			return _library.Songs[0];
-		}
-
-		public void PlaySong(Song song)
-		{
-			if (song == null)
-			{
-				Debug.WriteLine("Song is null in PlaySong method (Manager.cs)");
-				//TODO start random song
-			}
-			else
-			{
-				CurrentSong = song;
-				this.Play();
-			}
-		}
-
 		public void Play()
 		{
-#if DEBUG
-			if (CurrentSong == null) throw new NullReferenceException("CurrentSong should never be null!");
-#endif
+			Debug.Assert(CurrentSong != null);
+
+			GeneratePlayingNowList();
 
 			State = PlayState.Playing;
 
@@ -144,18 +122,83 @@ namespace PlaylistManager.BL
 
 		public void Next()
 		{
-			_audioPlayer.Next();
+			if (RepeatMode == RepeatMode.Off)
+			{
+				if (HasNext())
+				{
+					int index = _library.NowPlayingList.IndexOf(CurrentSong) + 1;
+					CurrentSong = _library.NowPlayingList[index];
+				}
+				else
+				{
+					Stop();
+				}
+			}
+			else if (RepeatMode == RepeatMode.On)
+			{
+				int index;
+
+				if (HasNext())
+				{
+					index = _library.NowPlayingList.IndexOf(CurrentSong) + 1;
+				}
+				else
+				{
+					index = 0;
+				}
+
+				CurrentSong = _library.NowPlayingList[index];
+			}
+
+			_audioPlayer.Stop();
+			_audioPlayer.Play(CurrentSong);
+
+			Debug.WriteLine("Now playing:" + CurrentSong);
+			Debug.WriteLine("Index: " + _library.NowPlayingList.IndexOf(CurrentSong));
 		}
 
 		public void Prev()
 		{
-			_audioPlayer.Prev();
+			if (RepeatMode == RepeatMode.Off)
+			{
+				if (HasPrev())
+				{
+					int index = _library.NowPlayingList.IndexOf(CurrentSong) - 1;
+					CurrentSong = _library.NowPlayingList[index];
+				}
+				else
+				{
+					Stop();
+				}
+			}
+			else if (RepeatMode == RepeatMode.On)
+			{
+				int index;
+
+				if (HasPrev())
+				{
+					index = _library.NowPlayingList.IndexOf(CurrentSong);
+				}
+				else
+				{
+					index = _library.NowPlayingList.Count - 1;
+				}
+
+				CurrentSong = _library.NowPlayingList[index];
+			}
+
+			_audioPlayer.Stop();
+			_audioPlayer.Play(CurrentSong);
+
+			Debug.WriteLine("Now playing:" + CurrentSong);
+			Debug.WriteLine("Index: " + _library.NowPlayingList.IndexOf(CurrentSong));
 		}
 
 		public void Stop()
 		{
 			State = PlayState.Stopped;
 			CurrentSong = null;
+			_library.NowPlayingList = null;
 			_audioPlayer.Stop();
 		}
 
@@ -174,16 +217,6 @@ namespace PlaylistManager.BL
 			return _audioPlayer.Mute();
 		}
 
-		public double GetLengthInSeconds()
-		{
-			return CurrentSong.Duration.TotalSeconds;
-		}
-
-		public double GetPositionInSeconds()
-		{
-			return CurrentTime;
-		}
-
 		public void SetPosition(double position)
 		{
 			_audioPlayer.SetPosition(position);
@@ -196,11 +229,97 @@ namespace PlaylistManager.BL
 
 		#endregion
 
-		private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+		#region auxilary
+
+		public bool HasNext()
 		{
-			if (State == PlayState.Playing)
-				CurrentTime = _audioPlayer.GetPositionInSeconds();
+			int index = _library.NowPlayingList.IndexOf(CurrentSong);
+
+			if (RepeatMode == RepeatMode.Once) return false;
+			return index < _library.NowPlayingList.Count - 1;
 		}
+
+
+
+		public bool HasPrev()
+		{
+			int index = _library.NowPlayingList.IndexOf(CurrentSong);
+
+			if (RepeatMode == RepeatMode.Once) return false;
+			return index > 0;
+		}
+
+		#endregion
+
+		#region other
+
+		private void GeneratePlayingNowList()
+		{
+			_library.NowPlayingList = new List<Song> { CurrentSong };
+
+			if (RepeatMode == RepeatMode.Once) return;
+
+			if (ShuffleEnabled)
+			{
+				Random rnd = new Random();
+
+				for (int i = 0; i < _library.Songs.Count; i++)
+				{
+					int index = rnd.Next(0, _library.Songs.Count - i);
+
+					Song song = _library.Songs.Where(s => s != CurrentSong).ToList()[index];
+					_library.NowPlayingList.Add(song);
+				}
+
+			}
+			else
+			{
+				int index = _library.Songs.IndexOf(CurrentSong);
+
+				if (index < _library.Songs.Count - 1)
+				{
+					for (int i = index + 1; i < _library.Songs.Count; i++)
+					{
+						Song song = _library.Songs[i];
+						_library.NowPlayingList.Add(song);
+					}
+
+					for (int i = 0; i < index; i++)
+					{
+						Song song = _library.Songs[i];
+						_library.NowPlayingList.Add(song);
+					}
+				}
+				else
+				{
+					for (int i = 0; i < _library.Songs.Count - 1; i++)
+					{
+						Song song = _library.Songs[i];
+						_library.NowPlayingList.Add(song);
+					}
+				}
+			}
+
+			//_library.NowPlayingList.ForEach(x => Debug.WriteLine(x));
+		}
+
+		public Song GetRandomSong()
+		{
+			//TODO
+			return _library.Songs[0];
+		}
+
+		public double GetLengthInSeconds()
+		{
+			return CurrentSong.Duration.TotalSeconds;
+		}
+
+		public double GetPositionInSeconds()
+		{
+			return CurrentTime;
+		}
+
+		#endregion
 
 		#endregion
 
@@ -209,8 +328,13 @@ namespace PlaylistManager.BL
 		private void OnPropertyChanged(string name)
 		{
 			var handler = PropertyChanged;
-			if (handler != null)
-				handler(this, new PropertyChangedEventArgs(name));
+			handler?.Invoke(this, new PropertyChangedEventArgs(name));
+		}
+
+		private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			if (State == PlayState.Playing)
+				CurrentTime = _audioPlayer.GetPositionInSeconds();
 		}
 
 		#endregion

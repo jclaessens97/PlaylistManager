@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using NAudio.Wave;
 using PlaylistManager.Domain;
 
@@ -13,8 +12,8 @@ namespace PlaylistManager.BL
 		private AudioFileReader _audioFileReader;
 		private IWavePlayer _wavePlayer;
 
-		private float lastVolumeLevel = -1f;
-		private bool muted;
+		private float _lastVolumeLevel = -1f;
+		private bool _muted;
 
 		public void Play(Song song)
 		{
@@ -31,12 +30,6 @@ namespace PlaylistManager.BL
 			}
 		} 
 
-		public void Play()
-		{
-			if (_wavePlayer == null) return;
-			_wavePlayer.Play();
-		}
-
 		public void Resume()
 		{
 			_wavePlayer.Play();
@@ -47,22 +40,21 @@ namespace PlaylistManager.BL
 			_wavePlayer.Pause();
 		}
 
-		public void Next()
+		public void Next(Song song)
 		{
-			throw new NotImplementedException();
+			Stop();
+			Play(song);
 		}
 
-		public void Prev()
+		public void Prev(Song song)
 		{
-			throw new NotImplementedException();
+			Stop();
+			Play(song);
 		}
 
 		public void Stop()
-		{		 
-			if (_wavePlayer != null)
-			{
-				_wavePlayer.Stop();
-			}
+		{
+			_wavePlayer?.Stop();
 
 			if (_audioFileReader != null)
 			{
@@ -82,29 +74,29 @@ namespace PlaylistManager.BL
 			_audioFileReader.Volume = Convert.ToSingle(newVolume / 100);
 
 			if (_audioFileReader.Volume > 0)
-				muted = false;
+				_muted = false;
 		}
 
 		public float GetVolume()
 		{
-			return _audioFileReader != null ? _audioFileReader.Volume / 100 : 1;
+			return _audioFileReader?.Volume / 100 ?? 1;
 		}
 
 		public double Mute()
 		{
-			if (muted)
+			if (_muted)
 			{
 				//unmute
-				_audioFileReader.Volume = lastVolumeLevel;
-				lastVolumeLevel = -1f;
-				muted = false;
+				_audioFileReader.Volume = _lastVolumeLevel;
+				_lastVolumeLevel = -1f;
+				_muted = false;
 			}
 			else
 			{
 				//mute
-				lastVolumeLevel = _audioFileReader.Volume;
+				_lastVolumeLevel = _audioFileReader.Volume;
 				_audioFileReader.Volume = 0f;
-				muted = true;
+				_muted = true;
 			}
 
 			return Convert.ToDouble(_audioFileReader.Volume) * 100;
@@ -112,18 +104,17 @@ namespace PlaylistManager.BL
 
 		public double GetLengthInSeconds()
 		{
-			return _audioFileReader != null ? _audioFileReader.TotalTime.TotalSeconds : 0;
+			return _audioFileReader?.TotalTime.TotalSeconds ?? 0;
 		}
 
 		public double GetPositionInSeconds()
 		{
-			return _audioFileReader != null ? _audioFileReader.CurrentTime.TotalSeconds : 0;
+			return _audioFileReader?.CurrentTime.TotalSeconds ?? 0;
 		}
 
 		public void SetPosition(double position)
 		{
-			if (_audioFileReader != null)
-				_audioFileReader.SetPosition(position);
+			_audioFileReader?.SetPosition(position);
 		}
 	}
 }

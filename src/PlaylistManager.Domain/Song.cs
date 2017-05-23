@@ -18,5 +18,10 @@ namespace PlaylistManager.Domain
 		public uint? Year { get; set; }
 		public uint? TrackNumber { get; set; }
 		public IPicture AlbumArt { get; set; }
+
+		public override string ToString()
+		{
+			return Artist + " - " + Title + " (" + Duration.ToString("hh\\:mm\\:ss") + ")";
+		}
 	}
 }
