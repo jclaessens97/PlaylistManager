@@ -48,8 +48,8 @@ namespace PlaylistManager.Domain
 					{
 						IsPlaying = false,
 
-						Artist = file.Tag.Performers[0].Trim(),
-						Title = file.Tag.Title.Trim(),
+						Artist = file.Tag.Performers[0],
+						Title = file.Tag.Title,
 						Album = file.Tag.Album,
 						Duration = file.Properties.Duration,
 						Path = filename,
@@ -59,10 +59,25 @@ namespace PlaylistManager.Domain
 						AlbumArt = file.Tag.Pictures.Length > 0 ? new Picture(file.Tag.Pictures[0]) : null
 					};
 
+					if (!string.IsNullOrEmpty(song.Artist))
+						song.Artist = song.Artist.Trim();
+
+					if (!string.IsNullOrEmpty(song.Title))
+						song.Title = song.Title.Trim();
+
+					if (!string.IsNullOrEmpty(song.Album))
+						song.Album = song.Album.Trim();
+
+					if (song.Year == 0)
+						song.Year = null;
+
+					if (song.TrackNumber == 0)
+						song.TrackNumber = null;
+
 					this.Songs.Add(song);
 				}
 
-				//TODO: trim after adding (nullchecks etc)
+
 			}
 			catch (IOException ex)
 			{

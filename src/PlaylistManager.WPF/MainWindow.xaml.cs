@@ -35,6 +35,8 @@ namespace PlaylistManager.WPF
 			LoadLibrary();
 			StartTimer();
 			AddEventHandlers();
+
+			LibraryView.Columns[0].MaxWidth = 30;
 		}
 
 		private void LoadLibrary()
@@ -42,10 +44,6 @@ namespace PlaylistManager.WPF
 			if (_manager.CheckLibrary())
 			{
 				LibraryView.ItemsSource = _manager.GetLibrarySongs();
-//				foreach (var song in _manager.GetLibrarySongs())
-//				{
-//					LibraryView.Items.Add(song);
-//				}
 			}
 			else
 			{
