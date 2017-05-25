@@ -22,12 +22,6 @@ namespace PlaylistManager.WPF.Custom
 		public AudioPlayerControl()
 		{
 			InitializeComponent();
-
-			var updateTimer = new DispatcherTimer();
-			updateTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-			updateTimer.Tick += UpdateTimer_Tick;
-			updateTimer.Start();
-
 			RegisterEventHandlers();
 		}
 
@@ -275,7 +269,7 @@ namespace PlaylistManager.WPF.Custom
 		#endregion
 
 		#region auxilary methods
-		private void ToggleButtons()
+		internal void ToggleButtons()
 		{
 			switch (Manager.State)
 			{
@@ -325,7 +319,7 @@ namespace PlaylistManager.WPF.Custom
 			Manager.Play();
 		}
 
-		private void RetrieveSongInfo()
+		internal void RetrieveSongInfo()
 		{
 			if (Manager.CurrentSong == null) return;
 
@@ -371,12 +365,6 @@ namespace PlaylistManager.WPF.Custom
 			LabelTitle.Content = string.Empty;
 			LabelArtist.Content = string.Empty;
 			LabelAlbum.Content = string.Empty;
-		}
-
-		private void UpdateTimer_Tick(object sender, EventArgs e)
-		{
-			ToggleButtons();
-			RetrieveSongInfo();
 		}
 
 		#endregion

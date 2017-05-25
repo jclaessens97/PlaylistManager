@@ -1,12 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
+using System.Windows.Data;
+using System.Windows.Forms;
+using System.Windows.Threading;
+
 using PlaylistManager.BL;
 using PlaylistManager.Domain;
+using DataGrid = System.Windows.Controls.DataGrid;
 
 namespace PlaylistManager.WPF
 {
@@ -27,6 +33,7 @@ namespace PlaylistManager.WPF
 			AudioPlayerControl.Manager = _manager;
 
 			LoadLibrary();
+			StartTimer();
 			AddEventHandlers();
 		}
 
@@ -34,15 +41,24 @@ namespace PlaylistManager.WPF
 		{
 			if (_manager.CheckLibrary())
 			{
-				foreach (var song in _manager.GetLibrarySongs())
-				{
-					LibraryView.Items.Add(song);
-				}
+				LibraryView.ItemsSource = _manager.GetLibrarySongs();
+//				foreach (var song in _manager.GetLibrarySongs())
+//				{
+//					LibraryView.Items.Add(song);
+//				}
 			}
 			else
 			{
 				//TODO: if library empty
 			}
+		}
+
+		private void StartTimer()
+		{
+			var updateTimer = new DispatcherTimer();
+			updateTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+			updateTimer.Tick += UpdateTimer_Tick;
+			updateTimer.Start();
 		}
 
 		private void AddEventHandlers()
@@ -83,7 +99,7 @@ namespace PlaylistManager.WPF
 			}
 
 			_manager.SortLibrary(e.Column.SortMemberPath, sortDirection);
-			LibraryView.Items.Clear();
+			//LibraryView.Items.Clear();
 			LoadLibrary();
 
 			Debug.WriteLine($"AFTER: Sorting {e.Column.SortMemberPath} by {sortDirection}");
@@ -127,6 +143,13 @@ namespace PlaylistManager.WPF
 
 				AudioPlayerControl.StartPlaying(song);
 			}
+		}
+
+		private void UpdateTimer_Tick(object sender, EventArgs e)
+		{
+			//Update audiocontrols
+			AudioPlayerControl.ToggleButtons();
+			AudioPlayerControl.RetrieveSongInfo();
 		}
 	}
 }

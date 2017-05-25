@@ -193,13 +193,13 @@
 
         <!--Images-->
         <Image x:Key="Prev" Source="/Images/prev.png" />
-        <Image x:Key="PrevDisabled" Source="/Images/prev_disabled.png"></Image>
+        <Image x:Key="PrevDisabled" Source="/Images/prev_disabled.png" />
         <Image x:Key="Play" Source="/Images/play.png" />
         <Image x:Key="Pause" Source="/Images/pause.png" />
         <Image x:Key="Stop" Source="/Images/stop.png" />
         <Image x:Key="StopDisabled" Source="/Images/stop_disabled.png" />
         <Image x:Key="Next" Source="/Images/next.png" />
-        <Image x:Key="NextDisabled" Source="/Images/next_disabled.png"></Image>
+        <Image x:Key="NextDisabled" Source="/Images/next_disabled.png" />
         <Image x:Key="RepeatOff" Source="/Images/repeat_off.png" />
         <Image x:Key="RepeatOnce" Source="/Images/repeat_once.png" />
         <Image x:Key="RepeatOn" Source="/Images/repeat_on.png" />
@@ -236,8 +236,6 @@
             <Label x:Name="LabelArtist" Style="{StaticResource Artist}"></Label>
             <Label x:Name="LabelAlbum" Style="{StaticResource Album}"></Label>
         </StackPanel>
-        
-
 
         <Button x:Name="ButtonPrevious" Grid.Row="1" Grid.Column="0" Style="{StaticResource AudioControl}">
             <DynamicResource ResourceKey="PrevDisabled" />

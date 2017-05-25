@@ -64,8 +64,12 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!--Images-->
+        <Image x:Key="SpeakerIcon" Source="/Images/speaker_33.png" Height="10" />
+        <Image x:Key="SpeakerOff" Source="/Images/speaker_off.png" Height="10" />
     </Window.Resources>
-    
+       
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
@@ -95,6 +99,18 @@
                               GridLinesVisibility="None"
                               IsReadOnly="True">
                         <DataGrid.Columns>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Name="IsPlayingImage"/>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                <Setter TargetName="IsPlayingImage" Property="Source" Value="/Images/speaker_33.png" />     
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTextColumn x:Name="TitleColumn"
                                                 Header="Title"
                                                 Binding="{Binding Title}"/>

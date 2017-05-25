@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Timers;
 using PlaylistManager.Domain;
+using PlaylistManager.Domain.Annotations;
 
 
 namespace PlaylistManager.BL
@@ -17,20 +19,23 @@ namespace PlaylistManager.BL
 	public class Manager : INotifyPropertyChanged
 	{
 		private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Ed Sheeran - Trap Queen (cover).mp3";
+
 		//private const string DEBUG_SONG_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\Chill Mix 2015 (Eric Clapton).mp3"; //>1h
 		private const string DEBUG_MUSIC_FOLDER_PATH = @"D:\Bibliotheken\Muziek\Mijn muziek\";
 
 		#region audioplayer declarations
+
 		private readonly AudioPlayer _audioPlayer;
 
+		private Song _currentSong;
 		private double _currentTime;
 		private Timer _timer;
 
 		private static readonly IDictionary RepeatModeMap = new Dictionary<RepeatMode, RepeatMode>
 		{
-			{ RepeatMode.Off, RepeatMode.Once },
-			{ RepeatMode.Once, RepeatMode.On },
-			{ RepeatMode.On, RepeatMode.Off }
+			{RepeatMode.Off, RepeatMode.Once},
+			{RepeatMode.Once, RepeatMode.On},
+			{RepeatMode.On, RepeatMode.Off}
 		};
 
 		public double CurrentTime
@@ -43,7 +48,20 @@ namespace PlaylistManager.BL
 				OnPropertyChanged("CurrentTime");
 			}
 		}
-		public Song CurrentSong { get; set; }
+		public Song CurrentSong
+		{
+			get => _currentSong;
+			set
+			{
+				if (value != null && value.Equals(_currentSong)) return;
+
+				if (_currentSong != null)
+					_currentSong.IsPlaying = false;
+
+				_currentSong = value;
+				OnPropertyChanged();
+			} 
+		}
 		public Song SelectedSong { get; set; }
 		public PlayState State { get; set; }
 		public bool ShuffleEnabled { get; set; }
@@ -371,11 +389,15 @@ namespace PlaylistManager.BL
 		#endregion
 
 		#region events
-
-		private void OnPropertyChanged(string name)
+		[NotifyPropertyChangedInvocator]
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			var handler = PropertyChanged;
-			handler?.Invoke(this, new PropertyChangedEventArgs(name));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+			if (propertyName == nameof(CurrentSong) && CurrentSong != null)
+			{
+				CurrentSong.IsPlaying = true;
+			}
 		}
 
 		private void Timer_Elapsed(object sender, ElapsedEventArgs e)

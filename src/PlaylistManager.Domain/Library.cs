@@ -46,6 +46,8 @@ namespace PlaylistManager.Domain
 					TagLib.File file = TagLib.File.Create(filename);
 					Song song = new Song()
 					{
+						IsPlaying = false,
+
 						Artist = file.Tag.Performers[0].Trim(),
 						Title = file.Tag.Title.Trim(),
 						Album = file.Tag.Album,
@@ -59,6 +61,8 @@ namespace PlaylistManager.Domain
 
 					this.Songs.Add(song);
 				}
+
+				//TODO: trim after adding (nullchecks etc)
 			}
 			catch (IOException ex)
 			{

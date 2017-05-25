@@ -1,5 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using PlaylistManager.Domain.Annotations;
 using TagLib;
+using TagLib.Riff;
 
 namespace PlaylistManager.Domain
 {
@@ -7,8 +11,21 @@ namespace PlaylistManager.Domain
 	///     Model that holds all song properties
 	///     (same datatypes as defined in the TagLib library)
 	/// </summary>
-	public class Song
+	public class Song : INotifyPropertyChanged
 	{
+		private bool _isPlaying;
+		
+		public bool IsPlaying
+		{
+			get => _isPlaying;
+			set
+			{
+				if (value.Equals(_isPlaying)) return;
+				_isPlaying = value;
+				OnPropertyChanged();
+			}
+		}
+
 		public string Title { get; set; }
 		public string Album { get; set; }
 		public TimeSpan Duration { get; set; }
@@ -22,6 +39,14 @@ namespace PlaylistManager.Domain
 		public override string ToString()
 		{
 			return Artist + " - " + Title + " (" + Duration.ToString("hh\\:mm\\:ss") + ")";
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		[NotifyPropertyChangedInvocator]
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }
