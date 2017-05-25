@@ -8,7 +8,7 @@ namespace PlaylistManager.BL
 {
 	public static class Extensions
 	{
-		private static Random rnd = new Random();
+		private static readonly Random rnd = new Random();
 
 		public static void ShuffleAll<T>(this List<T> list)
 		{

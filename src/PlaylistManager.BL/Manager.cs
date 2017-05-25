@@ -44,6 +44,7 @@ namespace PlaylistManager.BL
 			}
 		}
 		public Song CurrentSong { get; set; }
+		public Song SelectedSong { get; set; }
 		public PlayState State { get; set; }
 		public bool ShuffleEnabled { get; set; }
 		public RepeatMode RepeatMode { get; set; }
@@ -89,6 +90,11 @@ namespace PlaylistManager.BL
 			
 		}
 
+		public void SetNowPlayingList(List<Song> songs)
+		{
+			_library.NowPlayingList = songs;
+		}
+
 		#endregion
 
 		#region audioPlayer
@@ -99,7 +105,8 @@ namespace PlaylistManager.BL
 		{
 			Debug.Assert(CurrentSong != null);
 
-			GeneratePlayingNowList();
+			if (_library.NowPlayingList == null)
+				GeneratePlayingNowList();
 
 			State = PlayState.Playing;
 
@@ -240,6 +247,7 @@ namespace PlaylistManager.BL
 		public void ToggleShuffle()
 		{
 			ShuffleEnabled = !ShuffleEnabled;
+			Debug.Assert(_library.NowPlayingList != null);
 
 			if (ShuffleEnabled && (State == PlayState.Playing || State == PlayState.Paused))
 			{
@@ -251,7 +259,7 @@ namespace PlaylistManager.BL
 			}
 			else
 			{
-				_library.NowPlayingList = _library.Songs;
+				SetNowPlayingList(_library.Songs);
 			}
 		}
 
@@ -272,8 +280,6 @@ namespace PlaylistManager.BL
 			return index < _library.NowPlayingList.Count - 1;
 		}
 
-
-
 		public bool HasPrev()
 		{
 			int index = _library.NowPlayingList.IndexOf(CurrentSong);
@@ -285,7 +291,6 @@ namespace PlaylistManager.BL
 		#endregion
 
 		#region other
-
 		private void GeneratePlayingNowList()
 		{
 			_library.NowPlayingList = new List<Song> { CurrentSong };
@@ -338,8 +343,8 @@ namespace PlaylistManager.BL
 
 		public Song GetRandomSong()
 		{
-			//TODO
-			return _library.Songs[0];
+			Random rnd = new Random();
+			return _library.Songs[rnd.Next(_library.Songs.Count - 1)];
 		}
 
 		public double GetLengthInSeconds()
@@ -352,6 +357,10 @@ namespace PlaylistManager.BL
 			return CurrentTime;
 		}
 
+		public bool CurrentSongIsFinished()
+		{
+			return _audioPlayer.IsFinished();
+		}
 		#endregion
 
 		#endregion
@@ -368,8 +377,19 @@ namespace PlaylistManager.BL
 		{
 			if (State == PlayState.Playing)
 				CurrentTime = _audioPlayer.GetPositionInSeconds();
-		}
+     	}
 
+		#endregion
+
+		#region debug
+		[System.Diagnostics.Conditional("DEBUG")]
+		public void PrintNowPlayingList()
+		{
+			foreach (var song in _library.NowPlayingList)
+			{
+				Debug.WriteLine(song);
+			}
+		}
 		#endregion
 	}
 }

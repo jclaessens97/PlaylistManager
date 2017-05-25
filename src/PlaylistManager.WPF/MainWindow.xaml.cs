@@ -1,8 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Linq;
 using PlaylistManager.BL;
 using PlaylistManager.Domain;
 
@@ -47,6 +49,7 @@ namespace PlaylistManager.WPF
 		{
 			LibraryView.Loaded += LibraryView_Loaded;
 			LibraryView.Sorting += LibraryView_Sorting;
+			LibraryView.SelectedCellsChanged += LibraryView_SelectedCellsChanged;
 
 			//Datagrid events
 			Style rowStyle = new Style(typeof(DataGridRow));
@@ -83,6 +86,30 @@ namespace PlaylistManager.WPF
 			}
 
 			manager.SortLibrary(e.Column.SortMemberPath, sortDirection);
+		}
+
+		private void LibraryView_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+		{
+			DataGrid grid = sender as DataGrid;
+			Debug.Assert(grid != null);
+
+			if (grid.SelectedItems.Count == 1 && manager.State == PlayState.Stopped)
+			{
+				manager.CurrentSong = null;
+				manager.SelectedSong = grid.SelectedItem as Song;
+				Debug.WriteLine("Selected song is:" + manager.CurrentSong);
+			}
+			else if (grid.SelectedItems.Count > 1 && manager.State == PlayState.Stopped)
+			{
+				manager.CurrentSong = null;
+				manager.SelectedSong = grid.SelectedItems[0] as Song;
+
+				List<Song> songs = new List<Song>(grid.SelectedItems.Count);
+				songs.AddRange(from object song in grid.SelectedItems select song as Song);
+				manager.SetNowPlayingList(songs);
+
+				manager.PrintNowPlayingList();
+			}
 		}
 
 		private void LibraryViewRow_DoubleClick(object sender, MouseButtonEventArgs e)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using NAudio.Wave;
 using PlaylistManager.Domain;
 
@@ -122,6 +123,14 @@ namespace PlaylistManager.BL
 		public void SetPosition(double position)
 		{
 			_audioFileReader?.SetPosition(position);
+		}
+
+		public bool IsFinished()
+		{
+			if (_audioFileReader != null)
+				return _audioFileReader.CurrentTime == _audioFileReader.TotalTime;
+
+			return false;
 		}
 	}
 }

@@ -84,6 +84,11 @@ namespace PlaylistManager.WPF.Custom
 				ButtonPlay.Content = FindResource("Play");
 				Manager.ToggleResumePause();
 			}
+			else if (Manager.SelectedSong != null)
+			{
+				Manager.CurrentSong = Manager.SelectedSong;
+				StartPlaying(Manager.SelectedSong);
+			}
 			else
 			{
 				StartPlaying(null);
@@ -125,6 +130,11 @@ namespace PlaylistManager.WPF.Custom
 		private void SongSlider_ValueChanged(object sender, RoutedEventArgs e)
 		{
 			LabelCurrentTime.Content = FormatDuration(TimeSpan.FromSeconds(SongSlider.Value));
+
+			if (Manager.CurrentSongIsFinished())
+			{
+				Manager.Next();
+			}
 		}
 
 		private void SongSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -242,7 +252,6 @@ namespace PlaylistManager.WPF.Custom
 		#endregion
 
 		#region auxilary methods
-
 		private void ToggleButtons()
 		{
 			switch (Manager.State)
@@ -252,8 +261,9 @@ namespace PlaylistManager.WPF.Custom
 					ButtonNext.IsEnabled = Manager.HasNext();
 					ButtonPlay.IsEnabled = true;
 					ButtonPlay.Content = FindResource("Pause");
-					//ButtonRepeat.IsEnabled = true;
-					//ButtonShuffle.IsEnabled = true;
+					SongSlider.IsEnabled = true;
+					ButtonRepeat.IsEnabled = true;
+					ButtonShuffle.IsEnabled = true;
 					break;
 
 				case PlayState.Paused:
@@ -270,8 +280,8 @@ namespace PlaylistManager.WPF.Custom
 					ButtonNext.IsEnabled = false;
 					ButtonStop.IsEnabled = false;
 					SongSlider.IsEnabled = false;
-					//ButtonRepeat.IsEnabled = false;
-					//ButtonShuffle.IsEnabled = false;
+					ButtonRepeat.IsEnabled = false;
+					ButtonShuffle.IsEnabled = false;
 					return;
 			}
 
@@ -347,6 +357,5 @@ namespace PlaylistManager.WPF.Custom
 		}
 
 		#endregion
-
 	}
 }
