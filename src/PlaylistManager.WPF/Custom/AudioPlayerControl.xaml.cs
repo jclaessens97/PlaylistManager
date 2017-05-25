@@ -236,10 +236,33 @@ namespace PlaylistManager.WPF.Custom
 
 		private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
+			var value = VolumeSlider.Value;
+
 			if (Manager.CurrentSong != null)
-				Manager.SetVolume(VolumeSlider.Value, songPlaying: true);
+				Manager.SetVolume(value, songPlaying: true);
 			else
-				Manager.SetVolume(VolumeSlider.Value, songPlaying: false);
+				Manager.SetVolume(value, songPlaying: false);
+
+			Debug.WriteLine(VolumeSlider.Value);
+
+			uint iValue = (uint) value;
+
+			if (iValue == 0)
+			{
+				SpeakerIcon.Content = FindResource("SpeakerOff");
+			}
+			else if (iValue <= 33)
+			{
+				SpeakerIcon.Content = FindResource("Speaker33");
+			}
+			else if (iValue <= 66)
+			{
+				SpeakerIcon.Content = FindResource("Speaker66");
+			}
+			else if (iValue <= 100)
+			{
+				SpeakerIcon.Content = FindResource("Speaker100");
+			}
 
 			Debug.WriteLine("Volume changed!");
 		}
