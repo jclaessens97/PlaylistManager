@@ -12,6 +12,7 @@ namespace PlaylistManager.BL
 		private AudioFileReader _audioFileReader;
 		private IWavePlayer _wavePlayer;
 
+		private float _volume;
 		private float _lastVolumeLevel = -1f;
 		private bool _muted;
 
@@ -26,6 +27,7 @@ namespace PlaylistManager.BL
 			{
 				_audioFileReader = new AudioFileReader(song.Path);
 				_wavePlayer.Init(_audioFileReader);
+				_audioFileReader.Volume = _volume;
 				_wavePlayer.Play();
 			}
 		} 
@@ -69,12 +71,17 @@ namespace PlaylistManager.BL
 			}
 		}
 
-		public void SetVolume(double newVolume)
+		public void SetVolume(double newVolume, bool songPlaying)
 		{
-			_audioFileReader.Volume = Convert.ToSingle(newVolume / 100);
+			_volume = Convert.ToSingle(newVolume / 100);
 
-			if (_audioFileReader.Volume > 0)
-				_muted = false;
+			if (songPlaying)
+			{
+				_audioFileReader.Volume = _volume;
+
+				if (_audioFileReader.Volume > 0)
+					_muted = false;
+			}
 		}
 
 		public float GetVolume()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace PlaylistManager.BL
 {
@@ -20,6 +21,11 @@ namespace PlaylistManager.BL
 			{
 				return durationStr.Substring(0, 8);
 			}
+		}
+
+		public static string GetPropertyName<T>(Expression<Func<T>> expression)
+		{
+			return (expression.Body as MemberExpression).Member.Name;
 		}
 	}
 }

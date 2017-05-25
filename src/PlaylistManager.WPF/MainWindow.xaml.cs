@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using PlaylistManager.BL;
@@ -11,7 +13,7 @@ namespace PlaylistManager.WPF
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public Manager Manager { get; }
+		private readonly Manager manager;
 
 		public MainWindow()
 		{
@@ -19,8 +21,8 @@ namespace PlaylistManager.WPF
 			Title = "PlaylistManager v0.1";
 			WindowState = WindowState.Maximized;
 
-			Manager = new Manager();
-			AudioPlayerControl.Manager = Manager;
+			manager = new Manager();
+			AudioPlayerControl.Manager = manager;
 
 			LoadLibrary();
 			AddEventHandlers();
@@ -28,9 +30,9 @@ namespace PlaylistManager.WPF
 
 		private void LoadLibrary()
 		{
-			if (Manager.CheckLibrary())
+			if (manager.CheckLibrary())
 			{
-				foreach (var song in Manager.GetLibrarySongs())
+				foreach (var song in manager.GetLibrarySongs())
 				{
 					LibraryView.Items.Add(song);
 				}
@@ -44,12 +46,12 @@ namespace PlaylistManager.WPF
 		private void AddEventHandlers()
 		{
 			LibraryView.Loaded += LibraryView_Loaded;
-			
+			LibraryView.Sorting += LibraryView_Sorting;
+
 			//Datagrid events
 			Style rowStyle = new Style(typeof(DataGridRow));
-
-			rowStyle.Setters.Add(new EventSetter(MouseDoubleClickEvent, new MouseButtonEventHandler(LibraryViewRow_DoubleClick)));
-			
+			rowStyle.Setters.Add(new EventSetter(MouseDoubleClickEvent, 
+												new MouseButtonEventHandler(LibraryViewRow_DoubleClick)));
 			LibraryView.RowStyle = rowStyle;
 		}
 
@@ -57,8 +59,30 @@ namespace PlaylistManager.WPF
 		{
 			foreach (var col in LibraryView.Columns)
 			{
-					col.Width = new DataGridLength(col.ActualWidth, DataGridLengthUnitType.Pixel);
+				col.Width = new DataGridLength(col.ActualWidth, DataGridLengthUnitType.Pixel);
 			}
+		}
+
+		private void LibraryView_Sorting(object sender, DataGridSortingEventArgs e)
+		{
+			//TODO
+
+			Debug.WriteLine($"Sorting {e.Column.SortMemberPath} by {e.Column.SortDirection}");
+
+			//LibraryView.ColumnFromDisplayIndex(e.Column.DisplayIndex);
+
+			var sortDirection = e.Column.SortDirection;
+
+			if (sortDirection == ListSortDirection.Descending || sortDirection == null)
+			{
+				e.Column.SortDirection = ListSortDirection.Ascending;
+			}
+			else
+			{
+				e.Column.SortDirection = ListSortDirection.Descending;
+			}
+
+			manager.SortLibrary(e.Column.SortMemberPath, sortDirection);
 		}
 
 		private void LibraryViewRow_DoubleClick(object sender, MouseButtonEventArgs e)
@@ -68,9 +92,9 @@ namespace PlaylistManager.WPF
 			{
 				Song song = row.Item as Song;
 
-				if (Manager.CurrentSong != null)
+				if (manager.CurrentSong != null)
 				{
-					Manager.Stop();
+					manager.Stop();
 				}
 
 				AudioPlayerControl.StartPlaying(song);

@@ -74,6 +74,21 @@ namespace PlaylistManager.BL
 			return _library.Songs;
 		}
 
+		public void SortLibrary(string member, ListSortDirection? sortDirection)
+		{
+			PropertyDescriptor prop = TypeDescriptor.GetProperties(typeof(Song)).Find(member, true);
+
+			if (sortDirection == null || sortDirection == ListSortDirection.Ascending)
+			{
+				_library.Songs = _library.Songs.OrderBy(s => prop.GetValue(s)).ToList();
+			}
+			else
+			{
+				_library.Songs = _library.Songs.OrderByDescending(s => prop.GetValue(s)).ToList();
+			}
+			
+		}
+
 		#endregion
 
 		#region audioPlayer
@@ -207,9 +222,9 @@ namespace PlaylistManager.BL
 			return _audioPlayer.GetVolume();
 		}
 
-		public void SetVolume(double newVolume)
+		public void SetVolume(double newVolume, bool songPlaying)
 		{
-			_audioPlayer.SetVolume(newVolume);
+			_audioPlayer.SetVolume(newVolume, songPlaying);
 		}
 
 		public double Mute()

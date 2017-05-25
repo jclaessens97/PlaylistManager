@@ -50,7 +50,6 @@ namespace PlaylistManager.WPF.Custom
 			ButtonShuffle.Click += ButtonShuffle_Click;
 			ButtonShuffle.IsEnabledChanged += ButtonShuffle_IsEnabledChanged;
 
-
 			VolumeSlider.PreviewMouseWheel += VolumeSlider_PreviewMouseWheel;
 			VolumeSlider.ValueChanged += VolumeSlider_ValueChanged;
 			SpeakerIcon.Click += SpeakerIcon_Click;
@@ -228,7 +227,10 @@ namespace PlaylistManager.WPF.Custom
 		private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (Manager.CurrentSong != null)
-				Manager.SetVolume(VolumeSlider.Value);
+				Manager.SetVolume(VolumeSlider.Value, songPlaying: true);
+			else
+				Manager.SetVolume(VolumeSlider.Value, songPlaying: false);
+
 			Debug.WriteLine("Volume changed!");
 		}
 
@@ -286,8 +288,8 @@ namespace PlaylistManager.WPF.Custom
 			Manager.CurrentSong = song;
 			ButtonPlay.Content = FindResource("Pause");
 
+			Manager.SetVolume(VolumeSlider.Value, songPlaying: false);
 			Manager.Play();
-			Manager.SetVolume(VolumeSlider.Value);
 		}
 
 		private void RetrieveSongInfo()

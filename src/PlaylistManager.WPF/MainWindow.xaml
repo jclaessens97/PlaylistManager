@@ -96,10 +96,12 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="TitleColumn"
                                                 Header="Title"
-                                                Binding="{Binding Title}" />
+                                                Binding="{Binding Title}" 
+                                                SortDirection="Ascending"/>
                             <DataGridTextColumn x:Name="ArtistColumn"
                                                 Header="Artist"
-                                                Binding="{Binding Artist}"/>
+                                                Binding="{Binding Artist}"
+                                                SortDirection="Ascending"/>
                             <DataGridTextColumn x:Name="DurationColumn"
                                                 Header="Duration"
                                                 Binding="{Binding Duration, StringFormat=hh\\:mm\\:ss}"/>

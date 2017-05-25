@@ -13,7 +13,7 @@ namespace PlaylistManager.Domain
 	{
 		public string Folder { get; private set; }
 
-		public List<Song> Songs { get; private set; }
+		public List<Song> Songs { get; set; }
 		public List<Playlist> Playlists { get; set; }
 		public List<Song> NowPlayingList { get; set; }
 
@@ -46,8 +46,8 @@ namespace PlaylistManager.Domain
 					TagLib.File file = TagLib.File.Create(filename);
 					Song song = new Song()
 					{
-						Artist = file.Tag.Performers[0],
-						Title = file.Tag.Title,
+						Artist = file.Tag.Performers[0].Trim(),
+						Title = file.Tag.Title.Trim(),
 						Album = file.Tag.Album,
 						Duration = file.Properties.Duration,
 						Path = filename,
