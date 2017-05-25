@@ -79,15 +79,20 @@ namespace PlaylistManager.BL
 		{
 			PropertyDescriptor prop = TypeDescriptor.GetProperties(typeof(Song)).Find(member, true);
 
-			if (sortDirection == null || sortDirection == ListSortDirection.Ascending)
+			switch (sortDirection)
 			{
-				_library.Songs = _library.Songs.OrderBy(s => prop.GetValue(s)).ToList();
+				default:
+				case ListSortDirection.Descending: //not needed, but makes things clearer
+					_library.Songs = _library.Songs.OrderByDescending(s => prop.GetValue(s)).ToList();
+					Debug.WriteLine("Sorting descending!!!!");
+					break;
+				case ListSortDirection.Ascending:
+					_library.Songs = _library.Songs.OrderBy(s => prop.GetValue(s)).ToList();
+					Debug.WriteLine("Sorting ascencding!!!!");
+					break;
 			}
-			else
-			{
-				_library.Songs = _library.Songs.OrderByDescending(s => prop.GetValue(s)).ToList();
-			}
-			
+
+			Debug.WriteLine(prop.GetValue(CurrentSong));
 		}
 
 		public void SetNowPlayingList(List<Song> songs)

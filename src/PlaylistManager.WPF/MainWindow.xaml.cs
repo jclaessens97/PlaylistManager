@@ -15,7 +15,7 @@ namespace PlaylistManager.WPF
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private readonly Manager manager;
+		private readonly Manager _manager;
 
 		public MainWindow()
 		{
@@ -23,8 +23,8 @@ namespace PlaylistManager.WPF
 			Title = "PlaylistManager v0.1";
 			WindowState = WindowState.Maximized;
 
-			manager = new Manager();
-			AudioPlayerControl.Manager = manager;
+			_manager = new Manager();
+			AudioPlayerControl.Manager = _manager;
 
 			LoadLibrary();
 			AddEventHandlers();
@@ -32,9 +32,9 @@ namespace PlaylistManager.WPF
 
 		private void LoadLibrary()
 		{
-			if (manager.CheckLibrary())
+			if (_manager.CheckLibrary())
 			{
-				foreach (var song in manager.GetLibrarySongs())
+				foreach (var song in _manager.GetLibrarySongs())
 				{
 					LibraryView.Items.Add(song);
 				}
@@ -68,24 +68,25 @@ namespace PlaylistManager.WPF
 
 		private void LibraryView_Sorting(object sender, DataGridSortingEventArgs e)
 		{
-			//TODO
-
-			Debug.WriteLine($"Sorting {e.Column.SortMemberPath} by {e.Column.SortDirection}");
-
-			//LibraryView.ColumnFromDisplayIndex(e.Column.DisplayIndex);
+			Debug.WriteLine($"BEFORE: Sorting {e.Column.SortMemberPath} by {e.Column.SortDirection}");
 
 			var sortDirection = e.Column.SortDirection;
-
-			if (sortDirection == ListSortDirection.Descending || sortDirection == null)
+			switch (sortDirection)
 			{
-				e.Column.SortDirection = ListSortDirection.Ascending;
-			}
-			else
-			{
-				e.Column.SortDirection = ListSortDirection.Descending;
+				default: 
+				case ListSortDirection.Descending:	//not needed, but makes things clearer
+					sortDirection = ListSortDirection.Ascending;
+					break;
+				case ListSortDirection.Ascending:
+					sortDirection = ListSortDirection.Descending;
+					break;
 			}
 
-			manager.SortLibrary(e.Column.SortMemberPath, sortDirection);
+			_manager.SortLibrary(e.Column.SortMemberPath, sortDirection);
+			LibraryView.Items.Clear();
+			LoadLibrary();
+
+			Debug.WriteLine($"AFTER: Sorting {e.Column.SortMemberPath} by {sortDirection}");
 		}
 
 		private void LibraryView_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
@@ -93,22 +94,22 @@ namespace PlaylistManager.WPF
 			DataGrid grid = sender as DataGrid;
 			Debug.Assert(grid != null);
 
-			if (grid.SelectedItems.Count == 1 && manager.State == PlayState.Stopped)
+			if (grid.SelectedItems.Count == 1 && _manager.State == PlayState.Stopped)
 			{
-				manager.CurrentSong = null;
-				manager.SelectedSong = grid.SelectedItem as Song;
-				Debug.WriteLine("Selected song is:" + manager.CurrentSong);
+				_manager.CurrentSong = null;
+				_manager.SelectedSong = grid.SelectedItem as Song;
+				Debug.WriteLine("Selected song is:" + _manager.CurrentSong);
 			}
-			else if (grid.SelectedItems.Count > 1 && manager.State == PlayState.Stopped)
+			else if (grid.SelectedItems.Count > 1 && _manager.State == PlayState.Stopped)
 			{
-				manager.CurrentSong = null;
-				manager.SelectedSong = grid.SelectedItems[0] as Song;
+				_manager.CurrentSong = null;
+				_manager.SelectedSong = grid.SelectedItems[0] as Song;
 
 				List<Song> songs = new List<Song>(grid.SelectedItems.Count);
 				songs.AddRange(from object song in grid.SelectedItems select song as Song);
-				manager.SetNowPlayingList(songs);
+				_manager.SetNowPlayingList(songs);
 
-				manager.PrintNowPlayingList();
+				_manager.PrintNowPlayingList();
 			}
 		}
 
@@ -119,9 +120,9 @@ namespace PlaylistManager.WPF
 			{
 				Song song = row.Item as Song;
 
-				if (manager.CurrentSong != null)
+				if (_manager.CurrentSong != null)
 				{
-					manager.Stop();
+					_manager.Stop();
 				}
 
 				AudioPlayerControl.StartPlaying(song);
