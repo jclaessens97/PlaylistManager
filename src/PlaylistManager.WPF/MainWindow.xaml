@@ -10,7 +10,6 @@
         MinWidth="525"
         Background="#262626">
     <Window.Resources>
-
         <Style TargetType="{x:Type DataGrid}">
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="Normal" />
@@ -97,7 +96,8 @@
                               RowHeaderWidth="0"
                               Margin="-4,-5"
                               GridLinesVisibility="None"
-                              IsReadOnly="True">
+                              IsReadOnly="True"
+                              ItemsSource="{Binding songs}">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>

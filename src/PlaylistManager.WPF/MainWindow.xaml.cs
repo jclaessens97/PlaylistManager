@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
@@ -7,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
 using System.Windows.Data;
-using System.Windows.Forms;
 using System.Windows.Threading;
 
 using PlaylistManager.BL;
@@ -35,15 +35,13 @@ namespace PlaylistManager.WPF
 			LoadLibrary();
 			StartTimer();
 			AddEventHandlers();
-
-			LibraryView.Columns[0].MaxWidth = 30;
 		}
 
 		private void LoadLibrary()
 		{
 			if (_manager.CheckLibrary())
 			{
-				LibraryView.ItemsSource = _manager.GetLibrarySongs();
+				LibraryView.SetValue(DataGrid.ItemsSourceProperty, _manager.Library.Songs);
 			}
 			else
 			{
@@ -78,6 +76,7 @@ namespace PlaylistManager.WPF
 			{
 				col.Width = new DataGridLength(col.ActualWidth, DataGridLengthUnitType.Pixel);
 			}
+			LibraryView.Columns[0].MaxWidth = 30;
 		}
 
 		private void LibraryView_Sorting(object sender, DataGridSortingEventArgs e)
@@ -97,8 +96,6 @@ namespace PlaylistManager.WPF
 			}
 
 			_manager.SortLibrary(e.Column.SortMemberPath, sortDirection);
-			//LibraryView.Items.Clear();
-			LoadLibrary();
 
 			Debug.WriteLine($"AFTER: Sorting {e.Column.SortMemberPath} by {sortDirection}");
 		}

@@ -71,8 +71,6 @@ namespace PlaylistManager.WPF.Custom
 		{
 			Debug.WriteLine("Play button clicked!");
 
-			//TODO: if row selected in datagrid
-
 			if (Manager.CurrentSong != null)
 			{
 				ButtonPlay.Content = FindResource("Play");
@@ -342,7 +340,7 @@ namespace PlaylistManager.WPF.Custom
 			SongSlider.Minimum = 0;
 			SongSlider.Maximum = Manager.GetLengthInSeconds();
 
-			var b = new Binding
+			var b = new Binding 
 			{
 				Source = Manager,
 				Path = new PropertyPath("CurrentTime", Manager),

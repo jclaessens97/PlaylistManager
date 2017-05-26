@@ -68,11 +68,11 @@ namespace PlaylistManager.BL
 		public RepeatMode RepeatMode { get; set; }
 		#endregion
 
-		private readonly Library _library;
+		public Library Library { get; }
 
 		public Manager()
 		{
-			_library = new Library(DEBUG_MUSIC_FOLDER_PATH, true);
+			Library = new Library(DEBUG_MUSIC_FOLDER_PATH, true);
 			_audioPlayer = new AudioPlayer();
 		}
 
@@ -82,15 +82,10 @@ namespace PlaylistManager.BL
 
 		public bool CheckLibrary()
 		{
-			if (_library.Folder == string.Empty || _library.Songs.Count == 0)
+			if (Library.Folder == string.Empty || Library.Songs.Count == 0)
 				return false;
 
 			return true;
-		}
-
-		public List<Song> GetLibrarySongs()
-		{
-			return _library.Songs;
 		}
 
 		public void SortLibrary(string member, ListSortDirection? sortDirection)
@@ -101,12 +96,12 @@ namespace PlaylistManager.BL
 			{
 				default:
 				case ListSortDirection.Descending: //not needed, but makes things clearer
-					_library.Songs = _library.Songs.OrderByDescending(s => prop.GetValue(s)).ToList();
-					Debug.WriteLine("Sorting descending!!!!");
+					Library.Songs = Library.Songs.OrderByDescending(s => prop.GetValue(s))
+												 .ThenByDescending(s => s.Title).ToList();
 					break;
 				case ListSortDirection.Ascending:
-					_library.Songs = _library.Songs.OrderBy(s => prop.GetValue(s)).ToList();
-					Debug.WriteLine("Sorting ascencding!!!!");
+					Library.Songs = Library.Songs.OrderBy(s => prop.GetValue(s))
+												 .ThenByDescending(s => s.Title).ToList();
 					break;
 			}
 
@@ -115,7 +110,7 @@ namespace PlaylistManager.BL
 
 		public void SetNowPlayingList(List<Song> songs)
 		{
-			_library.NowPlayingList = songs;
+			Library.NowPlayingList = songs;
 		}
 
 		#endregion
@@ -128,7 +123,7 @@ namespace PlaylistManager.BL
 		{
 			Debug.Assert(CurrentSong != null);
 
-			if (_library.NowPlayingList == null)
+			if (Library.NowPlayingList == null)
 				GeneratePlayingNowList();
 
 			State = PlayState.Playing;
@@ -171,8 +166,8 @@ namespace PlaylistManager.BL
 			{
 				if (HasNext())
 				{
-					int index = _library.NowPlayingList.IndexOf(CurrentSong) + 1;
-					CurrentSong = _library.NowPlayingList[index];
+					int index = Library.NowPlayingList.IndexOf(CurrentSong) + 1;
+					CurrentSong = Library.NowPlayingList[index];
 				}
 				else
 				{
@@ -185,21 +180,21 @@ namespace PlaylistManager.BL
 
 				if (HasNext())
 				{
-					index = _library.NowPlayingList.IndexOf(CurrentSong) + 1;
+					index = Library.NowPlayingList.IndexOf(CurrentSong) + 1;
 				}
 				else
 				{
 					index = 0;
 				}
 
-				CurrentSong = _library.NowPlayingList[index];
+				CurrentSong = Library.NowPlayingList[index];
 			}
 
 			_audioPlayer.Stop();
 			_audioPlayer.Play(CurrentSong);
 
 			//Debug.WriteLine("Now playing:" + CurrentSong);
-			//Debug.WriteLine("Index: " + _library.NowPlayingList.IndexOf(CurrentSong));
+			//Debug.WriteLine("Index: " + Library.NowPlayingList.IndexOf(CurrentSong));
 		}
 
 		public void Prev()
@@ -208,8 +203,8 @@ namespace PlaylistManager.BL
 			{
 				if (HasPrev())
 				{
-					int index = _library.NowPlayingList.IndexOf(CurrentSong) - 1;
-					CurrentSong = _library.NowPlayingList[index];
+					int index = Library.NowPlayingList.IndexOf(CurrentSong) - 1;
+					CurrentSong = Library.NowPlayingList[index];
 				}
 				else
 				{
@@ -222,28 +217,28 @@ namespace PlaylistManager.BL
 
 				if (HasPrev())
 				{
-					index = _library.NowPlayingList.IndexOf(CurrentSong);
+					index = Library.NowPlayingList.IndexOf(CurrentSong);
 				}
 				else
 				{
-					index = _library.NowPlayingList.Count - 1;
+					index = Library.NowPlayingList.Count - 1;
 				}
 
-				CurrentSong = _library.NowPlayingList[index];
+				CurrentSong = Library.NowPlayingList[index];
 			}
 
 			_audioPlayer.Stop();
 			_audioPlayer.Play(CurrentSong);
 
 			Debug.WriteLine("Now playing:" + CurrentSong);
-			Debug.WriteLine("Index: " + _library.NowPlayingList.IndexOf(CurrentSong));
+			Debug.WriteLine("Index: " + Library.NowPlayingList.IndexOf(CurrentSong));
 		}
 
 		public void Stop()
 		{
 			State = PlayState.Stopped;
 			CurrentSong = null;
-			_library.NowPlayingList = null;
+			Library.NowPlayingList = null;
 			_audioPlayer.Stop();
 		}
 
@@ -270,19 +265,19 @@ namespace PlaylistManager.BL
 		public void ToggleShuffle()
 		{
 			ShuffleEnabled = !ShuffleEnabled;
-			Debug.Assert(_library.NowPlayingList != null);
+			Debug.Assert(Library.NowPlayingList != null);
 
 			if (ShuffleEnabled && (State == PlayState.Playing || State == PlayState.Paused))
 			{
-				_library.NowPlayingList.ShuffleFromCurrent(CurrentSong);
+				Library.NowPlayingList.ShuffleFromCurrent(CurrentSong);
 			}
 			else if (ShuffleEnabled && State == PlayState.Stopped)
 			{
-				_library.NowPlayingList.ShuffleAll();
+				Library.NowPlayingList.ShuffleAll();
 			}
 			else
 			{
-				SetNowPlayingList(_library.Songs);
+				SetNowPlayingList(Library.Songs);
 			}
 		}
 
@@ -297,15 +292,15 @@ namespace PlaylistManager.BL
 
 		public bool HasNext()
 		{
-			int index = _library.NowPlayingList.IndexOf(CurrentSong);
+			int index = Library.NowPlayingList.IndexOf(CurrentSong);
 
 			if (RepeatMode == RepeatMode.Once) return false;
-			return index < _library.NowPlayingList.Count - 1;
+			return index < Library.NowPlayingList.Count - 1;
 		}
 
 		public bool HasPrev()
 		{
-			int index = _library.NowPlayingList.IndexOf(CurrentSong);
+			int index = Library.NowPlayingList.IndexOf(CurrentSong);
 
 			if (RepeatMode == RepeatMode.Once) return false;
 			return index > 0;
@@ -316,7 +311,7 @@ namespace PlaylistManager.BL
 		#region other
 		private void GeneratePlayingNowList()
 		{
-			_library.NowPlayingList = new List<Song> { CurrentSong };
+			Library.NowPlayingList = new List<Song> { CurrentSong };
 
 			if (RepeatMode == RepeatMode.Once) return;
 
@@ -324,50 +319,50 @@ namespace PlaylistManager.BL
 			{
 				Random rnd = new Random();
 
-				for (int i = 0; i < _library.Songs.Count; i++)
+				for (int i = 0; i < Library.Songs.Count; i++)
 				{
-					int index = rnd.Next(0, _library.Songs.Count - i);
+					int index = rnd.Next(0, Library.Songs.Count - i);
 
-					Song song = _library.Songs.Where(s => s != CurrentSong).ToList()[index];
-					_library.NowPlayingList.Add(song);
+					Song song = Library.Songs.Where(s => s != CurrentSong).ToList()[index];
+					Library.NowPlayingList.Add(song);
 				}
 
 			}
 			else
 			{
-				int index = _library.Songs.IndexOf(CurrentSong);
+				int index = Library.Songs.IndexOf(CurrentSong);
 
-				if (index < _library.Songs.Count - 1)
+				if (index < Library.Songs.Count - 1)
 				{
-					for (int i = index + 1; i < _library.Songs.Count; i++)
+					for (int i = index + 1; i < Library.Songs.Count; i++)
 					{
-						Song song = _library.Songs[i];
-						_library.NowPlayingList.Add(song);
+						Song song = Library.Songs[i];
+						Library.NowPlayingList.Add(song);
 					}
 
 					for (int i = 0; i < index; i++)
 					{
-						Song song = _library.Songs[i];
-						_library.NowPlayingList.Add(song);
+						Song song = Library.Songs[i];
+						Library.NowPlayingList.Add(song);
 					}
 				}
 				else
 				{
-					for (int i = 0; i < _library.Songs.Count - 1; i++)
+					for (int i = 0; i < Library.Songs.Count - 1; i++)
 					{
-						Song song = _library.Songs[i];
-						_library.NowPlayingList.Add(song);
+						Song song = Library.Songs[i];
+						Library.NowPlayingList.Add(song);
 					}
 				}
 			}
 
-			//_library.NowPlayingList.ForEach(x => Debug.WriteLine(x));
+			//Library.NowPlayingList.ForEach(x => Debug.WriteLine(x));
 		}
 
 		public Song GetRandomSong()
 		{
 			Random rnd = new Random();
-			return _library.Songs[rnd.Next(_library.Songs.Count - 1)];
+			return Library.Songs[rnd.Next(Library.Songs.Count - 1)];
 		}
 
 		public double GetLengthInSeconds()
@@ -412,7 +407,7 @@ namespace PlaylistManager.BL
 		[System.Diagnostics.Conditional("DEBUG")]
 		public void PrintNowPlayingList()
 		{
-			foreach (var song in _library.NowPlayingList)
+			foreach (var song in Library.NowPlayingList)
 			{
 				Debug.WriteLine(song);
 			}
