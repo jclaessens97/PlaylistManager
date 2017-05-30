@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -39,6 +40,9 @@ namespace PlaylistManager.Domain
 					files = Directory.GetFiles(Folder);
 				}
 
+
+				uint id = 0;
+
 				foreach (var filename in files)
 				{
 					if (!filename.EndsWith(".mp3")) continue;
@@ -48,6 +52,7 @@ namespace PlaylistManager.Domain
 					{
 						IsPlaying = false,
 
+						Id = id++,
 						Artist = file.Tag.Performers[0],
 						Title = file.Tag.Title,
 						Album = file.Tag.Album,
