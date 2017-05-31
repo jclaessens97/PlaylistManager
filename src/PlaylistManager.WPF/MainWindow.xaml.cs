@@ -15,6 +15,8 @@ using System.Windows.Threading;
 using PlaylistManager.BL;
 using PlaylistManager.Domain;
 using DataGrid = System.Windows.Controls.DataGrid;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace PlaylistManager.WPF
 {
@@ -38,6 +40,8 @@ namespace PlaylistManager.WPF
 			StartTimer();
 			AddEventHandlers();
 		}
+
+		#region Auxilary methods
 
 		private void LoadLibrary()
 		{
@@ -67,10 +71,31 @@ namespace PlaylistManager.WPF
 
 			//Datagrid events
 			Style rowStyle = new Style(typeof(DataGridRow));
-			rowStyle.Setters.Add(new EventSetter(MouseDoubleClickEvent, 
-												new MouseButtonEventHandler(LibraryViewRow_DoubleClick)));
+			rowStyle.Setters.Add(new EventSetter(MouseDoubleClickEvent,
+				new MouseButtonEventHandler(LibraryViewRow_DoubleClick)));
 			LibraryView.RowStyle = rowStyle;
 		}
+
+		#endregion
+
+		#region MainWindow events
+
+		private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+		{
+			this.KeyDown += MainWindow_KeyDown;
+		}
+
+		private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+		{
+			switch (e.Key)
+			{
+				case Key.Escape: LibraryView.SelectedItems.Clear();break;
+			}
+		}
+
+		#endregion
+		
+		#region LibraryView events
 
 		private void LibraryView_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -142,6 +167,8 @@ namespace PlaylistManager.WPF
 			}
 		}
 
+		#endregion
+		
 		private void UpdateTimer_Tick(object sender, EventArgs e)
 		{
 			//Update audiocontrols
