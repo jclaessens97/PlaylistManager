@@ -7,7 +7,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Windows.Data;
+using System.Windows.Forms;
 using System.Windows.Threading;
 
 using PlaylistManager.BL;
@@ -81,23 +83,24 @@ namespace PlaylistManager.WPF
 
 		private void LibraryView_Sorting(object sender, DataGridSortingEventArgs e)
 		{
-			Debug.WriteLine($"BEFORE: Sorting {e.Column.SortMemberPath} by {e.Column.SortDirection}");
-
-			var sortDirection = e.Column.SortDirection;
-			switch (sortDirection)
+			var sourceCollection = LibraryView.ItemsSource as List<Song>;
+			if (sourceCollection != null)
 			{
-				default: 
-				case ListSortDirection.Descending:	//not needed, but makes things clearer
-					sortDirection = ListSortDirection.Ascending;
-					break;
-				case ListSortDirection.Ascending:
+				var sortDirection = e.Column.SortDirection;
+				switch (sortDirection)
+				{
+					default:
+					case ListSortDirection.Descending:
+						sortDirection = ListSortDirection.Ascending;
+						break;
+					case ListSortDirection.Ascending:
 					sortDirection = ListSortDirection.Descending;
-					break;
+						break;
+				}
+
+				int direction = (sortDirection == ListSortDirection.Ascending ? 1 : -1);
+				Tools.Sort(sourceCollection, e.Column.SortMemberPath, direction);
 			}
-
-			_manager.SortLibrary(e.Column.SortMemberPath, sortDirection);
-
-			Debug.WriteLine($"AFTER: Sorting {e.Column.SortMemberPath} by {sortDirection}");
 		}
 
 		private void LibraryView_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)

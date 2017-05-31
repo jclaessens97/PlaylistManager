@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -110,7 +111,7 @@ namespace PlaylistManager.BL
 
 		public void SetNowPlayingList(List<Song> songs)
 		{
-			Library.NowPlayingList = songs;
+			Library.NowPlayingList = songs.ToList();
 		}
 
 		#endregion
