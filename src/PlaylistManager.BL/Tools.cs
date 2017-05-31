@@ -25,11 +25,6 @@ namespace PlaylistManager.BL
 			}
 		}
 
-		public static string GetPropertyName<T>(Expression<Func<T>> expression)
-		{
-			return (expression.Body as MemberExpression).Member.Name;
-		}
-
 		public static void Sort(List<Song> sourceCollection, string member, int direction)
 		{
 			switch (member)
