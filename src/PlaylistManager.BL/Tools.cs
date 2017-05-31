@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Windows;
 using PlaylistManager.Domain;
 
 namespace PlaylistManager.BL
@@ -48,7 +50,10 @@ namespace PlaylistManager.BL
 				//					sourceCollection.Sort((s1, s2) => s1.Duration.CompareTo(s2.Duration) * direction);
 				//					break;
 				case nameof(Song.Year):
-					sourceCollection.Sort((s1, s2) => s1.Year.CompareTo(s2.Year) * direction);
+					if (direction == 1)
+						sourceCollection = sourceCollection.OrderBy(s => s.Year).ThenBy(s => s.Id).ToList();
+					else
+						sourceCollection = sourceCollection.OrderByDescending(s => s.Year).ThenByDescending(s => s.Id).ToList();
 					break;
 
 			}
