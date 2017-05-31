@@ -39,7 +39,7 @@ namespace PlaylistManager.Domain
 
 		public override string ToString()
 		{
-			return Artist + " - " + Title + " (" + Duration.ToString("hh\\:mm\\:ss") + ")";
+			return $"{Id}) - {Artist} - {Title} ({Duration:hh\\:mm\\:ss})";
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
