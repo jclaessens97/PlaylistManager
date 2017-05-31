@@ -74,7 +74,7 @@ namespace PlaylistManager.BL
 
 		public void SetVolume(double newVolume, bool songPlaying)
 		{
-			_volume = Convert.ToSingle(newVolume / 100);
+			_volume = Convert.ToSingle(newVolume / 100) - .25f;
 
 			if (songPlaying)
 			{
