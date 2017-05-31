@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PlaylistManager.Domain;
 
 namespace PlaylistManager.BL
 {
@@ -38,6 +39,13 @@ namespace PlaylistManager.BL
 				list[i] = a;
 				list[i + rnd.Next(list.Count - i)] = tmp;
 			}
+		}
+
+		public static int CompareTo(this uint? nVal1, uint? nVal2)
+		{
+			uint val1 = nVal1 ?? 0;
+			uint val2 = nVal2 ?? 0;
+			return val1.CompareTo(val2);
 		}
 	}
 }

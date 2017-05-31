@@ -94,12 +94,11 @@ namespace PlaylistManager.WPF
 						sortDirection = ListSortDirection.Ascending;
 						break;
 					case ListSortDirection.Ascending:
-					sortDirection = ListSortDirection.Descending;
+						sortDirection = ListSortDirection.Descending;
 						break;
 				}
 
-				int direction = (sortDirection == ListSortDirection.Ascending ? 1 : -1);
-				Tools.Sort(sourceCollection, e.Column.SortMemberPath, direction);
+				Tools.Sort(sourceCollection, e.Column.SortMemberPath, sortDirection);
 			}
 		}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq.Expressions;
 using PlaylistManager.Domain;
 
@@ -25,16 +26,31 @@ namespace PlaylistManager.BL
 			}
 		}
 
-		public static void Sort(List<Song> sourceCollection, string member, int direction)
+		public static void Sort(List<Song> sourceCollection, string member, ListSortDirection? sortDirection)
 		{
+			int direction = (sortDirection == ListSortDirection.Ascending ? 1 : -1);
+
 			switch (member)
 			{
-				default:
-					sourceCollection.Sort((s1, s2) => s1.Id.CompareTo(s2.Id) * direction);
-					break;
 				case nameof(Song.Title):
 					sourceCollection.Sort((s1, s2) => s1.Title.CompareTo(s2.Title) * direction);
 					break;
+				case nameof(Song.Artist):
+					sourceCollection.Sort((s1, s2) => s1.Artist.CompareTo(s2.Artist) * direction);
+					break;
+				case nameof(Song.Duration):
+					sourceCollection.Sort((s1, s2) => s1.Duration.CompareTo(s2.Duration) * direction);
+					break;
+				case nameof(Song.Album):
+					sourceCollection.Sort((s1, s2) => s1.Album.CompareTo(s2.Album) * direction);
+					break;
+				//				case nameof(Song.Genres):
+				//					sourceCollection.Sort((s1, s2) => s1.Duration.CompareTo(s2.Duration) * direction);
+				//					break;
+				case nameof(Song.Year):
+					sourceCollection.Sort((s1, s2) => s1.Year.CompareTo(s2.Year) * direction);
+					break;
+
 			}
 		}
 	}
