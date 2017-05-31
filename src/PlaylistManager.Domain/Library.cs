@@ -58,7 +58,8 @@ namespace PlaylistManager.Domain
 						Album = file.Tag.Album,
 						Duration = file.Properties.Duration,
 						Path = filename,
-						Genres = file.Tag.Genres,
+						//Genres = file.Tag.Genres,
+						Genres = null,
 						Year = file.Tag.Year,
 						TrackNumber = file.Tag.Track,
 						AlbumArt = file.Tag.Pictures.Length > 0 ? new Picture(file.Tag.Pictures[0]) : null
