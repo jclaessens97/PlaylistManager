@@ -19,7 +19,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../ResourceDictionaries/AudioControlResourceDictionary.xaml" />
+                <ResourceDictionary Source="../ResourceDictionaries/CustomResourceDictionary.xaml" />
                 
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
@@ -61,7 +61,7 @@
         
         <Button Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
                 Grid.Row="1" Grid.Column="0" 
-                Height="{StaticResource ButtonSize}" Width="{StaticResource ButtonSize}"
+                Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Previous"
                 Command="{Binding PrevCommand}">
                 <materialDesign:PackIcon Kind="SkipPrevious"></materialDesign:PackIcon>
@@ -70,7 +70,7 @@
         <Button x:Name="btnPausePlay"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
                 Grid.Row="1" Grid.Column="1" 
-                Height="{StaticResource ButtonSize}" Width="{StaticResource ButtonSize}"
+                Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Pause/Play"
                 Command="{Binding ToggleResumePauseCommand}"
                 Click="BtnPausePlay_OnClick">
@@ -79,7 +79,7 @@
         <Button x:Name="btnStop"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
                 Grid.Row="1" Grid.Column="2" 
-                Height="{StaticResource ButtonSize}" Width="{StaticResource ButtonSize}"
+                Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Stop"
                 Command="{Binding StopCommand}"
                 Click="BtnStop_OnClick">
@@ -87,7 +87,7 @@
         </Button>
         <Button Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
                 Grid.Row="1" Grid.Column="3" 
-                Height="{StaticResource ButtonSize}" Width="{StaticResource ButtonSize}"
+                Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Next"
                 Command="{Binding NextCommand}">
             <materialDesign:PackIcon Kind="SkipNext" />
@@ -113,7 +113,7 @@
         <Button x:Name="btnRepeat"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
                 Grid.Row="1" Grid.Column="7" 
-                Height="{StaticResource ButtonSize}" Width="{StaticResource ButtonSize}"
+                Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Repeat"
                 Click="BtnRepeat_OnClick"
                 Command="{Binding ToggleRepeatCommand}">
@@ -122,7 +122,7 @@
         <Button x:Name="btnShuffle"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
                 Grid.Row="1" Grid.Column="8" 
-                Height="{StaticResource ButtonSize}" Width="{StaticResource ButtonSize}"
+                Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Shuffle"
                 Click="BtnShuffle_OnClick"
                 Command="{Binding ToggleShuffleCommand}">
@@ -131,7 +131,7 @@
         <Button x:Name="btnVolume"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
                 Grid.Row="1" Grid.Column="9" 
-                Height="{StaticResource ButtonSize}" Width="{StaticResource ButtonSize}"
+                Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Mute/Unmute"
                 Command="{Binding ToggleMuteCommand}">
             <materialDesign:PackIcon x:Name="VolumeIcon" Kind="VolumeHigh"  />

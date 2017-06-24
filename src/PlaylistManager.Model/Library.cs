@@ -15,53 +15,52 @@ namespace PlaylistManager.Model
 	/// </summary>
 	public class Library
 	{
-		public string Folder { get; }
+		public Settings Settings { get; }
 
 		public List<Song> Songs { get; set; }
 		public List<Playlist> Playlists { get; set; }
 		public List<Song> NowPlayingList { get; set; }
 
-		public Library(string _folder, bool _includeSubDirs)
+		public Library()
 		{
-			Folder = _folder;
-			LoadSongs(_includeSubDirs);
+			Settings = new Settings();
+			
+			LoadSongs();
 		}
 
-		private void LoadSongs(bool _includeSubdirs)
+		private void LoadSongs()
 		{
 			this.Songs = new List<Song>();
 
 			try
 			{
 				string[] files;
-				if (_includeSubdirs)
+				if (Settings.IncludeSubdirs)
 				{
-					files = Directory.GetFiles(Folder, "*.*", SearchOption.AllDirectories);
+					files = Directory.GetFiles(Settings.Folder, "*.*", SearchOption.AllDirectories);
 				}
 				else
 				{
-					files = Directory.GetFiles(Folder);
+					files = Directory.GetFiles(Settings.Folder);
 				}
-
-
-				uint id = 0;
 
 				foreach (var filename in files)
 				{
 					if (!filename.EndsWith(".mp3")) continue;
-
+					
+					//TODO: Remove doubles
+					
 					TagLib.File file = TagLib.File.Create(filename);
 					Song song = new Song()
 					{
 						IsPlaying = false,
 
-						Id = id++,
 						Artist = file.Tag.Performers[0],
 						Title = file.Tag.Title,
 						Album = file.Tag.Album,
 						Duration = file.Properties.Duration,
 						Path = filename,
-						//Genres = file.Tag.Genres,
+						//Genres = file.Tag.Genres, //TODO: issue #8
 						Genres = null,
 						Year = file.Tag.Year,
 						TrackNumber = file.Tag.Track,
@@ -91,11 +90,6 @@ namespace PlaylistManager.Model
 			{
 				Debug.WriteLine(ex.Message);
 			}
-		}
-
-		public void ChangeFolder(string _folder, bool _includeSubdirs)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

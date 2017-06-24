@@ -6,8 +6,6 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:PlaylistManager.View"
         xmlns:custom="clr-namespace:PlaylistManager.View.Custom"
-        xmlns:ViewModel="clr-namespace:PlaylistManager.ViewModel"
-        xmlns:View="clr-namespace:PlaylistManager.View"
         mc:Ignorable="d"
         
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -23,6 +21,24 @@
         MinWidth="525"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized">
+    
+    <Window.Resources>
+        
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ResourceDictionaries/CustomResourceDictionary.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+    </Window.Resources>
+    
+    
     <DockPanel>
         <Menu IsMainMenu="True" DockPanel.Dock="Top">
             <MenuItem Header="_File">
@@ -34,14 +50,15 @@
             </MenuItem>
         </Menu>
         
-        <Grid>
+        <Grid DockPanel.Dock="Bottom">
             <Grid.RowDefinitions>
                 <RowDefinition Height="110" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="1*" />
+                <!--<ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="1*" />-->
             </Grid.ColumnDefinitions>
             
             <custom:AudioPlayerControl x:Name="AudioPlayerControl" 
@@ -49,6 +66,115 @@
                                        Width="auto" Height="110"
                                        Grid.ColumnSpan="2" />
             
+            <TabControl Grid.Row="1" Grid.ColumnSpan="2"
+                        Background="Transparent">
+                    
+                <TabItem Header="Library">
+                    <!--TODO: only enable edit when edit mode is checked -->
+                    <DataGrid x:Name="libraryDataGrid"
+                              ItemsSource="{Binding SongsInLibrary}"
+                              AutoGenerateColumns="False"
+                              GridLinesVisibility="Horizontal"
+                              CanUserResizeRows="False"
+                              materialDesign:DataGridAssist.ColumnHeaderPadding="5"
+                              materialDesign:DataGridAssist.CellPadding="8">
+                        <!--TODO: move to CustomResourceDictionary???????-->
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}"
+                                   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                                
+                                <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource PrimaryHueDarkBrush}" />
+                                <Setter Property="FontSize" Value="16" />
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="{x:Type DataGridCell}"
+                                   BasedOn="{StaticResource MaterialDesignDataGridCell}">
+                                <Setter Property="FontWeight" Value="Regular" />
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <!--TODO: add is playing icon 
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Name="IsPlayingImage"/>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                            <Setter TargetName="IsPlayingImage" Property="Source" Value="/Images/speaker_33.png" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>-->
+                        <DataGrid.Columns>
+                            <materialDesign:MaterialDataGridTextColumn x:Name="TitleColumn"
+                                                                       Binding="{Binding Title}"
+                                                                       Header="Title"                                                        
+                                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}">
+
+                            </materialDesign:MaterialDataGridTextColumn>
+                            <materialDesign:MaterialDataGridTextColumn x:Name="ArtistColumn"
+                                                                       Binding="{Binding Artist}"
+                                                                       Header="Artist"                                                        
+                                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                            />
+                            <materialDesign:MaterialDataGridTextColumn x:Name="DurationColumn"
+                                                                       Binding="{Binding Duration}"
+                                                                       Header="Duration"                                                        
+                                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                            />
+                            <materialDesign:MaterialDataGridTextColumn x:Name="AlbumColumn"
+                                                                       Binding="{Binding Album}"
+                                                                       Header="Album"                                                        
+                                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                            />
+                            <materialDesign:MaterialDataGridTextColumn x:Name="GenresColumn"
+                                                                       Binding="{Binding Genres}"
+                                                                       Header="Genres"                                                        
+                                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                            />
+                            <materialDesign:MaterialDataGridTextColumn x:Name="YearColumn"
+                                                                       Binding="{Binding Year}"
+                                                                       Header="Year"                                                        
+                                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                            />
+                            <materialDesign:MaterialDataGridTextColumn x:Name="TrackNumberColumn"
+                                                                       Binding="{Binding TrackNumberColumn}"
+                                                                       Header="Track #"                                                        
+                                                                       EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                            />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    
+                </TabItem>
+                <TabItem Header="Playlists">
+
+
+                </TabItem>
+                <TabItem Header="Settings">
+
+
+                </TabItem>
+
+
+            </TabControl>
+            
+            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" 
+                        Background="{DynamicResource PrimaryHueDarkBrush}"
+                        Orientation="Horizontal">
+                
+                <RadioButton Margin="8 0 8 5"
+                             VerticalAlignment="Center"
+                             VerticalContentAlignment="Bottom"
+                             IsChecked="True"
+                             Content="Play mode">
+                </RadioButton>
+                <RadioButton Margin="8 0 8 5"
+                             VerticalAlignment="Center"
+                             VerticalContentAlignment="Bottom"
+                             Content="Edit mode" />
+           </StackPanel>
         </Grid>
     </DockPanel>
 </Window>

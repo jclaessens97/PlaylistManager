@@ -24,20 +24,19 @@ namespace PlaylistManager.Model
 			}
 		}
 
-		public uint Id { get; set; }
 		public string Title { get; set; }
+		public string Artist { get; set; }
 		public string Album { get; set; }
 		public TimeSpan Duration { get; set; }
 		public string Path { get; set; }
 		public string[] Genres { get; set; }
-		public string Artist { get; set; }
 		public uint? Year { get; set; }
 		public uint? TrackNumber { get; set; }
 		public IPicture AlbumArt { get; set; }
 
 		public override string ToString()
 		{
-			return $"{Id}) - {Artist} - {Title} ({Duration:hh\\:mm\\:ss})";
+			return $"{Artist} - {Title} ({Duration:hh\\:mm\\:ss})";
 		}
 	}
 }

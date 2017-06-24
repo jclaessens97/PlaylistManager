@@ -13,7 +13,6 @@ using PlaylistManager.BL;
 using PlaylistManager.Model.Other;
 
 //TODO: Add scrollwheel event to volumebar
-
 namespace PlaylistManager.ViewModel
 {
 	public class AudioplayerPresenter : ObservableObject
@@ -207,7 +206,7 @@ namespace PlaylistManager.ViewModel
 		{
 			audioPlayer = new AudioPlayer();
 			State = PlayState.Stopped;
-			Volume = 100; //TODO
+			Volume = 100; //TODO init with volume from last time (settings)
 			Reset();
 		}
 
@@ -237,7 +236,7 @@ namespace PlaylistManager.ViewModel
 
 		private void Start()
 		{
-			//TODO: remove
+			//TODO: remove (get song from random or selected song in grid)
 			CurrentSong = Globals.DEBUG_SONG;
 			Debug.Assert(CurrentSong != null);
 
@@ -280,7 +279,6 @@ namespace PlaylistManager.ViewModel
 		{
 			Debug.WriteLine("Next");
 			//TODO: implement next
-
 			//			if (RepeatMode == RepeatMode.Off)
 			//			{
 			//				if (HasNext())
@@ -407,7 +405,6 @@ namespace PlaylistManager.ViewModel
 
 		public void ToggleMute()
 		{
-			//TODO: set mute
 			Debug.WriteLine("Mute");
 
 			if (CurrentSong == null) return;

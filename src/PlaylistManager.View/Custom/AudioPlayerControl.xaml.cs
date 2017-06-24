@@ -31,6 +31,8 @@ namespace PlaylistManager.View.Custom
 		public AudioPlayerControl()
 		{
 			InitializeComponent();
+
+			ToggleEnable(false);
 		}
 
 		private void AudioPlayerControl_OnLoaded(object _sender, RoutedEventArgs _e)
@@ -40,6 +42,8 @@ namespace PlaylistManager.View.Custom
 		
 		private void BtnPausePlay_OnClick(object _sender, RoutedEventArgs _e)
 		{
+			ToggleEnable(true);
+
 			if (PlayPauseIcon.Kind == PackIconKind.Pause)
 			{
 				PlayPauseIcon.Kind = PackIconKind.Play;
@@ -53,6 +57,8 @@ namespace PlaylistManager.View.Custom
 		private void BtnStop_OnClick(object _sender, RoutedEventArgs _e)
 		{
 			PlayPauseIcon.Kind = PackIconKind.Play;
+
+			ToggleEnable(false);
 		}
 
 		private void SliderTime_OnPreviewMouseDown(object _sender, MouseButtonEventArgs _e)
@@ -138,6 +144,14 @@ namespace PlaylistManager.View.Custom
 			{
 				VolumeIcon.Kind = PackIconKind.VolumeHigh;
 			}
+		}
+
+		private void ToggleEnable(bool _state)
+		{
+			btnStop.IsEnabled = _state;
+			sliderTime.IsEnabled = _state;
+			btnVolume.IsEnabled = _state;
+			sliderVolume.IsEnabled = _state;
 		}
 	}
 }
