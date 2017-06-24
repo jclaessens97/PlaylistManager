@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BE362041-E282-46A2-9E7F-CCAE7D8FDE9A}</ProjectGuid>
+    <ProjectGuid>{F7F6A783-E84B-4202-A7FA-0554CF679E9A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>PlaylistManager.WPF</RootNamespace>
-    <AssemblyName>PlaylistManager.WPF</AssemblyName>
+    <RootNamespace>PlaylistManager.View</RootNamespace>
+    <AssemblyName>PlaylistManager.View</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -34,11 +34,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MaterialDesignColors, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MaterialDesignColors.1.1.2\lib\net45\MaterialDesignColors.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=2.3.0.823, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MaterialDesignThemes.2.3.0.823\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -76,6 +79,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ResourceDictionaries\AudioControlResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -107,41 +114,78 @@
     <Resource Include="Fonts\Roboto-Regular.ttf" />
     <Resource Include="Fonts\Roboto-Thin.ttf" />
     <Resource Include="Fonts\Roboto-ThinItalic.ttf" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="App.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\next.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\next_disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\pause.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\play.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\prev.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\prev_disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\repeat_off.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\repeat_on.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\repeat_once.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\shuffle_off.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\shuffle_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\speaker_100.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\speaker_33.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\speaker_66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\speaker_off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\stop_disabled.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Fonts\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\speaker_100.png" />
-    <Resource Include="Images\speaker_33.png" />
-    <Resource Include="Images\speaker_66.png" />
-    <Resource Include="Images\speaker_off.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\next_disabled.png" />
-    <Resource Include="Images\prev_disabled.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\stop.png" />
-    <Resource Include="Images\stop_disabled.png" />
+    <ProjectReference Include="..\PlaylistManager.Model\PlaylistManager.Model.csproj">
+      <Project>{7e0f3dda-ec8b-4fcc-8cc0-63a821e4849f}</Project>
+      <Name>PlaylistManager.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PlaylistManager.ViewModel\PlaylistManager.ViewModel.csproj">
+      <Project>{4870430a-3525-42c5-8f0d-751bd5cc067d}</Project>
+      <Name>PlaylistManager.ViewModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

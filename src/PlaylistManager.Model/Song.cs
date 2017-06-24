@@ -1,28 +1,26 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using PlaylistManager.Properties;
+using PlaylistManager.Model.Properties;
 using TagLib;
 using TagLib.Riff;
 
-namespace PlaylistManager.Domain
+namespace PlaylistManager.Model
 {
 	/// <summary>
-	///     Model that holds all song properties
-	///     (same datatypes as defined in the TagLib library)
+	/// Song (same datatypes as defined in the TagLib library)
 	/// </summary>
-	public class Song : INotifyPropertyChanged
+	public class Song
 	{
-		private bool _isPlaying;
+		private bool isPlaying;
 		
 		public bool IsPlaying
 		{
-			get => _isPlaying;
+			get => isPlaying;
 			set
 			{
-				if (value.Equals(_isPlaying)) return;
-				_isPlaying = value;
-				OnPropertyChanged();
+				if (value.Equals(isPlaying)) return;
+				isPlaying = value;
 			}
 		}
 
@@ -40,14 +38,6 @@ namespace PlaylistManager.Domain
 		public override string ToString()
 		{
 			return $"{Id}) - {Artist} - {Title} ({Duration:hh\\:mm\\:ss})";
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

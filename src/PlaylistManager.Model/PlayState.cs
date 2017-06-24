@@ -1,4 +1,4 @@
-﻿namespace PlaylistManager.BL
+﻿namespace PlaylistManager.Model
 {
 	/// <summary>
 	///     Custom enum (despite there is a same enum in the NAudio package)

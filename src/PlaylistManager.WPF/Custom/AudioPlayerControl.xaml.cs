@@ -7,8 +7,8 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using PlaylistManager.BL;
-using PlaylistManager.Domain;
-using static PlaylistManager.BL.Tools;
+using PlaylistManager.ViewModel;
+using static PlaylistManager.Model.Other.Tools;
 
 namespace PlaylistManager.WPF.Custom
 {
