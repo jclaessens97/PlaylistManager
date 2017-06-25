@@ -1,11 +1,17 @@
-﻿<Window x:Class="PlaylistManager.View.MainWindow"
+﻿<!--For debugging bindings:
+        - Add to file declaration: xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        - Add at end of binding: ", diag:PresentationTraceSources.TraceLevel=High}"
+-->
+    <Window x:Class="PlaylistManager.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:PlaylistManager.View"
+        xmlns:behaviours="clr-namespace:PlaylistManager.View.Behaviours"
         xmlns:custom="clr-namespace:PlaylistManager.View.Custom"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         mc:Ignorable="d"
         
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -71,13 +77,21 @@
                     
                 <TabItem Header="Library">
                     <!--TODO: only enable edit when edit mode is checked -->
-                    <DataGrid x:Name="libraryDataGrid"
-                              ItemsSource="{Binding SongsInLibrary}"
-                              AutoGenerateColumns="False"
-                              GridLinesVisibility="Horizontal"
-                              CanUserResizeRows="False"
-                              materialDesign:DataGridAssist.ColumnHeaderPadding="5"
-                              materialDesign:DataGridAssist.CellPadding="8">
+                    <custom:CustomDataGrid x:Name="libraryDataGrid"
+                                           Style="{StaticResource MaterialDesignDataGrid}"
+                                           AutoGenerateColumns="False"
+                                           GridLinesVisibility="Horizontal"
+                                           CanUserResizeRows="False"
+                                           Sorted="LibraryDataGrid_OnSorted"
+                                           IsReadOnly="True"
+                                           materialDesign:DataGridAssist.ColumnHeaderPadding="5"
+                                           materialDesign:DataGridAssist.CellPadding="8">
+                        <DataGrid.InputBindings>
+                            <MouseBinding MouseAction="LeftDoubleClick"
+                                          Command="{Binding DoubleClickRowCommand}"
+                                          CommandParameter="{Binding ElementName=libraryDataGrid, Path=SelectedItem}"
+                                          />
+                        </DataGrid.InputBindings>
                         <!--TODO: move to CustomResourceDictionary???????-->
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="{x:Type DataGridColumnHeader}"
@@ -145,13 +159,14 @@
                                                                        EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
                             />
                         </DataGrid.Columns>
-                    </DataGrid>
-                    
+                    </custom:CustomDataGrid>
                 </TabItem>
+                
                 <TabItem Header="Playlists">
 
 
                 </TabItem>
+                
                 <TabItem Header="Settings">
 
 
@@ -168,13 +183,16 @@
                              VerticalAlignment="Center"
                              VerticalContentAlignment="Bottom"
                              IsChecked="True"
+                             GroupName="LibraryMode"
                              Content="Play mode">
                 </RadioButton>
                 <RadioButton Margin="8 0 8 5"
                              VerticalAlignment="Center"
                              VerticalContentAlignment="Bottom"
+                             GroupName="LibraryMode"
                              Content="Edit mode" />
            </StackPanel>
         </Grid>
     </DockPanel>
 </Window>
+

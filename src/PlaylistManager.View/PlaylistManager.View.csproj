@@ -72,9 +72,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Behaviours\HandleDoubleClickBehavior.cs" />
     <Compile Include="Custom\AudioPlayerControl.xaml.cs">
       <DependentUpon>AudioPlayerControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Custom\CustomDataGrid.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

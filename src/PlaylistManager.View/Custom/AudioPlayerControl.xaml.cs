@@ -17,6 +17,7 @@ using MaterialDesignThemes.Wpf;
 using PlaylistManager.BL;
 using PlaylistManager.ViewModel;
 using PlaylistManager.Model;
+using PlaylistManager.ViewModel.Presenters;
 
 
 namespace PlaylistManager.View.Custom
@@ -35,11 +36,6 @@ namespace PlaylistManager.View.Custom
 			ToggleEnable(false);
 		}
 
-		private void AudioPlayerControl_OnLoaded(object _sender, RoutedEventArgs _e)
-		{
-			DataContext = new AudioplayerPresenter();
-		}
-		
 		private void BtnPausePlay_OnClick(object _sender, RoutedEventArgs _e)
 		{
 			ToggleEnable(true);
@@ -148,7 +144,9 @@ namespace PlaylistManager.View.Custom
 
 		private void ToggleEnable(bool _state)
 		{
+			btnPrev.IsEnabled = _state;
 			btnStop.IsEnabled = _state;
+			btnNext.IsEnabled = _state;
 			sliderTime.IsEnabled = _state;
 			btnVolume.IsEnabled = _state;
 			sliderVolume.IsEnabled = _state;

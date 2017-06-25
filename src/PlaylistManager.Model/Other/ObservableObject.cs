@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlaylistManager.ViewModel
+namespace PlaylistManager.Model.Other
 {
 	public class ObservableObject : INotifyPropertyChanged
 	{

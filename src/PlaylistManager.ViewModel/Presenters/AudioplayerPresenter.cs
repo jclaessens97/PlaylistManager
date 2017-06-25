@@ -11,9 +11,10 @@ using System.Timers;
 using System.Windows.Input;
 using PlaylistManager.BL;
 using PlaylistManager.Model.Other;
+using PlaylistManager.ViewModel.Other;
 
 //TODO: Add scrollwheel event to volumebar
-namespace PlaylistManager.ViewModel
+namespace PlaylistManager.ViewModel.Presenters
 {
 	public class AudioplayerPresenter : ObservableObject
 	{
@@ -26,6 +27,7 @@ namespace PlaylistManager.ViewModel
 			{RepeatMode.On, RepeatMode.Off}
 		};
 		private readonly AudioPlayer audioPlayer;
+		private readonly Library library;
 		private Song currentSong;
 		private Song selectedSong; //???
 		private PlayState state;
@@ -190,10 +192,10 @@ namespace PlaylistManager.ViewModel
 		#region Commands
 
 		//Navigation
-		public ICommand NextCommand => new DelegateCommand(Next);
+		public ICommand PrevCommand => new DelegateCommand(Prev);
 		public ICommand ToggleResumePauseCommand => new DelegateCommand(ToggleResumePause);
 		public ICommand StopCommand => new DelegateCommand(Stop);
-		public ICommand PrevCommand => new DelegateCommand(Prev);
+		public ICommand NextCommand => new DelegateCommand(Next);
 		public ICommand ToggleShuffleCommand => new DelegateCommand(ToggleShuffle);
 		public ICommand ToggleRepeatCommand => new DelegateCommand(ToggleRepeat);
 
@@ -205,8 +207,9 @@ namespace PlaylistManager.ViewModel
 		public AudioplayerPresenter()
 		{
 			audioPlayer = new AudioPlayer();
+			library = Library.Instance;
 			State = PlayState.Stopped;
-			Volume = 100; //TODO init with volume from last time (settings)
+			Volume = Settings.Instance.Volume;
 			Reset();
 		}
 
@@ -236,22 +239,37 @@ namespace PlaylistManager.ViewModel
 
 		private void Start()
 		{
-			//TODO: remove (get song from random or selected song in grid)
-			CurrentSong = Globals.DEBUG_SONG;
-			Debug.Assert(CurrentSong != null);
+			if (CurrentSong == null)
+			{
+				library.GenerateNowPlayingList(shuffleEnabled);
+				CurrentSong = library.NowPlayingList.First();
+			}
 
-			//TODO implement play
-			//			if (Library.NowPlayingList == null)
-			//				GeneratePlayingNowList();
+			Debug.Assert(library.NowPlayingList != null);
+			Debug.Assert(CurrentSong != null);
 
 			updateTimer = new Timer();
 			updateTimer.Interval = 250;
 			updateTimer.Elapsed += UpdateTimer_Elapsed;
 			updateTimer.Start();
 
-			audioPlayer.SetVolume(100, false);
+			audioPlayer.SetVolume(volume, false);
 			audioPlayer.Play(CurrentSong);
 			TotalSeconds = audioPlayer.GetLengthInSeconds();
+		}
+
+		internal void Start(Song _song)
+		{
+			library.GenerateNowPlayingList(_song, shuffleEnabled);
+			CurrentSong = library.NowPlayingList.First();
+			Start();
+		}
+
+		internal void Start(List<Song> _songs)
+		{
+			library.GenerateNowPlayingList(_songs, shuffleEnabled);
+			CurrentSong = library.NowPlayingList.First();
+			Start();
 		}
 
 		private void Resume()
@@ -270,7 +288,12 @@ namespace PlaylistManager.ViewModel
 
 			if (State == PlayState.Stopped) return;
 			State = PlayState.Stopped;
+			CurrentSong = null;
 			audioPlayer.Stop();
+
+			updateTimer.Stop();
+			updateTimer.Dispose();
+			updateTimer = null;
 
 			Reset();
 		}

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace PlaylistManager.ViewModel
+namespace PlaylistManager.ViewModel.Other
 {
 	public class DelegateCommand : ICommand
 	{

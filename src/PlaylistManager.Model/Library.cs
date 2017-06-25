@@ -12,19 +12,38 @@ namespace PlaylistManager.Model
 {
 	/// <summary>
 	/// Library
+	/// Singleton class
 	/// </summary>
 	public class Library
 	{
-		public Settings Settings { get; }
+		private static volatile Library instance;
+		private static readonly object syncRoot = new Object();
+
+		public static Library Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					lock (syncRoot)
+					{
+						if (instance == null)
+						{
+							instance = new Library();
+						}
+					}
+				}
+
+				return instance;
+			}
+		}
 
 		public List<Song> Songs { get; set; }
 		public List<Playlist> Playlists { get; set; }
 		public List<Song> NowPlayingList { get; set; }
 
-		public Library()
-		{
-			Settings = new Settings();
-			
+		private Library()
+		{	
 			LoadSongs();
 		}
 
@@ -35,13 +54,13 @@ namespace PlaylistManager.Model
 			try
 			{
 				string[] files;
-				if (Settings.IncludeSubdirs)
+				if (Settings.Instance.IncludeSubdirs)
 				{
-					files = Directory.GetFiles(Settings.Folder, "*.*", SearchOption.AllDirectories);
+					files = Directory.GetFiles(Settings.Instance.Folder, "*.*", SearchOption.AllDirectories);
 				}
 				else
 				{
-					files = Directory.GetFiles(Settings.Folder);
+					files = Directory.GetFiles(Settings.Instance.Folder);
 				}
 
 				foreach (var filename in files)
@@ -91,5 +110,95 @@ namespace PlaylistManager.Model
 				Debug.WriteLine(ex.Message);
 			}
 		}
+
+		#region NowPlayingList
+
+		public void GenerateNowPlayingList(bool _shuffled)
+		{
+			if (!_shuffled)
+			{
+				NowPlayingList = Songs;
+				return;
+			}
+
+			NowPlayingList = new List<Song>(Songs.Count);
+			var songsCopy = Songs;
+			Random rnd = new Random();
+
+			while (songsCopy.Count > 0)
+			{
+				var songToAdd = songsCopy[rnd.Next(songsCopy.Count)];
+				NowPlayingList.Add(songToAdd);
+				songsCopy.Remove(songToAdd);
+			}
+
+			PrintPlayingNowList();
+		}
+
+		public void GenerateNowPlayingList(Song _song, bool _shuffled)
+		{
+			if (!_shuffled)
+			{
+				NowPlayingList = new List<Song>(Songs.Count);
+				var songsCopy = Songs;
+				int startIndex = songsCopy.IndexOf(_song);
+
+				NowPlayingList.Add(songsCopy[startIndex]);
+				songsCopy.RemoveAt(startIndex);
+
+				int songsToLeftOfFirst = songsCopy.Count - startIndex;
+
+				while (songsToLeftOfFirst > 0)
+				{
+					var songToAdd = songsCopy[startIndex];
+					NowPlayingList.Add(songToAdd);
+					songsCopy.Remove(songToAdd);
+
+					songsToLeftOfFirst--;
+				}
+
+				for (int i = 0; i < startIndex; i++)
+				{
+					var songToAdd = songsCopy[i];
+					NowPlayingList.Add(songToAdd);
+				}
+			}
+
+			PrintPlayingNowList();
+		}
+
+		public void GenerateNowPlayingList(List<Song> _songs, bool _shuffled)
+		{
+			if (!_shuffled)
+			{
+				NowPlayingList = _songs;
+				return;
+			}
+
+			NowPlayingList = new List<Song>(_songs.Count);
+			var songsCopy = _songs;
+			Random rnd = new Random();
+
+			while (songsCopy.Count > 0)
+			{
+				var songToAdd = songsCopy[rnd.Next(songsCopy.Count)];
+				NowPlayingList.Add(songToAdd);
+				songsCopy.Remove(songToAdd);
+			}
+
+			PrintPlayingNowList();
+		}
+
+		#endregion
+
+		#region Debug
+
+		[System.Diagnostics.Conditional("DEBUG")]
+		private void PrintPlayingNowList()
+		{
+			NowPlayingList.ForEach(s => Debug.WriteLine(s));
+		}
+
+		#endregion
 	}
 }

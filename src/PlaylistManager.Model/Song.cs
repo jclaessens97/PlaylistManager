@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using PlaylistManager.Model.Other;
 using PlaylistManager.Model.Properties;
 using TagLib;
 using TagLib.Riff;
@@ -10,29 +11,109 @@ namespace PlaylistManager.Model
 	/// <summary>
 	/// Song (same datatypes as defined in the TagLib library)
 	/// </summary>
-	public class Song
+	public class Song : ObservableObject
 	{
+		private string title;
+		private string album;
+		private TimeSpan duration;
+		private string path;
+		private string[] genres;
+		private string artist;
+		private uint? year;
+		private uint? trackNumber;
+		private IPicture albumArt;
 		private bool isPlaying;
-		
+
+		public string Title
+		{
+			get => title;
+			set
+			{
+				title = value;
+				RaisePropertyChangedEvent(nameof(Title));
+			}
+		}
+		public string Artist
+		{
+			get => artist;
+			set
+			{
+				artist = value;
+				RaisePropertyChangedEvent(nameof(Artist));
+			}
+		}
+		public string Album
+		{
+			get => album;
+			set
+			{
+				album = value;
+				RaisePropertyChangedEvent(nameof(Album));
+			}
+		}
+		public TimeSpan Duration
+		{
+			get => duration;
+			set
+			{
+				duration = value;
+				RaisePropertyChangedEvent(nameof(Duration));
+			}
+		}
+		public string Path
+		{
+			get => path;
+			set
+			{
+				path = value;
+				RaisePropertyChangedEvent(nameof(Path));
+			}
+		}
+		public string[] Genres
+		{
+			get => genres;
+			set
+			{
+				genres = value;
+				RaisePropertyChangedEvent(nameof(Genres));
+			}
+		}
+		public uint? Year
+		{
+			get => year;
+			set
+			{
+				year = value;
+				RaisePropertyChangedEvent(nameof(Year));
+			}
+		}
+		public uint? TrackNumber
+		{
+			get => trackNumber;
+			set
+			{
+				trackNumber = value;
+				RaisePropertyChangedEvent(nameof(TrackNumber));
+			}
+		}
+		public IPicture AlbumArt
+		{
+			get => albumArt;
+			set
+			{
+				albumArt = value;
+				RaisePropertyChangedEvent(nameof(AlbumArt));
+			}
+		}
 		public bool IsPlaying
 		{
 			get => isPlaying;
 			set
 			{
-				if (value.Equals(isPlaying)) return;
 				isPlaying = value;
+				RaisePropertyChangedEvent(nameof(IsPlaying));
 			}
 		}
-
-		public string Title { get; set; }
-		public string Artist { get; set; }
-		public string Album { get; set; }
-		public TimeSpan Duration { get; set; }
-		public string Path { get; set; }
-		public string[] Genres { get; set; }
-		public uint? Year { get; set; }
-		public uint? TrackNumber { get; set; }
-		public IPicture AlbumArt { get; set; }
 
 		public override string ToString()
 		{
