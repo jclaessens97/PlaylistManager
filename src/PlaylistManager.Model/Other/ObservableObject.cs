@@ -11,9 +11,15 @@ namespace PlaylistManager.Model.Other
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		protected void OnPropertyChanged(PropertyChangedEventArgs _e)
+		{
+			PropertyChangedEventHandler handler = PropertyChanged;
+			handler?.Invoke(this, _e);
+		}
+
 		protected void RaisePropertyChangedEvent(string _propertyName)
 		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(_propertyName));
+			OnPropertyChanged(new PropertyChangedEventArgs(_propertyName));
 		}
 	}
 }

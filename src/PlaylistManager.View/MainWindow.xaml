@@ -134,7 +134,7 @@
                                                                        EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
                             />
                             <materialDesign:MaterialDataGridTextColumn x:Name="DurationColumn"
-                                                                       Binding="{Binding Duration}"
+                                                                       Binding="{Binding Duration, StringFormat=hh\\:mm\\:ss}"
                                                                        Header="Duration"                                                        
                                                                        EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
                             />

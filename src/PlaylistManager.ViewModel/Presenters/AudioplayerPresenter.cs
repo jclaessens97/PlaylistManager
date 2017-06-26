@@ -129,6 +129,7 @@ namespace PlaylistManager.ViewModel.Presenters
 				volume = value;
 				SetVolume();
 				RaisePropertyChangedEvent(nameof(Volume));
+				OnVolumeChanged(EventArgs.Empty);
 				Debug.WriteLine("Volume: " + volume);
 			}
 		}
@@ -162,10 +163,11 @@ namespace PlaylistManager.ViewModel.Presenters
 		public PlayState State
 		{
 			get => state;
-			set
+			set	
 			{
 				state = value;
 				RaisePropertyChangedEvent(nameof(State));
+				OnStateChanged(EventArgs.Empty);
 			}
 		}
 		public bool ShuffleEnabled
@@ -175,6 +177,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			{
 				shuffleEnabled = value;
 				RaisePropertyChangedEvent(nameof(ShuffleEnabled));
+				OnShuffleChanged(EventArgs.Empty);
 			}
 		}
 		public RepeatMode RepeatMode
@@ -184,6 +187,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			{
 				repeatMode = value;
 				RaisePropertyChangedEvent(nameof(RepeatMode));
+				OnRepeatChanged(EventArgs.Empty);
 			}
 		}
 
@@ -221,17 +225,14 @@ namespace PlaylistManager.ViewModel.Presenters
 			{
 				case PlayState.Stopped:
 					Debug.WriteLine("Play!");
-					State = PlayState.Playing;
 					Start();
 					break;
 				case PlayState.Paused:
-					Debug.WriteLine("Pause!");
-					State = PlayState.Playing;
+					Debug.WriteLine("Play!");
 					Resume();
 					break;
 				case PlayState.Playing:
-					Debug.WriteLine("Play!");
-					State = PlayState.Paused;
+					Debug.WriteLine("Pause!");
 					Pause();
 					break;
 			}
@@ -239,6 +240,8 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		private void Start()
 		{
+			State = PlayState.Playing;
+			
 			if (CurrentSong == null)
 			{
 				library.GenerateNowPlayingList(shuffleEnabled);
@@ -260,6 +263,7 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		internal void Start(Song _song)
 		{
+			State = PlayState.Playing;
 			library.GenerateNowPlayingList(_song, shuffleEnabled);
 			CurrentSong = library.NowPlayingList.First();
 			Start();
@@ -267,6 +271,7 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		internal void Start(List<Song> _songs)
 		{
+			State = PlayState.Playing;
 			library.GenerateNowPlayingList(_songs, shuffleEnabled);
 			CurrentSong = library.NowPlayingList.First();
 			Start();
@@ -274,11 +279,13 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		private void Resume()
 		{
+			State = PlayState.Playing;
 			audioPlayer.Resume();
 		}
 
 		private void Pause()
 		{
+			State = PlayState.Paused;
 			audioPlayer.Pause();
 		}
 
@@ -477,5 +484,37 @@ namespace PlaylistManager.ViewModel.Presenters
 		{
 			CurrentSeconds = audioPlayer.GetPositionInSeconds();
 		}
+
+		#region Events
+		//TODO: optimize
+		public event EventHandler StateChanged;
+		public event EventHandler ShuffleChanged;
+		public event EventHandler RepeatChanged;
+		public event EventHandler VolumeChanged;
+
+		private void OnStateChanged(EventArgs _e)
+		{
+			EventHandler handler = StateChanged;
+			handler?.Invoke(State, _e);
+		}
+
+		private void OnShuffleChanged(EventArgs _e)
+		{
+			EventHandler handler = ShuffleChanged;
+			handler?.Invoke(ShuffleEnabled, _e);
+		}
+
+		private void OnRepeatChanged(EventArgs _e)
+		{
+			EventHandler handler = RepeatChanged;
+			handler?.Invoke(RepeatMode, _e);
+		}
+
+		private void OnVolumeChanged(EventArgs _e)
+		{
+			EventHandler handler = VolumeChanged;
+			handler?.Invoke(Volume, _e);
+		}
+		#endregion
 	}
 }

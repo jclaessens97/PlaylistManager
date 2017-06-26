@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,8 @@ namespace PlaylistManager.View.Custom
 	/// </summary>
 	public partial class AudioPlayerControl : UserControl
 	{
+
+
 		public AudioPlayerControl()
 		{
 			InitializeComponent();
@@ -36,26 +39,7 @@ namespace PlaylistManager.View.Custom
 			ToggleEnable(false);
 		}
 
-		private void BtnPausePlay_OnClick(object _sender, RoutedEventArgs _e)
-		{
-			ToggleEnable(true);
-
-			if (PlayPauseIcon.Kind == PackIconKind.Pause)
-			{
-				PlayPauseIcon.Kind = PackIconKind.Play;
-			}
-			else
-			{
-				PlayPauseIcon.Kind = PackIconKind.Pause;
-			}
-		}
-
-		private void BtnStop_OnClick(object _sender, RoutedEventArgs _e)
-		{
-			PlayPauseIcon.Kind = PackIconKind.Play;
-
-			ToggleEnable(false);
-		}
+		#region Event Handlers
 
 		private void SliderTime_OnPreviewMouseDown(object _sender, MouseButtonEventArgs _e)
 		{
@@ -82,74 +66,139 @@ namespace PlaylistManager.View.Custom
 			}
 		}
 
-		private void BtnShuffle_OnClick(object _sender, RoutedEventArgs _e)
+		#endregion
+
+		#region PropertyChanged Events
+
+		public void RegisterEvents()
 		{
 			var presenter = DataContext as AudioplayerPresenter;
-			if (presenter == null) return;
 
-			//Inverse of what happens in presenter, because presenter changes after this icon
-			if (!presenter.ShuffleEnabled)
+			if (presenter != null)
 			{
-				//ShuffleIcon.Kind = PackIconKind.ShuffleVariant;
-				ShuffleIcon.Kind = PackIconKind.Shuffle;	//CHOOSE
+				presenter.StateChanged += OnStateChanged;
+				presenter.ShuffleChanged += OnShuffleChanged;
+				presenter.RepeatChanged += OnRepeatChanged;
+				presenter.VolumeChanged += OnVolumeChanged;
 			}
-			else
+			
+		}
+
+		private void OnStateChanged(object _sender, EventArgs _e)
+		{
+			if (_sender is PlayState )
 			{
-				ShuffleIcon.Kind = PackIconKind.ShuffleDisabled;
+				PlayState state = (PlayState) _sender;
+
+				switch (state)
+				{
+					case PlayState.Stopped:
+						ToggleEnable(false);
+						PlayPauseIcon.Kind = PackIconKind.Play;
+						break;
+					case PlayState.Paused:
+						ToggleEnable(true);
+						PlayPauseIcon.Kind = PackIconKind.Play;
+						break;
+					case PlayState.Playing:
+						ToggleEnable(true);
+						PlayPauseIcon.Kind = PackIconKind.Pause;
+						break;
+				}
 			}
 		}
 
-		private void BtnRepeat_OnClick(object _sender, RoutedEventArgs _e)
+		private void OnShuffleChanged(object _sender, EventArgs _e)
 		{
-			var presenter = DataContext as AudioplayerPresenter;
-			if (presenter == null) return;
-
-			//Jump one forward because repeat mode is changed in presenter after the icon
-			switch (presenter.RepeatMode)
+			if (_sender is bool)
 			{
-				case RepeatMode.Off:
-					RepeatIcon.Kind = PackIconKind.RepeatOnce;
-					break;
-				case RepeatMode.On:
-					RepeatIcon.Kind = PackIconKind.RepeatOff;
-					break;
-				case RepeatMode.Once:
-					RepeatIcon.Kind = PackIconKind.Repeat;
-					break;
+				bool shuffleEnabled = (bool)_sender;
+
+				if (shuffleEnabled)
+				{
+					ShuffleIcon.Kind = PackIconKind.Shuffle;
+				}
+				else
+				{
+					ShuffleIcon.Kind = PackIconKind.ShuffleDisabled;
+				}
 			}
 		}
 
-		private void SliderVolume_OnValueChanged(object _sender, RoutedPropertyChangedEventArgs<double> _e)
+		private void OnRepeatChanged(object _sender, EventArgs _e)
 		{
-			var presenter = DataContext as AudioplayerPresenter;
-			if (presenter == null) return;
+			if (_sender is RepeatMode)
+			{
+				RepeatMode mode = (RepeatMode)_sender;
 
-			if (presenter.Volume < 1)
-			{
-				VolumeIcon.Kind = PackIconKind.VolumeOff;
-			}
-			else if (presenter.Volume <= 33)
-			{
-				VolumeIcon.Kind = PackIconKind.VolumeLow;
-			}
-			else if (presenter.Volume <= 66)
-			{
-				VolumeIcon.Kind = PackIconKind.VolumeMedium;
-			}
-			else if (presenter.Volume <= 100)
-			{
-				VolumeIcon.Kind = PackIconKind.VolumeHigh;
+				switch (mode)
+				{
+					case RepeatMode.Off:
+						RepeatIcon.Kind = PackIconKind.RepeatOff;
+						break;
+					case RepeatMode.Once:
+						RepeatIcon.Kind = PackIconKind.RepeatOnce;
+						break;
+					case RepeatMode.On:
+						RepeatIcon.Kind = PackIconKind.Repeat;
+						break;
+				}
 			}
 		}
+
+		private void OnVolumeChanged(object _sender, EventArgs _e)
+		{
+			if (_sender is float)
+			{
+				float volume = (float) _sender;
+
+				if (volume < 1)
+				{
+					VolumeIcon.Kind = PackIconKind.VolumeOff;
+				}
+				else if (volume <= 33)
+				{
+					VolumeIcon.Kind = PackIconKind.VolumeLow;
+				}
+				else if (volume <= 66)
+				{
+					VolumeIcon.Kind = PackIconKind.VolumeMedium;
+				}
+				else if (volume <= 100)
+				{
+					VolumeIcon.Kind = PackIconKind.VolumeHigh;
+				}
+			}
+		}
+
+		#endregion
+
+		#region Auxilary
 
 		private void ToggleEnable(bool _state)
 		{
-			btnPrev.IsEnabled = _state;
 			btnStop.IsEnabled = _state;
-			btnNext.IsEnabled = _state;
 			sliderTime.IsEnabled = _state;
 			btnVolume.IsEnabled = _state;
 			sliderVolume.IsEnabled = _state;
+
+			if (DataContext != null)
+			{
+				var presenter = DataContext as AudioplayerPresenter;
+
+				if (presenter != null)
+				{
+					btnPrev.IsEnabled = presenter.HasPrev();
+					btnNext.IsEnabled = presenter.HasNext();
+				}
+			}
+			else
+			{
+				btnPrev.IsEnabled = false;
+				btnNext.IsEnabled = false;
+			}
 		}
+
+		#endregion
 	}
 }

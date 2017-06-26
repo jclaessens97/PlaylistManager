@@ -72,8 +72,7 @@
                 Grid.Row="1" Grid.Column="1" 
                 Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Pause/Play"
-                Command="{Binding ToggleResumePauseCommand}"
-                Click="BtnPausePlay_OnClick">
+                Command="{Binding ToggleResumePauseCommand}">
                 <materialDesign:PackIcon x:Name="PlayPauseIcon" Kind="Play" />
         </Button>
         <Button x:Name="btnStop"
@@ -81,8 +80,7 @@
                 Grid.Row="1" Grid.Column="2" 
                 Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Stop"
-                Command="{Binding StopCommand}"
-                Click="BtnStop_OnClick">
+                Command="{Binding StopCommand}">
             <materialDesign:PackIcon Kind="Stop" />
         </Button>
         <Button x:Name="btnNext"
@@ -116,7 +114,6 @@
                 Grid.Row="1" Grid.Column="7" 
                 Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Repeat"
-                Click="BtnRepeat_OnClick"
                 Command="{Binding ToggleRepeatCommand}">
             <materialDesign:PackIcon x:Name="RepeatIcon" Kind="RepeatOff" />
         </Button>
@@ -125,7 +122,6 @@
                 Grid.Row="1" Grid.Column="8" 
                 Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Shuffle"
-                Click="BtnShuffle_OnClick"
                 Command="{Binding ToggleShuffleCommand}">
             <materialDesign:PackIcon x:Name="ShuffleIcon" Kind="ShuffleDisabled" />
         </Button>

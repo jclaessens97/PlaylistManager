@@ -146,15 +146,15 @@ namespace PlaylistManager.Model
 				NowPlayingList.Add(songsCopy[startIndex]);
 				songsCopy.RemoveAt(startIndex);
 
-				int songsToLeftOfFirst = songsCopy.Count - startIndex;
+				int songsLeft = songsCopy.Count - startIndex;
 
-				while (songsToLeftOfFirst > 0)
+				while (songsLeft > 0)
 				{
 					var songToAdd = songsCopy[startIndex];
 					NowPlayingList.Add(songToAdd);
 					songsCopy.Remove(songToAdd);
 
-					songsToLeftOfFirst--;
+					songsLeft--;
 				}
 
 				for (int i = 0; i < startIndex; i++)
@@ -163,6 +163,8 @@ namespace PlaylistManager.Model
 					NowPlayingList.Add(songToAdd);
 				}
 			}
+
+			//TODO: shuffled version of generate playlist with starting song given
 
 			PrintPlayingNowList();
 		}
@@ -196,7 +198,7 @@ namespace PlaylistManager.Model
 		[System.Diagnostics.Conditional("DEBUG")]
 		private void PrintPlayingNowList()
 		{
-			NowPlayingList.ForEach(s => Debug.WriteLine(s));
+			//NowPlayingList.ForEach(s => Debug.WriteLine(s));
 		}
 
 		#endregion

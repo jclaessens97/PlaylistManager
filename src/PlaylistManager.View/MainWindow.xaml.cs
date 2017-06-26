@@ -38,6 +38,7 @@ namespace PlaylistManager.View
 			//Set the presenter of the Audioplayer control
 			audioplayerPresenter = new AudioplayerPresenter();
 			AudioPlayerControl.DataContext = audioplayerPresenter;
+			AudioPlayerControl.RegisterEvents();
 
 			//Load the data context & itemssource of the library grid programmatically via converting it to a ICollectionView
 			libraryPresenter = new LibraryPresenter();
