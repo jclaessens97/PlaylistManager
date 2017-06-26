@@ -38,13 +38,7 @@ namespace PlaylistManager.Model
 			}
 		}
 
-		private List<Song> songs;
-
-		public List<Song> Songs
-		{
-			get => songs;
-			set { songs = value; }
-		}
+		public List<Song> Songs { get; set; }
 		public List<Playlist> Playlists { get; set; }
 		public List<Song> NowPlayingList { get; set; }
 
@@ -80,7 +74,7 @@ namespace PlaylistManager.Model
 					{
 						IsPlaying = false,
 
-						Artist = file.Tag.Performers[0],
+						Artist = file.Tag.Performers.Length > 0 ? file.Tag.Performers[0] : null,
 						Title = file.Tag.Title,
 						Album = file.Tag.Album,
 						Duration = file.Properties.Duration,
