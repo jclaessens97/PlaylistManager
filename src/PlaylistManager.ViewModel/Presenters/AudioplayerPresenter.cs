@@ -345,7 +345,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			Reset();
 		}
 
-		private void Next()
+		public void Next()
 		{
 			Debug.WriteLine("Next");
 

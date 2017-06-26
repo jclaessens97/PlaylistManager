@@ -41,6 +41,21 @@ namespace PlaylistManager.View.Custom
 
 		#region Event Handlers
 
+		private void SliderTime_OnValueChanged(object _sender, RoutedPropertyChangedEventArgs<double> _e)
+		{
+			var slider  = _sender as Slider;
+			var presenter = DataContext as AudioplayerPresenter;
+
+			if (presenter != null && slider != null)
+			{
+				if (slider.Value >= slider.Maximum)
+				{
+					if (presenter.HasNext())
+						presenter.Next();
+				}
+			}
+		}
+
 		private void SliderTime_OnPreviewMouseDown(object _sender, MouseButtonEventArgs _e)
 		{
 			var presenter = DataContext as AudioplayerPresenter;
@@ -99,7 +114,6 @@ namespace PlaylistManager.View.Custom
 				ToggleEnable(false);
 			}
 		}
-
 		private void OnStateChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is PlayState )
@@ -123,7 +137,6 @@ namespace PlaylistManager.View.Custom
 				}
 			}
 		}
-
 		private void OnShuffleChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is bool)
@@ -140,7 +153,6 @@ namespace PlaylistManager.View.Custom
 				}
 			}
 		}
-
 		private void OnRepeatChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is RepeatMode)
@@ -166,7 +178,6 @@ namespace PlaylistManager.View.Custom
 				OnStateChanged(_sender, _e);
 			}
 		}
-
 		private void OnVolumeChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is float)
@@ -226,5 +237,6 @@ namespace PlaylistManager.View.Custom
 		}
 
 		#endregion
+
 	}
 }

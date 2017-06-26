@@ -102,6 +102,7 @@
                 Foreground="{StaticResource SecondaryAccentBrush}"
                 Maximum="{Binding TotalSeconds, UpdateSourceTrigger=PropertyChanged}"
                 Value="{Binding CurrentSeconds, UpdateSourceTrigger=PropertyChanged}"
+                ValueChanged="SliderTime_OnValueChanged"
                 PreviewMouseDown="SliderTime_OnPreviewMouseDown"
                 PreviewMouseUp="SliderTime_OnPreviewMouseUp" />
         <TextBlock Grid.Row="1" Grid.Column="6" 
