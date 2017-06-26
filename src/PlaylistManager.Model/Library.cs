@@ -38,7 +38,13 @@ namespace PlaylistManager.Model
 			}
 		}
 
-		public List<Song> Songs { get; set; }
+		private List<Song> songs;
+
+		public List<Song> Songs
+		{
+			get => songs;
+			set { songs = value; }
+		}
 		public List<Playlist> Playlists { get; set; }
 		public List<Song> NowPlayingList { get; set; }
 
@@ -117,12 +123,12 @@ namespace PlaylistManager.Model
 		{
 			if (!_shuffled)
 			{
-				NowPlayingList = Songs;
+				NowPlayingList = Songs.ToList();
 				return;
 			}
 
 			NowPlayingList = new List<Song>(Songs.Count);
-			var songsCopy = Songs;
+			var songsCopy = new List<Song>(Songs);
 			Random rnd = new Random();
 
 			while (songsCopy.Count > 0)
@@ -138,7 +144,7 @@ namespace PlaylistManager.Model
 		public void GenerateNowPlayingList(Song _song, bool _shuffled)
 		{
 			NowPlayingList = new List<Song>(Songs.Count);
-			var songsCopy = Songs;
+			var songsCopy = new List<Song>(Songs);
 			int startIndex = songsCopy.IndexOf(_song);
 
 			NowPlayingList.Add(songsCopy[startIndex]);

@@ -222,25 +222,21 @@ namespace PlaylistManager.ViewModel.Presenters
 			EventHandler handler = SongChanged;
 			handler?.Invoke(CurrentSong, _e);
 		}
-
 		private void OnStateChanged(EventArgs _e)
 		{
 			EventHandler handler = StateChanged;
 			handler?.Invoke(State, _e);
 		}
-
 		private void OnShuffleChanged(EventArgs _e)
 		{
 			EventHandler handler = ShuffleChanged;
 			handler?.Invoke(ShuffleEnabled, _e);
 		}
-
 		private void OnRepeatChanged(EventArgs _e)
 		{
 			EventHandler handler = RepeatChanged;
 			handler?.Invoke(RepeatMode, _e);
 		}
-
 		private void OnVolumeChanged(EventArgs _e)
 		{
 			EventHandler handler = VolumeChanged;
@@ -338,8 +334,6 @@ namespace PlaylistManager.ViewModel.Presenters
 			if (State == PlayState.Stopped) return;
 			State = PlayState.Stopped;
 
-			library.NowPlayingList = null;
-
 			updateTimer.Stop();
 			updateTimer.Dispose();
 			updateTimer = null;
@@ -395,19 +389,19 @@ namespace PlaylistManager.ViewModel.Presenters
 			ShuffleEnabled = !ShuffleEnabled;
 			Debug.WriteLine("Shuffle is " + ShuffleEnabled);
 
-			if (ShuffleEnabled)
+			if (shuffleEnabled)
 			{
 				if (State == PlayState.Playing || State == PlayState.Paused)
 				{
-					//Library.NowPlayingList.ShuffleFromCurrent(CurrentSong);
-				} else if (State == PlayState.Stopped)
-				{
-					//Library.NowPlayingList.ShuffleAll();
+					library.GenerateNowPlayingList(CurrentSong, true);
 				}
 			}
 			else
 			{
-				//SetNowPlayingList(Library.Songs);
+				if (State == PlayState.Playing || State == PlayState.Paused)
+				{
+					library.GenerateNowPlayingList(CurrentSong, false);
+				}
 			}
 		}
 
@@ -428,6 +422,11 @@ namespace PlaylistManager.ViewModel.Presenters
 		public void Seek()
 		{
 			audioPlayer.Seek(currentSeconds);
+		}
+
+		private void UpdateTimer_Elapsed(object _sender, ElapsedEventArgs _e)
+		{
+			CurrentSeconds = audioPlayer.GetPositionInSeconds();
 		}
 
 		#endregion
@@ -505,10 +504,5 @@ namespace PlaylistManager.ViewModel.Presenters
 		}
 
 		#endregion
-
-		private void UpdateTimer_Elapsed(object _sender, ElapsedEventArgs _e)
-		{
-			CurrentSeconds = audioPlayer.GetPositionInSeconds();
-		}
 	}
 }
