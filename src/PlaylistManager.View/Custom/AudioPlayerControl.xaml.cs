@@ -76,12 +76,24 @@ namespace PlaylistManager.View.Custom
 
 			if (presenter != null)
 			{
+				presenter.SongChanged += OnSongChanged;
 				presenter.StateChanged += OnStateChanged;
 				presenter.ShuffleChanged += OnShuffleChanged;
 				presenter.RepeatChanged += OnRepeatChanged;
 				presenter.VolumeChanged += OnVolumeChanged;
 			}
 			
+		}
+
+		private void OnSongChanged(object _sender, EventArgs _e)
+		{
+			if (_sender is Song)
+			{
+				Song song = (Song) _sender;
+
+				Debug.WriteLine(song);
+				ToggleEnable(true);
+			}
 		}
 
 		private void OnStateChanged(object _sender, EventArgs _e)
@@ -186,10 +198,15 @@ namespace PlaylistManager.View.Custom
 			{
 				var presenter = DataContext as AudioplayerPresenter;
 
-				if (presenter != null)
+				if (presenter != null && presenter.CurrentSong != null)
 				{
 					btnPrev.IsEnabled = presenter.HasPrev();
 					btnNext.IsEnabled = presenter.HasNext();
+				}
+				else
+				{
+					btnPrev.IsEnabled = false;
+					btnNext.IsEnabled = false;
 				}
 			}
 			else

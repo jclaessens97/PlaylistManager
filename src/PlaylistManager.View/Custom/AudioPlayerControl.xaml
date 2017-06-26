@@ -139,8 +139,7 @@
                 Foreground="{StaticResource SecondaryAccentBrush}" 
                 Maximum="100" 
                 Margin="5"
-                Value="{Binding Volume, Mode=TwoWay}"
-                ValueChanged="SliderVolume_OnValueChanged"/>
+                Value="{Binding Volume, Mode=TwoWay}"/>
     </Grid>
 </UserControl>
 

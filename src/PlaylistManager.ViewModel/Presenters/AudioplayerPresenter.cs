@@ -142,6 +142,7 @@ namespace PlaylistManager.ViewModel.Presenters
 				if (currentSong == value) return;
 				currentSong = value; 
 				RaisePropertyChangedEvent(nameof(CurrentSong));
+				OnSongChanged(EventArgs.Empty);
 
 				if (currentSong != null)
 				{
@@ -308,82 +309,43 @@ namespace PlaylistManager.ViewModel.Presenters
 		private void Next()
 		{
 			Debug.WriteLine("Next");
-			//TODO: implement next
-			//			if (RepeatMode == RepeatMode.Off)
-			//			{
-			//				if (HasNext())
-			//				{
-			//					int index = Library.NowPlayingList.IndexOf(CurrentSong) + 1;
-			//					CurrentSong = Library.NowPlayingList[index];
-			//				}
-			//				else
-			//				{
-			//					Stop();
-			//				}
-			//			}
-			//			else if (RepeatMode == RepeatMode.On)
-			//			{
-			//				int index;
-			//
-			//				if (HasNext())
-			//				{
-			//					index = Library.NowPlayingList.IndexOf(CurrentSong) + 1;
-			//				}
-			//				else
-			//				{
-			//					index = 0;
-			//				}
-			//
-			//				CurrentSong = Library.NowPlayingList[index];
-			//			}
-			//
-			//			_audioPlayer.Stop();
-			//			_audioPlayer.Play(CurrentSong);
 
-			//Debug.WriteLine("Now playing:" + CurrentSong);
-			//Debug.WriteLine("Index: " + Library.NowPlayingList.IndexOf(CurrentSong));
+			if (HasNext())
+			{
+				int index = library.NowPlayingList.IndexOf(CurrentSong) + 1;
+				Stop();
+				CurrentSong = library.NowPlayingList[index];
+				Start();
+			}
+			else
+			{
+				Stop();
+			}
+
+			Debug.WriteLine("Now playing:" + CurrentSong);
+			Debug.WriteLine("Index: " + library.NowPlayingList.IndexOf(CurrentSong));
 		}
 
 		private void Prev()
 		{
 			Debug.WriteLine("Prev");
 
-			//TODO: implement prev
-			//			if (RepeatMode == RepeatMode.Off)
-			//			{
-			//				if (HasPrev())
-			//				{
-			//					int index = Library.NowPlayingList.IndexOf(CurrentSong) - 1;
-			//					CurrentSong = Library.NowPlayingList[index];
-			//				}
-			//				else
-			//				{
-			//					Stop();
-			//				}
-			//			}
-			//			else if (RepeatMode == RepeatMode.On)
-			//			{
-			//				int index;
-			//
-			//				if (HasPrev())
-			//				{
-			//					index = Library.NowPlayingList.IndexOf(CurrentSong);
-			//				}
-			//				else
-			//				{
-			//					index = Library.NowPlayingList.Count - 1;
-			//				}
-			//
-			//				CurrentSong = Library.NowPlayingList[index];
-			//			}
-			//
-			//			_audioPlayer.Stop();
-			//			_audioPlayer.Play(CurrentSong);
-			//
-			//			Debug.WriteLine("Now playing:" + CurrentSong);
-			//			Debug.WriteLine("Index: " + Library.NowPlayingList.IndexOf(CurrentSong));
+			if (HasPrev())
+			{
+				int index = library.NowPlayingList.IndexOf(CurrentSong) - 1;
+				Stop();
+				CurrentSong = library.NowPlayingList[index];
+				Start();
+			}
+			else
+			{
+				Stop(); 
+			}
+
+			Debug.WriteLine("Now playing:" + CurrentSong);
+			Debug.WriteLine("Index: " + library.NowPlayingList.IndexOf(CurrentSong));
 		}
-		
+
 		private void ToggleShuffle()
 		{
 			ShuffleEnabled = !ShuffleEnabled;
@@ -447,24 +409,44 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		public bool HasNext()
 		{
-			//TODO: implement HasNext()
-//			int index = Library.NowPlayingList.IndexOf(CurrentSong);
-//
-//			if (RepeatMode == RepeatMode.Once) return false;
-//			return index < Library.NowPlayingList.Count - 1;
+			if (RepeatMode == RepeatMode.Once) return false;
 
-			return false;
+			if (RepeatMode == RepeatMode.Off)
+			{
+				int index = library.NowPlayingList.IndexOf(CurrentSong);
+
+				if (index < library.NowPlayingList.Count - 1)
+					return true;
+				else
+					return false;
+			}
+			else if (RepeatMode == RepeatMode.On)
+			{
+				return true;
+			}
+
+			return false; //should never reach this
 		}
 
 		public bool HasPrev()
 		{
-			//TODO: implement HasPrev
-//			int index = Library.NowPlayingList.IndexOf(CurrentSong);
-//
-//			if (RepeatMode == RepeatMode.Once) return false;
-//			return index > 0;
+			if (RepeatMode == RepeatMode.Once) return false;
 
-			return false;
+			if (RepeatMode == RepeatMode.Off)
+			{
+				int index = library.NowPlayingList.IndexOf(CurrentSong);
+
+				if (index > 0)
+					return true;
+				else
+					return false;
+			}
+			else if (RepeatMode == RepeatMode.On)
+			{
+				return true;
+			}
+
+			return false; //should never reach this
 		}
 
 		private void Reset()
@@ -487,10 +469,17 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#region Events
 		//TODO: optimize
+		public event EventHandler SongChanged;
 		public event EventHandler StateChanged;
 		public event EventHandler ShuffleChanged;
 		public event EventHandler RepeatChanged;
 		public event EventHandler VolumeChanged;
+
+		private void OnSongChanged(EventArgs _e)
+		{
+			EventHandler handler = SongChanged;
+			handler?.Invoke(CurrentSong, _e);
+		}
 
 		private void OnStateChanged(EventArgs _e)
 		{

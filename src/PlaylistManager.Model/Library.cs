@@ -137,15 +137,15 @@ namespace PlaylistManager.Model
 
 		public void GenerateNowPlayingList(Song _song, bool _shuffled)
 		{
+			NowPlayingList = new List<Song>(Songs.Count);
+			var songsCopy = Songs;
+			int startIndex = songsCopy.IndexOf(_song);
+
+			NowPlayingList.Add(songsCopy[startIndex]);
+			songsCopy.RemoveAt(startIndex);
+
 			if (!_shuffled)
 			{
-				NowPlayingList = new List<Song>(Songs.Count);
-				var songsCopy = Songs;
-				int startIndex = songsCopy.IndexOf(_song);
-
-				NowPlayingList.Add(songsCopy[startIndex]);
-				songsCopy.RemoveAt(startIndex);
-
 				int songsLeft = songsCopy.Count - startIndex;
 
 				while (songsLeft > 0)
@@ -163,8 +163,17 @@ namespace PlaylistManager.Model
 					NowPlayingList.Add(songToAdd);
 				}
 			}
+			else
+			{
+				Random rnd = new Random();
 
-			//TODO: shuffled version of generate playlist with starting song given
+				while (songsCopy.Count > 0)
+				{
+					var songToAdd = songsCopy[rnd.Next(songsCopy.Count)];
+					NowPlayingList.Add(songToAdd);
+					songsCopy.Remove(songToAdd);
+				}
+			}
 
 			PrintPlayingNowList();
 		}
