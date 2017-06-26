@@ -160,6 +160,11 @@ namespace PlaylistManager.View.Custom
 						break;
 				}
 			}
+
+			if (_sender is PlayState)
+			{
+				OnStateChanged(_sender, _e);
+			}
 		}
 
 		private void OnVolumeChanged(object _sender, EventArgs _e)

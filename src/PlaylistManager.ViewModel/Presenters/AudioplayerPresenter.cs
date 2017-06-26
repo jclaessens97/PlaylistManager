@@ -236,6 +236,7 @@ namespace PlaylistManager.ViewModel.Presenters
 		{
 			EventHandler handler = RepeatChanged;
 			handler?.Invoke(RepeatMode, _e);
+			handler?.Invoke(State, _e); //Call 2nd time with state this time to see if playing or not
 		}
 		private void OnVolumeChanged(EventArgs _e)
 		{
