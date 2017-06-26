@@ -209,13 +209,54 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#endregion
 
+		#region Events
+
+		public event EventHandler SongChanged;
+		public event EventHandler StateChanged;
+		public event EventHandler ShuffleChanged;
+		public event EventHandler RepeatChanged;
+		public event EventHandler VolumeChanged;
+
+		private void OnSongChanged(EventArgs _e)
+		{
+			EventHandler handler = SongChanged;
+			handler?.Invoke(CurrentSong, _e);
+		}
+
+		private void OnStateChanged(EventArgs _e)
+		{
+			EventHandler handler = StateChanged;
+			handler?.Invoke(State, _e);
+		}
+
+		private void OnShuffleChanged(EventArgs _e)
+		{
+			EventHandler handler = ShuffleChanged;
+			handler?.Invoke(ShuffleEnabled, _e);
+		}
+
+		private void OnRepeatChanged(EventArgs _e)
+		{
+			EventHandler handler = RepeatChanged;
+			handler?.Invoke(RepeatMode, _e);
+		}
+
+		private void OnVolumeChanged(EventArgs _e)
+		{
+			EventHandler handler = VolumeChanged;
+			handler?.Invoke(Volume, _e);
+		}
+
+		#endregion
+
 		public AudioplayerPresenter()
 		{
+			Reset();
+
 			audioPlayer = new AudioPlayer();
 			library = Library.Instance;
 			State = PlayState.Stopped;
 			Volume = Settings.Instance.Volume;
-			Reset();
 		}
 
 		#region Navigation control commands
@@ -296,12 +337,15 @@ namespace PlaylistManager.ViewModel.Presenters
 
 			if (State == PlayState.Stopped) return;
 			State = PlayState.Stopped;
-			CurrentSong = null;
-			audioPlayer.Stop();
+
+			library.NowPlayingList = null;
 
 			updateTimer.Stop();
 			updateTimer.Dispose();
 			updateTimer = null;
+
+			CurrentSong = null;
+			audioPlayer.Stop();
 
 			Reset();
 		}
@@ -466,44 +510,5 @@ namespace PlaylistManager.ViewModel.Presenters
 		{
 			CurrentSeconds = audioPlayer.GetPositionInSeconds();
 		}
-
-		#region Events
-		//TODO: optimize
-		public event EventHandler SongChanged;
-		public event EventHandler StateChanged;
-		public event EventHandler ShuffleChanged;
-		public event EventHandler RepeatChanged;
-		public event EventHandler VolumeChanged;
-
-		private void OnSongChanged(EventArgs _e)
-		{
-			EventHandler handler = SongChanged;
-			handler?.Invoke(CurrentSong, _e);
-		}
-
-		private void OnStateChanged(EventArgs _e)
-		{
-			EventHandler handler = StateChanged;
-			handler?.Invoke(State, _e);
-		}
-
-		private void OnShuffleChanged(EventArgs _e)
-		{
-			EventHandler handler = ShuffleChanged;
-			handler?.Invoke(ShuffleEnabled, _e);
-		}
-
-		private void OnRepeatChanged(EventArgs _e)
-		{
-			EventHandler handler = RepeatChanged;
-			handler?.Invoke(RepeatMode, _e);
-		}
-
-		private void OnVolumeChanged(EventArgs _e)
-		{
-			EventHandler handler = VolumeChanged;
-			handler?.Invoke(Volume, _e);
-		}
-		#endregion
 	}
 }

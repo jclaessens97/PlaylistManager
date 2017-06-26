@@ -94,6 +94,10 @@ namespace PlaylistManager.View.Custom
 				Debug.WriteLine(song);
 				ToggleEnable(true);
 			}
+			else
+			{
+				ToggleEnable(false);
+			}
 		}
 
 		private void OnStateChanged(object _sender, EventArgs _e)
