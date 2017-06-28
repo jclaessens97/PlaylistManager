@@ -2,12 +2,12 @@
         - Add to file declaration: xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         - Add at end of binding: ", diag:PresentationTraceSources.TraceLevel=High}"
 -->
-<UserControl x:Class="PlaylistManager.View.Custom.AudioPlayerControl"
+<UserControl x:Class="PlaylistManager.View.UserControls.AudioPlayerControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PlaylistManager.View.Custom"
+             xmlns:local="clr-namespace:PlaylistManager.View.UserControls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
@@ -48,7 +48,6 @@
             <ColumnDefinition Width="120" />
         </Grid.ColumnDefinitions>
 
-
         <StackPanel Grid.Row="0" Grid.Column="5"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center">
@@ -56,7 +55,6 @@
             <TextBlock HorizontalAlignment="Center" FontSize="14" Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock HorizontalAlignment="Center" FontSize="12" Text="{Binding Album, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
-        
         
         <Button x:Name="btnPrev"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
@@ -66,7 +64,6 @@
                 Command="{Binding PrevCommand}">
                 <materialDesign:PackIcon Kind="SkipPrevious" />
         </Button>
-
         <Button x:Name="btnPausePlay"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
                 Grid.Row="1" Grid.Column="1" 

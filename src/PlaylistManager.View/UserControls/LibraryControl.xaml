@@ -1,0 +1,107 @@
+﻿<UserControl x:Class="PlaylistManager.View.UserControls.LibraryControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PlaylistManager.View.UserControls"
+             xmlns:custom="clr-namespace:PlaylistManager.View.Custom"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             Width="Auto"
+             Height="Auto">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../ResourceDictionaries/CustomResourceDictionary.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <DockPanel>
+        <custom:CustomDataGrid x:Name="libraryDataGrid"
+                               Style="{StaticResource MaterialDesignDataGrid}"
+                               AutoGenerateColumns="False"
+                               GridLinesVisibility="Horizontal"
+                               CanUserResizeRows="False"
+                               Sorted="LibraryDataGrid_OnSorted"
+                               IsReadOnly="True"
+                               materialDesign:DataGridAssist.ColumnHeaderPadding="5"
+                               materialDesign:DataGridAssist.CellPadding="8">
+            <DataGrid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick"
+                              Command="{Binding DoubleClickRowCommand}"
+                              CommandParameter="{Binding ElementName=libraryDataGrid, Path=SelectedItem}"
+                />
+            </DataGrid.InputBindings>
+            <!--TODO: move to CustomResourceDictionary???????-->
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="{x:Type DataGridColumnHeader}"
+                       BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+
+                    <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}" />
+                    <Setter Property="Background" Value="{DynamicResource PrimaryHueDarkBrush}" />
+                    <Setter Property="FontSize" Value="16" />
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.CellStyle>
+                <Style TargetType="{x:Type DataGridCell}"
+                       BasedOn="{StaticResource MaterialDesignDataGridCell}">
+                    <Setter Property="FontWeight" Value="Regular" />
+                </Style>
+            </DataGrid.CellStyle>
+            <!--TODO: add is playing icon 
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Name="IsPlayingImage"/>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                            <Setter TargetName="IsPlayingImage" Property="Source" Value="/Images/speaker_33.png" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>-->
+            <DataGrid.Columns>
+                <materialDesign:MaterialDataGridTextColumn x:Name="TitleColumn"
+                                                           Binding="{Binding Title}"
+                                                           Header="Title"                                                        
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}">
+
+                </materialDesign:MaterialDataGridTextColumn>
+                <materialDesign:MaterialDataGridTextColumn x:Name="ArtistColumn"
+                                                           Binding="{Binding Artist}"
+                                                           Header="Artist"                                                        
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                />
+                <materialDesign:MaterialDataGridTextColumn x:Name="DurationColumn"
+                                                           Binding="{Binding Duration, StringFormat=hh\\:mm\\:ss}"
+                                                           Header="Duration"                                                        
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                />
+                <materialDesign:MaterialDataGridTextColumn x:Name="AlbumColumn"
+                                                           Binding="{Binding Album}"
+                                                           Header="Album"                                                        
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                />
+                <materialDesign:MaterialDataGridTextColumn x:Name="GenresColumn"
+                                                           Binding="{Binding Genres}"
+                                                           Header="Genres"                                                        
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                />
+                <materialDesign:MaterialDataGridTextColumn x:Name="YearColumn"
+                                                           Binding="{Binding Year}"
+                                                           Header="Year"                                                        
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                />
+                <materialDesign:MaterialDataGridTextColumn x:Name="TrackNumberColumn"
+                                                           Binding="{Binding TrackNumberColumn}"
+                                                           Header="Track #"                                                        
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}" 
+                />
+            </DataGrid.Columns>
+        </custom:CustomDataGrid>
+    </DockPanel>
+</UserControl>

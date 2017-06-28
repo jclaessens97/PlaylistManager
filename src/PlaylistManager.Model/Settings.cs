@@ -32,10 +32,19 @@ namespace PlaylistManager.Model
 			}
 		}
 
+		#region Implicit settings
+
 		public float Volume { get; private set; }
+		
+		#endregion
+
+		#region Explicit settings
 
 		public string Folder { get; private set; }
 		public bool IncludeSubdirs { get; private set; }
+
+		#endregion
+
 
 		private Settings()
 		{

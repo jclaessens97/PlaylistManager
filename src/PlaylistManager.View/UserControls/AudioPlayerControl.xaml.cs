@@ -21,7 +21,7 @@ using PlaylistManager.Model;
 using PlaylistManager.ViewModel.Presenters;
 
 
-namespace PlaylistManager.View.Custom
+namespace PlaylistManager.View.UserControls
 {
 	/// <summary>
 	/// Interaction logic for AudioPlayerControl.xaml
@@ -30,12 +30,9 @@ namespace PlaylistManager.View.Custom
 	/// </summary>
 	public partial class AudioPlayerControl : UserControl
 	{
-
-
 		public AudioPlayerControl()
 		{
 			InitializeComponent();
-
 			ToggleEnable(false);
 		}
 
@@ -237,6 +234,5 @@ namespace PlaylistManager.View.Custom
 		}
 
 		#endregion
-
 	}
 }

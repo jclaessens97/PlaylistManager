@@ -4,6 +4,7 @@
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
     
     <!--AudioControl-->
@@ -49,5 +50,9 @@
                 <Setter Property="FontWeight" Value="Bold" />
             </Style>
             <!--End Library-->
+    
+            <!--Settings--> 
+            <!--End Settings-->
+     
     
 </ResourceDictionary>

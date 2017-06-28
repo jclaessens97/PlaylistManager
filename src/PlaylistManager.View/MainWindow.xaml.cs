@@ -29,7 +29,7 @@ namespace PlaylistManager.View
 	{
 		private readonly AudioplayerPresenter audioplayerPresenter;
 		private readonly LibraryPresenter libraryPresenter;
-		private readonly ICollectionView librarySongSource;
+		//private readonly SettingsPresenter settingsPresenter;
 
 		public MainWindow()
 		{
@@ -40,28 +40,39 @@ namespace PlaylistManager.View
 			AudioPlayerControl.DataContext = audioplayerPresenter;
 			AudioPlayerControl.RegisterEvents();
 
-			//Load the data context & itemssource of the library grid programmatically via converting it to a ICollectionView
+			//Set the presenter of the Library control
 			libraryPresenter = new LibraryPresenter();
-			DataContext = libraryPresenter;
-			librarySongSource = CollectionViewSource.GetDefaultView(libraryPresenter.SongsInLibrary);
-
-			libraryDataGrid.ItemsSource = librarySongSource;
+			LibraryControl.DataContext = libraryPresenter;
 
 			//Set a reference in libraryPresenter to AudioplayerPresenter so you can access its methods (e.g. to start a song)
 			libraryPresenter.AudioplayerPresenter = audioplayerPresenter;
+
+			//Register library presenter so data grid can be loaded with data
+			LibraryControl.RegisterLibraryPresenter();
 		}
 
-		private void LibraryDataGrid_OnSorted(object _sender, RoutedEventArgs _e)
+		private void TabControl_OnSelectionChanged(object _sender, SelectionChangedEventArgs _e)
 		{
-			var sortedList = new ObservableCollection<Song>();
-			foreach (var song in librarySongSource.OfType<Song>())
-			{
-				//Debug.WriteLine(song);
-				sortedList.Add(song);
-			}
+			TabControl tabControl = _sender as TabControl;
 
-			libraryPresenter.SongsInLibrary = sortedList;
-			//libraryPresenter.SongsInLibrary.ToList().ForEach(s => Debug.WriteLine(s));
+			switch (tabControl.SelectedIndex)
+			{
+				//Library tab
+				case 0:
+					libraryBottomBar.Visibility = Visibility.Visible;
+					//settingsBottomBar.Visibility = Visibility.Collapsed;
+					break;
+				//Playlists tab
+				case 1:
+					libraryBottomBar.Visibility = Visibility.Collapsed;
+					//settingsBottomBar.Visibility = Visibility.Collapsed;
+					break;
+				//Settings tab
+				case 2:
+					libraryBottomBar.Visibility = Visibility.Collapsed;
+					//settingsBottomBar.Visibility = Visibility.Visible;
+					break;
+			}
 		}
 	}
 }
