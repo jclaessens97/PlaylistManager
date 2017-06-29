@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using PlaylistManager.Model;
 using System.Timers;
 using System.Windows.Input;
-using PlaylistManager.BL;
 using PlaylistManager.Model.Other;
 using PlaylistManager.ViewModel.Other;
 
@@ -19,6 +18,8 @@ namespace PlaylistManager.ViewModel.Presenters
 	public class AudioplayerPresenter : ObservableObject
 	{
 		#region Attributes
+
+		private readonly SettingsPresenter settingsPresenter;
 
 		private readonly IDictionary repeatModeMap = new Dictionary<RepeatMode, RepeatMode>
 		{
@@ -248,12 +249,17 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		public AudioplayerPresenter()
 		{
+			settingsPresenter = SettingsPresenter.Instance;
+
 			Reset();
 
 			audioPlayer = new AudioPlayer();
 			library = Library.Instance;
 			State = PlayState.Stopped;
-			Volume = Settings.Instance.Volume;
+
+			Volume = settingsPresenter.Volume;
+			ShuffleEnabled = settingsPresenter.ShuffleEnabled;
+			RepeatMode = settingsPresenter.RepeatMode;
 		}
 
 		#region Navigation control commands

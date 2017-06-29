@@ -48,14 +48,17 @@
                     Style="{StaticResource MaterialDesignTextBox}"
                     Margin="5,8"
                     FontSize="12"
-                    materialDesign:HintAssist.Hint="Fill in path to your music folder" />
+                    materialDesign:HintAssist.Hint="Fill in path to your music folder"
+                    Text="{Binding Folder}"
+                    LostFocus="TbFolder_OnLostFocus"/>
         <Button x:Name="btnBrowseFolder"
                 Foreground="{StaticResource PrimaryHueDarkBrush}"
                 Grid.Row="0" Grid.Column="2"
                 Style="{StaticResource MaterialDesignRaisedAccentButton}"
                 Margin="5"
                 Height="20"
-                FontSize="10">
+                FontSize="10"
+                Click="BtnBrowseFolder_OnClick">
             Browse...
         </Button>
 
@@ -64,7 +67,8 @@
                     FontSize="12"
                     VerticalAlignment="Top"
                     Foreground="White"
-                    Background="{StaticResource SecondaryAccentBrush}">
+                    Background="{StaticResource SecondaryAccentBrush}"
+                    IsChecked="{Binding IncludeSubdirs}">
             Include subdirectories
         </CheckBox>
 
@@ -106,14 +110,14 @@
             <Slider x:Name="settingsSliderTimeBetween"
                     VerticalAlignment="Center" 
                     Foreground="{StaticResource SecondaryAccentBrush}"
-                    Maximum="10" Value="3"
+                    Maximum="10" Value="{Binding TimeBetweenSongs, UpdateSourceTrigger=PropertyChanged}"
                     Margin="5"
                     Width="100"/>
             <TextBox x:Name="settingsTextBoxTimeBetween"
                      VerticalAlignment="Center"
                      Margin="5"
-                     Width="50">
-                3.00
+                     Width="55"
+                     Text="{Binding TimeBetweenSongs, StringFormat=N2}">
             </TextBox>
         </StackPanel>
         
@@ -129,7 +133,8 @@
                     Width="75"
                     Style="{DynamicResource MaterialDesignRaisedButton}"
                     HorizontalAlignment="Right"
-                    Margin="5">
+                    Margin="5"
+                    Command="{Binding SaveCommand}">
                 Save
             </Button>
 
@@ -138,7 +143,8 @@
                     Width="140"
                     Style="{DynamicResource MaterialDesignRaisedButton}"
                     HorizontalAlignment="Left"
-                    Margin="5">
+                    Margin="5"
+                    Command="{Binding DefaultCommand}">
                 Reset to default
             </Button>
         </Grid>

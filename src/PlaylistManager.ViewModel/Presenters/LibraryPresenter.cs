@@ -17,6 +17,7 @@ namespace PlaylistManager.ViewModel.Presenters
 		#region Attributes
 
 		private readonly Library library;
+		private readonly SettingsPresenter settings;
 
 		private ObservableCollection<Song> songsInLibrary;
 
@@ -66,8 +67,11 @@ namespace PlaylistManager.ViewModel.Presenters
 		public LibraryPresenter()
 		{	
 			library = Library.Instance;
+			settings = SettingsPresenter.Instance;
 
 			LoadSongs();
+
+			settings.FolderChanged += OnFolderChanged;
 		}
 
 		#region LibraryGrid Events
@@ -77,6 +81,13 @@ namespace PlaylistManager.ViewModel.Presenters
 			AudioplayerPresenter.Start(_selectedSong);
 		}
 
+		private void OnFolderChanged(object _sender, EventArgs _e)
+		{
+			//reload songs
+			library.LoadSongs();
+			LoadSongs();
+		}
+
 		#endregion
 
 		#region Auxilary
@@ -84,11 +95,6 @@ namespace PlaylistManager.ViewModel.Presenters
 		private void LoadSongs()
 		{
 			SongsInLibrary = new ObservableCollection<Song>(library.Songs);
-		}
-
-		private void GeneratePlayingNowList()
-		{
-			
 		}
 
 		#endregion

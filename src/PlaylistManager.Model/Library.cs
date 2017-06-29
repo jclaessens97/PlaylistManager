@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TagLib.Flac;
+using PlaylistManager.Model.Properties;
 
 namespace PlaylistManager.Model
 {
@@ -16,8 +17,14 @@ namespace PlaylistManager.Model
 	/// </summary>
 	public class Library
 	{
+		#region Attributes
+
 		private static volatile Library instance;
 		private static readonly object syncRoot = new Object();
+
+		#endregion
+
+		#region Properties
 
 		public static Library Instance
 		{
@@ -42,25 +49,27 @@ namespace PlaylistManager.Model
 		public List<Playlist> Playlists { get; set; }
 		public List<Song> NowPlayingList { get; set; }
 
+		#endregion
+
 		private Library()
 		{	
 			LoadSongs();
 		}
 
-		private void LoadSongs()
+		public void LoadSongs()
 		{
 			this.Songs = new List<Song>();
 
 			try
 			{
 				string[] files;
-				if (Settings.Instance.IncludeSubdirs)
+				if (Settings.Default.IncludeSubdirs)
 				{
-					files = Directory.GetFiles(Settings.Instance.Folder, "*.*", SearchOption.AllDirectories);
+					files = Directory.GetFiles(Settings.Default.Folder, "*.*", SearchOption.AllDirectories);
 				}
 				else
 				{
-					files = Directory.GetFiles(Settings.Instance.Folder);
+					files = Directory.GetFiles(Settings.Default.Folder);
 				}
 
 				foreach (var filename in files)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlaylistManager.BL
+namespace PlaylistManager.Model
 {
 	public enum RepeatMode : byte
 	{

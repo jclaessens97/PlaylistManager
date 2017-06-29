@@ -47,6 +47,7 @@
     <Compile Include="Other\DelegateCommand.cs" />
     <Compile Include="Presenters\LibraryPresenter.cs" />
     <Compile Include="Manager.cs" />
+    <Compile Include="Presenters\SettingsPresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

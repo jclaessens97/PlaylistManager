@@ -29,11 +29,15 @@ namespace PlaylistManager.View
 	{
 		private readonly AudioplayerPresenter audioplayerPresenter;
 		private readonly LibraryPresenter libraryPresenter;
-		//private readonly SettingsPresenter settingsPresenter;
+		private readonly SettingsPresenter settingsPresenter;
 
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			//Set the presenter of the settings control
+			settingsPresenter = SettingsPresenter.Instance;
+			SettingsControl.DataContext = settingsPresenter;
 
 			//Set the presenter of the Audioplayer control
 			audioplayerPresenter = new AudioplayerPresenter();
@@ -43,12 +47,10 @@ namespace PlaylistManager.View
 			//Set the presenter of the Library control
 			libraryPresenter = new LibraryPresenter();
 			LibraryControl.DataContext = libraryPresenter;
-
+			LibraryControl.LoadLibrary();
+			
 			//Set a reference in libraryPresenter to AudioplayerPresenter so you can access its methods (e.g. to start a song)
 			libraryPresenter.AudioplayerPresenter = audioplayerPresenter;
-
-			//Register library presenter so data grid can be loaded with data
-			LibraryControl.RegisterLibraryPresenter();
 		}
 
 		private void TabControl_OnSelectionChanged(object _sender, SelectionChangedEventArgs _e)

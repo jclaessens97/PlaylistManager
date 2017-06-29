@@ -15,7 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MaterialDesignThemes.Wpf;
-using PlaylistManager.BL;
 using PlaylistManager.ViewModel;
 using PlaylistManager.Model;
 using PlaylistManager.ViewModel.Presenters;

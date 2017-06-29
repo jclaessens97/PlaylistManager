@@ -32,7 +32,7 @@ namespace PlaylistManager.View.UserControls
             InitializeComponent();
 		}
 
-	    public void RegisterLibraryPresenter()
+	    public void LoadLibrary()
 	    {
 			if (DataContext != null)
 		    {
