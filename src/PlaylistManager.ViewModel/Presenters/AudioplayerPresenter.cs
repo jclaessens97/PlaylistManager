@@ -256,10 +256,6 @@ namespace PlaylistManager.ViewModel.Presenters
 			audioPlayer = new AudioPlayer();
 			library = Library.Instance;
 			State = PlayState.Stopped;
-
-			Volume = settingsPresenter.Volume;
-			ShuffleEnabled = settingsPresenter.ShuffleEnabled;
-			RepeatMode = settingsPresenter.RepeatMode;
 		}
 
 		#region Navigation control commands

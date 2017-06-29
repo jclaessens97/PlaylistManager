@@ -43,6 +43,7 @@ namespace PlaylistManager.View
 			audioplayerPresenter = new AudioplayerPresenter();
 			AudioPlayerControl.DataContext = audioplayerPresenter;
 			AudioPlayerControl.RegisterEvents();
+			AudioPlayerControl.LoadImplicits(SettingsPresenter.Instance);
 
 			//Set the presenter of the Library control
 			libraryPresenter = new LibraryPresenter();
@@ -51,6 +52,8 @@ namespace PlaylistManager.View
 			
 			//Set a reference in libraryPresenter to AudioplayerPresenter so you can access its methods (e.g. to start a song)
 			libraryPresenter.AudioplayerPresenter = audioplayerPresenter;
+
+
 		}
 
 		private void TabControl_OnSelectionChanged(object _sender, SelectionChangedEventArgs _e)
@@ -75,6 +78,15 @@ namespace PlaylistManager.View
 					//settingsBottomBar.Visibility = Visibility.Visible;
 					break;
 			}
+		}
+
+		private void MainWindow_OnClosing(object _sender, CancelEventArgs _e)
+		{
+			settingsPresenter.Volume = audioplayerPresenter.Volume;
+			settingsPresenter.ShuffleEnabled = audioplayerPresenter.ShuffleEnabled;
+			settingsPresenter.RepeatMode = audioplayerPresenter.RepeatMode;
+
+			settingsPresenter.SaveImplicitSettings();
 		}
 	}
 }

@@ -232,6 +232,22 @@ namespace PlaylistManager.View.UserControls
 			}
 		}
 
+		public void LoadImplicits(SettingsPresenter _settingsPresenter)
+		{
+			var presenter = DataContext as AudioplayerPresenter;
+
+			if (presenter != null)
+			{
+				presenter.Volume = _settingsPresenter.Volume;
+				presenter.ShuffleEnabled = _settingsPresenter.ShuffleEnabled;
+				presenter.RepeatMode = _settingsPresenter.RepeatMode;
+			}
+		}
+
+		#endregion
+
+		#region Other
+
 		#endregion
 	}
 }

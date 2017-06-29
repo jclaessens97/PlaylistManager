@@ -27,7 +27,9 @@
         MinHeight="400"
         MinWidth="525"
         WindowStartupLocation="CenterScreen"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        
+        Closing="MainWindow_OnClosing">
 
     <Window.Resources>
 

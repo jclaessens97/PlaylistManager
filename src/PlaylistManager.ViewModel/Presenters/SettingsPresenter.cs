@@ -137,6 +137,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			settings = Settings.Default;
 
 			LoadSettings();
+			//LoadAllDefaults();
 		}
 
 		#region Save
@@ -158,7 +159,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			settings.RepeatMode = (byte)RepeatMode;
 
 			settings.Save();
-			Debug.WriteLine("Settings saved!");
+			Debug.WriteLine("Implicit Settings saved!");
 		}
 
 		#endregion
@@ -186,5 +187,19 @@ namespace PlaylistManager.ViewModel.Presenters
 		}
 
 		#endregion
+
+		#region Debug
+
+		[System.Diagnostics.Conditional("DEBUG")]
+		private void LoadAllDefaults()
+		{
+			this.Volume = DefaultSettings.Volume;
+			this.ShuffleEnabled = DefaultSettings.ShuffleEnabled;
+			this.RepeatMode = DefaultSettings.Repeatmode;
+
+			LoadDefaultSettings();
+		}
+
+		#endregion	
 	}
 }
