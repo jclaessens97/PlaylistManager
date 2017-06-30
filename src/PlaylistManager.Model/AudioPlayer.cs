@@ -55,7 +55,7 @@ namespace PlaylistManager.Model
 			Play(_song);
 		}
 
-		public void Stop()
+		public void Stop(bool _stopBetween = false)
 		{
 			wavePlayer?.Stop();
 
@@ -67,7 +67,8 @@ namespace PlaylistManager.Model
 
 			if (wavePlayer != null)
 			{
-				wavePlayer.Dispose();
+				if (!_stopBetween)
+					wavePlayer.Dispose();
 				wavePlayer = null;
 			}
 		}

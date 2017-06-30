@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,8 @@ using System.Windows.Shapes;
 using MaterialDesignThemes.Wpf;
 using PlaylistManager.ViewModel;
 using PlaylistManager.Model;
+using PlaylistManager.Model.Other;
+using PlaylistManager.ViewModel.Other;
 using PlaylistManager.ViewModel.Presenters;
 
 
@@ -29,6 +32,9 @@ namespace PlaylistManager.View.UserControls
 	/// </summary>
 	public partial class AudioPlayerControl : UserControl
 	{
+		private AudioplayerPresenter audioplayerPresenter;
+		private SettingsPresenter settingsPresenter;
+
 		public AudioPlayerControl()
 		{
 			InitializeComponent();
@@ -36,21 +42,6 @@ namespace PlaylistManager.View.UserControls
 		}
 
 		#region Event Handlers
-
-		private void SliderTime_OnValueChanged(object _sender, RoutedPropertyChangedEventArgs<double> _e)
-		{
-			var slider  = _sender as Slider;
-			var presenter = DataContext as AudioplayerPresenter;
-
-			if (presenter != null && slider != null)
-			{
-				if (slider.Value >= slider.Maximum)
-				{
-					if (presenter.HasNext())
-						presenter.Next();
-				}
-			}
-		}
 
 		private void SliderTime_OnPreviewMouseDown(object _sender, MouseButtonEventArgs _e)
 		{
@@ -63,7 +54,6 @@ namespace PlaylistManager.View.UserControls
 				presenter.ToggleResumePauseCommand.Execute(null);
 			}
 		}
-
 		private void SliderTime_OnPreviewMouseUp(object _sender, MouseButtonEventArgs _e)
 		{
 			var presenter = DataContext as AudioplayerPresenter;
@@ -83,26 +73,46 @@ namespace PlaylistManager.View.UserControls
 
 		public void RegisterEvents()
 		{
-			var presenter = DataContext as AudioplayerPresenter;
+			audioplayerPresenter = DataContext as AudioplayerPresenter;
 
-			if (presenter != null)
+			if (audioplayerPresenter != null)
 			{
-				presenter.SongChanged += OnSongChanged;
-				presenter.StateChanged += OnStateChanged;
-				presenter.ShuffleChanged += OnShuffleChanged;
-				presenter.RepeatChanged += OnRepeatChanged;
-				presenter.VolumeChanged += OnVolumeChanged;
+				audioplayerPresenter.CurrentSecondsChanged += OnCurrentSecondsChanged;
+				audioplayerPresenter.SongChanged += OnSongChanged;
+				audioplayerPresenter.StateChanged += OnStateChanged;
+				audioplayerPresenter.ShuffleChanged += OnShuffleChanged;
+				audioplayerPresenter.RepeatChanged += OnRepeatChanged;
+				audioplayerPresenter.VolumeChanged += OnVolumeChanged;
 			}
-			
 		}
 
+		private void OnCurrentSecondsChanged(object _sender, EventArgs _e)
+		{
+			if (_sender is double)
+			{
+				double currentSeconds = (double) _sender;
+				double totalSeconds = audioplayerPresenter.TotalSeconds;
+
+				if (currentSeconds >= totalSeconds && currentSeconds > 0)
+				{
+					int waitInMillis = (int) (settingsPresenter.TimeBetweenSongs * 1000);
+					Debug.WriteLine("Wait for " + waitInMillis + "ms");
+					var autoEvent = new AutoResetEvent(false);
+					var timeBetweenSongsChecker = new TimeBetweenSongChecker(1);
+					var timer = new Timer(timeBetweenSongsChecker.CheckTime, autoEvent, waitInMillis, (int)(waitInMillis * 0.25));
+
+					autoEvent.WaitOne();
+					timer.Dispose();
+
+					Debug.WriteLine("Continue");
+					audioplayerPresenter.Next();
+				}
+			}
+		}
 		private void OnSongChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is Song)
 			{
-				Song song = (Song) _sender;
-
-				Debug.WriteLine(song);
 				ToggleEnable(true);
 			}
 			else
@@ -120,15 +130,15 @@ namespace PlaylistManager.View.UserControls
 				{
 					case PlayState.Stopped:
 						ToggleEnable(false);
-						PlayPauseIcon.Kind = PackIconKind.Play;
+						ChangeIcon(PlayPauseIcon, PackIconKind.Play);
 						break;
 					case PlayState.Paused:
 						ToggleEnable(true);
-						PlayPauseIcon.Kind = PackIconKind.Play;
+						ChangeIcon(PlayPauseIcon, PackIconKind.Play);
 						break;
 					case PlayState.Playing:
 						ToggleEnable(true);
-						PlayPauseIcon.Kind = PackIconKind.Pause;
+						ChangeIcon(PlayPauseIcon, PackIconKind.Pause);
 						break;
 				}
 			}
@@ -205,35 +215,105 @@ namespace PlaylistManager.View.UserControls
 
 		private void ToggleEnable(bool _state)
 		{
-			btnStop.IsEnabled = _state;
-			sliderTime.IsEnabled = _state;
-			btnVolume.IsEnabled = _state;
-			sliderVolume.IsEnabled = _state;
+			//TODO: cleanup
 
-			if (DataContext != null)
+			if (btnStop.Dispatcher.CheckAccess())
 			{
-				var presenter = DataContext as AudioplayerPresenter;
+				btnStop.IsEnabled = _state;
+			}
+			else
+			{
+				btnStop.Dispatcher.Invoke(() => btnStop.IsEnabled = _state);
+			}
 
-				if (presenter != null && presenter.CurrentSong != null)
+			if (sliderTime.Dispatcher.CheckAccess())
+			{
+				sliderTime.IsEnabled = _state;
+			}
+			else
+			{
+				sliderTime.Dispatcher.Invoke(() => sliderTime.IsEnabled = _state);
+			}
+
+			if (btnVolume.Dispatcher.CheckAccess())
+			{
+				btnVolume.IsEnabled = _state;
+			}
+			else
+			{
+				btnVolume.Dispatcher.Invoke(() => btnVolume.IsEnabled = _state);
+			}
+
+			if (sliderVolume.Dispatcher.CheckAccess())
+			{
+				sliderVolume.IsEnabled = _state;
+			}
+			else
+			{
+				sliderVolume.Dispatcher.Invoke(() => sliderVolume.IsEnabled = _state);
+			}
+
+			if (audioplayerPresenter != null && audioplayerPresenter.CurrentSong != null)
+			{
+				if (btnPrev.Dispatcher.CheckAccess())
 				{
-					btnPrev.IsEnabled = presenter.HasPrev();
-					btnNext.IsEnabled = presenter.HasNext();
+					btnPrev.IsEnabled = audioplayerPresenter.HasPrev();
 				}
 				else
 				{
-					btnPrev.IsEnabled = false;
-					btnNext.IsEnabled = false;
+					btnPrev.Dispatcher.Invoke(() => btnPrev.IsEnabled = audioplayerPresenter.HasPrev());
+				}
+
+				if (btnNext.Dispatcher.CheckAccess())
+				{
+					btnNext.IsEnabled = audioplayerPresenter.HasNext();
+				}
+				else
+				{
+					btnNext.Dispatcher.Invoke(() => btnNext.IsEnabled = audioplayerPresenter.HasNext());
 				}
 			}
 			else
 			{
-				btnPrev.IsEnabled = false;
-				btnNext.IsEnabled = false;
+				if (btnPrev.Dispatcher.CheckAccess())
+				{
+					btnPrev.IsEnabled = false;
+				}
+				else
+				{
+					btnPrev.Dispatcher.Invoke(() => btnPrev.IsEnabled = false);
+				}
+
+				if (btnNext.Dispatcher.CheckAccess())
+				{
+					btnNext.IsEnabled = false;
+				}
+				else
+				{
+					btnNext.Dispatcher.Invoke(() => btnNext.IsEnabled = false);
+				}
 			}
 		}
 
+		private void ChangeIcon(PackIcon _icon, PackIconKind _iconKind)
+		{
+			if (_icon.Dispatcher.CheckAccess())
+			{
+				_icon.Kind = _iconKind;
+			}
+			else
+			{
+				_icon.Dispatcher.Invoke(() => _icon.Kind = _iconKind);
+			}
+		}
+
+		#endregion
+
+		#region Other
+
 		public void LoadImplicits(SettingsPresenter _settingsPresenter)
 		{
+			this.settingsPresenter = _settingsPresenter;
 			var presenter = DataContext as AudioplayerPresenter;
 
 			if (presenter != null)
@@ -244,9 +324,6 @@ namespace PlaylistManager.View.UserControls
 			}
 		}
 
-		#endregion
-
-		#region Other
 
 		#endregion
 	}

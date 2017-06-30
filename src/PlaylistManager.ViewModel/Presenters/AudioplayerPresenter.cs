@@ -5,12 +5,14 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using PlaylistManager.Model;
 using System.Timers;
 using System.Windows.Input;
 using PlaylistManager.Model.Other;
 using PlaylistManager.ViewModel.Other;
+using Timer = System.Timers.Timer;
 
 //TODO: Add scrollwheel event to volumebar
 namespace PlaylistManager.ViewModel.Presenters
@@ -49,7 +51,7 @@ namespace PlaylistManager.ViewModel.Presenters
 		private Timer updateTimer;
 
 		#endregion
-		
+
 		#region Properties
 
 		public string Title
@@ -91,6 +93,11 @@ namespace PlaylistManager.ViewModel.Presenters
 				currentSeconds = value;
 				RaisePropertyChangedEvent(nameof(CurrentSeconds));
 				FormattedCurrentSeconds = Tools.FormatDuration(currentSeconds);
+
+				if (currentSeconds >= totalSeconds && updateTimer != null)
+					updateTimer.Enabled = false;
+
+				OnCurrentSecondsChanged(EventArgs.Empty);
 			}
 		}
 		public string FormattedCurrentSeconds
@@ -143,6 +150,7 @@ namespace PlaylistManager.ViewModel.Presenters
 				if (currentSong == value) return;
 				currentSong = value; 
 				RaisePropertyChangedEvent(nameof(CurrentSong));
+
 				OnSongChanged(EventArgs.Empty);
 
 				if (currentSong != null)
@@ -169,6 +177,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			{
 				state = value;
 				RaisePropertyChangedEvent(nameof(State));
+
 				OnStateChanged(EventArgs.Empty);
 			}
 		}
@@ -212,12 +221,18 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#region Events
 
+		public event EventHandler CurrentSecondsChanged;
 		public event EventHandler SongChanged;
 		public event EventHandler StateChanged;
 		public event EventHandler ShuffleChanged;
 		public event EventHandler RepeatChanged;
 		public event EventHandler VolumeChanged;
 
+		private void OnCurrentSecondsChanged(EventArgs _e)
+		{
+			EventHandler handler = CurrentSecondsChanged;
+			handler?.Invoke(CurrentSeconds, _e);
+		}
 		private void OnSongChanged(EventArgs _e)
 		{
 			EventHandler handler = SongChanged;
@@ -321,12 +336,14 @@ namespace PlaylistManager.ViewModel.Presenters
 		private void Resume()
 		{
 			State = PlayState.Playing;
+			updateTimer.Enabled = true;
 			audioPlayer.Resume();
 		}
 
 		private void Pause()
 		{
 			State = PlayState.Paused;
+			updateTimer.Enabled = false;
 			audioPlayer.Pause();
 		}
 
@@ -347,6 +364,20 @@ namespace PlaylistManager.ViewModel.Presenters
 			Reset();
 		}
 
+		private void StopBetween()
+		{
+			Debug.WriteLine("Stop between!");
+
+			if (State == PlayState.Stopped) return;
+
+			updateTimer.Stop();
+			updateTimer.Dispose();
+			updateTimer = null;
+
+			CurrentSong = null;
+			audioPlayer.Stop(_stopBetween: true);
+		}
+
 		public void Next()
 		{
 			Debug.WriteLine("Next");
@@ -354,7 +385,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			if (HasNext())
 			{
 				int index = library.NowPlayingList.IndexOf(CurrentSong) + 1;
-				Stop();
+				StopBetween();
 				CurrentSong = library.NowPlayingList[index];
 				Start();
 			}
@@ -429,7 +460,9 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		private void UpdateTimer_Elapsed(object _sender, ElapsedEventArgs _e)
 		{
+			
 			CurrentSeconds = audioPlayer.GetPositionInSeconds();
+			//Debug.WriteLine("Timer thread: " + Thread.CurrentThread.ManagedThreadId);
 		}
 
 		#endregion
@@ -504,6 +537,14 @@ namespace PlaylistManager.ViewModel.Presenters
 
 			CurrentSeconds = 0;
 			TotalSeconds = 0;
+		}
+
+		public void ToggleTimer()
+		{
+			if (updateTimer != null)
+			{
+				updateTimer.Enabled = !updateTimer.Enabled;
+			}
 		}
 
 		#endregion
