@@ -385,12 +385,27 @@ namespace PlaylistManager.ViewModel.Presenters
 			if (HasNext())
 			{
 				int index = library.NowPlayingList.IndexOf(CurrentSong) + 1;
+
+				if (index >= library.NowPlayingList.Count)
+				{
+					index = 0;
+				}
+
 				StopBetween();
 				CurrentSong = library.NowPlayingList[index];
 				Start();
 			}
 			else
 			{
+				if (RepeatMode == RepeatMode.Once)
+				{
+					Song s = CurrentSong;
+
+					StopBetween();
+					Start(s);
+				}
+
+
 				Stop();
 			}
 
@@ -405,6 +420,12 @@ namespace PlaylistManager.ViewModel.Presenters
 			if (HasPrev())
 			{
 				int index = library.NowPlayingList.IndexOf(CurrentSong) - 1;
+
+				if (index < 0)
+				{
+					index = library.NowPlayingList.Count - 1;
+				}
+
 				Stop();
 				CurrentSong = library.NowPlayingList[index];
 				Start();
