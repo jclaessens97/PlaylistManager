@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PlaylistManager.Model
+﻿namespace PlaylistManager.Model
 {
+	/// <summary>
+	/// State of repeat
+	/// </summary>
 	public enum RepeatMode : byte
 	{
 		Off = 0,

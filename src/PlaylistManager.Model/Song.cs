@@ -1,10 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using PlaylistManager.Model.Other;
-using PlaylistManager.Model.Properties;
 using TagLib;
-using TagLib.Riff;
 
 namespace PlaylistManager.Model
 {
@@ -13,6 +9,8 @@ namespace PlaylistManager.Model
 	/// </summary>
 	public class Song : ObservableObject
 	{
+		#region Attributes
+
 		private string title;
 		private string album;
 		private TimeSpan duration;
@@ -23,6 +21,10 @@ namespace PlaylistManager.Model
 		private uint? trackNumber;
 		private IPicture albumArt;
 		private bool isPlaying;
+
+		#endregion
+
+		#region Properties
 
 		public string Title
 		{
@@ -114,6 +116,8 @@ namespace PlaylistManager.Model
 				RaisePropertyChangedEvent(nameof(IsPlaying));
 			}
 		}
+
+		#endregion
 
 		public override string ToString()
 		{

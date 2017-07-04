@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PlaylistManager.Model;
-using static System.Environment;
+﻿using static System.Environment;
+
 
 namespace PlaylistManager.Model.Other
 {
+	/// <summary>
+	/// Used to restore all settings to default
+	/// </summary>
 	public static class DefaultSettings
 	{
 		#region Implicit Default Settings

@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using PlaylistManager.Model;
 using System.Timers;
 using System.Windows.Input;
@@ -17,11 +13,12 @@ using Timer = System.Timers.Timer;
 //TODO: Add scrollwheel event to volumebar
 namespace PlaylistManager.ViewModel.Presenters
 {
+	/// <summary>
+	/// Class that interacts between view & model
+	/// </summary>
 	public class AudioplayerPresenter : ObservableObject
 	{
 		#region Attributes
-
-		private readonly SettingsPresenter settingsPresenter;
 
 		private readonly IDictionary repeatModeMap = new Dictionary<RepeatMode, RepeatMode>
 		{
@@ -54,6 +51,7 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#region Properties
 
+		//Song info
 		public string Title
 		{
 			get => title;
@@ -85,6 +83,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			}
 		}
 
+		//Time info
 		public double CurrentSeconds
 		{
 			get => currentSeconds;
@@ -129,6 +128,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			}
 		}
 
+		//Volume info
 		public float Volume
 		{
 			get => volume;
@@ -142,6 +142,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			}
 		}
 
+		//Play info
 		public Song CurrentSong
 		{
 			get => currentSong;
@@ -264,8 +265,6 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		public AudioplayerPresenter()
 		{
-			settingsPresenter = SettingsPresenter.Instance;
-
 			Reset();
 
 			audioPlayer = new AudioPlayer();
@@ -275,6 +274,9 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#region Navigation control commands
 
+		/// <summary>
+		/// Switch between pause & play depending on the current playstate
+		/// </summary>
 		private void ToggleResumePause()
 		{
 			switch (State)
@@ -294,6 +296,10 @@ namespace PlaylistManager.ViewModel.Presenters
 			}
 		}
 
+		/// <summary>
+		/// Start playing song & from playlist depending on shufflestate
+		/// If song is not set generate play now list & set current song
+		/// </summary>
 		private void Start()
 		{
 			State = PlayState.Playing;
@@ -317,22 +323,36 @@ namespace PlaylistManager.ViewModel.Presenters
 			TotalSeconds = audioPlayer.GetLengthInSeconds();
 		}
 
+		/// <summary>
+		/// Start playing selected song
+		/// calls Start() when list is generated & current song is set
+		/// Called when double click on song or when a song is selected & play is pressed
+		/// </summary>
+		/// <param name="_song"></param>
 		internal void Start(Song _song)
 		{
-			State = PlayState.Playing;
 			library.GenerateNowPlayingList(_song, shuffleEnabled);
 			CurrentSong = library.NowPlayingList.First();
 			Start();
 		}
 
+		/// <summary>
+		/// Start playing a list of selected songs
+		/// calls Start() when list is generated & current song is set
+		/// Called when multiple songs are selected & play is pressed
+		/// TODO list of songs
+		/// </summary>
+		/// <param name="_songs"></param>
 		internal void Start(List<Song> _songs)
 		{
-			State = PlayState.Playing;
 			library.GenerateNowPlayingList(_songs, shuffleEnabled);
 			CurrentSong = library.NowPlayingList.First();
 			Start();
 		}
 
+		/// <summary>
+		/// Continue playing
+		/// </summary>
 		private void Resume()
 		{
 			State = PlayState.Playing;
@@ -340,6 +360,9 @@ namespace PlaylistManager.ViewModel.Presenters
 			audioPlayer.Resume();
 		}
 
+		/// <summary>
+		/// Pause song
+		/// </summary>
 		private void Pause()
 		{
 			State = PlayState.Paused;
@@ -347,6 +370,10 @@ namespace PlaylistManager.ViewModel.Presenters
 			audioPlayer.Pause();
 		}
 
+		/// <summary>
+		/// Stop song
+		/// When stop is clicked or end of list is reached (without repeatmode)
+		/// </summary>
 		private void Stop()
 		{
 			Debug.WriteLine("Stop!");
@@ -364,6 +391,10 @@ namespace PlaylistManager.ViewModel.Presenters
 			Reset();
 		}
 
+		/// <summary>
+		/// Stop song before changing to a new song in the list
+		/// (Called when navigating to songs (next or prev))
+		/// </summary>
 		private void StopBetween()
 		{
 			Debug.WriteLine("Stop between!");
@@ -378,6 +409,10 @@ namespace PlaylistManager.ViewModel.Presenters
 			audioPlayer.Stop(_stopBetween: true);
 		}
 
+		/// <summary>
+		/// Next song in list if possible,
+		/// else stop
+		/// </summary>
 		public void Next()
 		{
 			Debug.WriteLine("Next");
@@ -400,11 +435,9 @@ namespace PlaylistManager.ViewModel.Presenters
 				if (RepeatMode == RepeatMode.Once)
 				{
 					Song s = CurrentSong;
-
 					StopBetween();
 					Start(s);
 				}
-
 
 				Stop();
 			}
@@ -413,6 +446,10 @@ namespace PlaylistManager.ViewModel.Presenters
 			Debug.WriteLine("Index: " + library.NowPlayingList.IndexOf(CurrentSong));
 		}
 
+		/// <summary>
+		/// Prev song in list if possible,
+		/// else stop
+		/// </summary>
 		private void Prev()
 		{
 			Debug.WriteLine("Prev");
@@ -439,6 +476,10 @@ namespace PlaylistManager.ViewModel.Presenters
 			Debug.WriteLine("Index: " + library.NowPlayingList.IndexOf(CurrentSong));
 		}
 
+		/// <summary>
+		/// Toggles between shuffle states
+		/// When shuffle changes, change playing now list depending of the shufflestate
+		/// </summary>
 		private void ToggleShuffle()
 		{
 			ShuffleEnabled = !ShuffleEnabled;
@@ -460,6 +501,9 @@ namespace PlaylistManager.ViewModel.Presenters
 			}
 		}
 
+		/// <summary>
+		/// Toggles between repeatmode states
+		/// </summary>
 		private void ToggleRepeat()
 		{
 			RepeatMode = (RepeatMode)repeatModeMap[RepeatMode];
@@ -474,14 +518,21 @@ namespace PlaylistManager.ViewModel.Presenters
 #endif
 		}
 
+		/// <summary>
+		/// Scroll throug song using songslider
+		/// </summary>
 		public void Seek()
 		{
 			audioPlayer.Seek(currentSeconds);
 		}
 
+		/// <summary>
+		/// Timer thread to update current seconds of the song
+		/// </summary>
+		/// <param name="_sender"></param>
+		/// <param name="_e"></param>
 		private void UpdateTimer_Elapsed(object _sender, ElapsedEventArgs _e)
 		{
-			
 			CurrentSeconds = audioPlayer.GetPositionInSeconds();
 			//Debug.WriteLine("Timer thread: " + Thread.CurrentThread.ManagedThreadId);
 		}
@@ -490,11 +541,17 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#region Volume controls
 
+		/// <summary>
+		/// Set volume
+		/// </summary>
 		public void SetVolume()
 		{
 			audioPlayer.SetVolume(volume, State == PlayState.Playing);
 		}
 
+		/// <summary>
+		/// Mute volume
+		/// </summary>
 		public void ToggleMute()
 		{
 			Debug.WriteLine("Mute");
@@ -507,6 +564,10 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#region Auxilary
 
+		/// <summary>
+		/// Checks if its possible to play a next song
+		/// </summary>
+		/// <returns></returns>
 		public bool HasNext()
 		{
 			if (RepeatMode == RepeatMode.Once) return false;
@@ -528,6 +589,10 @@ namespace PlaylistManager.ViewModel.Presenters
 			return false; //should never reach this
 		}
 
+		/// <summary>
+		/// Checks if its possible to play a prev song
+		/// </summary>
+		/// <returns></returns>
 		public bool HasPrev()
 		{
 			if (RepeatMode == RepeatMode.Once) return false;
@@ -549,6 +614,9 @@ namespace PlaylistManager.ViewModel.Presenters
 			return false; //should never reach this
 		}
 
+		/// <summary>
+		/// Resets properties when song stops or at the beginning
+		/// </summary>
 		private void Reset()
 		{
 			Title = string.Empty;
@@ -560,6 +628,10 @@ namespace PlaylistManager.ViewModel.Presenters
 			TotalSeconds = 0;
 		}
 
+		/// <summary>
+		/// Toggle between timer enabled true/false
+		/// Used when next song automatically needs to start with time in between
+		/// </summary>
 		public void ToggleTimer()
 		{
 			if (updateTimer != null)

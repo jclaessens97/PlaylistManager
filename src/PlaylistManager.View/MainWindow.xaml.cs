@@ -1,23 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using PlaylistManager.Model;
-using PlaylistManager.ViewModel;
 using PlaylistManager.ViewModel.Presenters;
 
 namespace PlaylistManager.View
@@ -27,34 +10,50 @@ namespace PlaylistManager.View
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private readonly AudioplayerPresenter audioplayerPresenter;
-		private readonly LibraryPresenter libraryPresenter;
-		private readonly SettingsPresenter settingsPresenter;
+		#region Attributes
+
+		private AudioplayerPresenter audioplayerPresenter;
+		private LibraryPresenter libraryPresenter;
+		private SettingsPresenter settingsPresenter;
+
+		#endregion
 
 		public MainWindow()
 		{
 			InitializeComponent();
 
-			//Set the presenter of the settings control
+			InitSettings();
+			InitAudioPlayer();
+			InitLibrary();
+		}
+
+		#region Init
+
+		private void InitSettings()
+		{
 			settingsPresenter = SettingsPresenter.Instance;
 			SettingsControl.DataContext = settingsPresenter;
+		}
 
-			//Set the presenter of the Audioplayer control
+		private void InitAudioPlayer()
+		{
 			audioplayerPresenter = new AudioplayerPresenter();
 			AudioPlayerControl.DataContext = audioplayerPresenter;
 			AudioPlayerControl.RegisterEvents();
 			AudioPlayerControl.LoadImplicits(SettingsPresenter.Instance);
+		}
 
-			//Set the presenter of the Library control
+		private void InitLibrary()
+		{
 			libraryPresenter = new LibraryPresenter();
 			LibraryControl.DataContext = libraryPresenter;
 			LibraryControl.LoadLibrary();
-			
-			//Set a reference in libraryPresenter to AudioplayerPresenter so you can access its methods (e.g. to start a song)
 			libraryPresenter.AudioplayerPresenter = audioplayerPresenter;
-
-
 		}
+
+		#endregion
+
+		#region Events
 
 		private void TabControl_OnSelectionChanged(object _sender, SelectionChangedEventArgs _e)
 		{
@@ -88,5 +87,7 @@ namespace PlaylistManager.View
 
 			settingsPresenter.SaveImplicitSettings();
 		}
+
+		#endregion
 	}
 }

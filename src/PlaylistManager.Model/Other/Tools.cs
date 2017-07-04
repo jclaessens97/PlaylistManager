@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+
 
 namespace PlaylistManager.Model.Other
 {
@@ -11,7 +9,7 @@ namespace PlaylistManager.Model.Other
 	/// </summary>
 	public static class Tools
 	{
-		public static string FormatDuration(TimeSpan _duration)
+		private static string FormatDuration(TimeSpan _duration)
 		{
 			var durationStr = _duration.ToString();
 

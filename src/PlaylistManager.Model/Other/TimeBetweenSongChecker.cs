@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+
 
 namespace PlaylistManager.Model.Other
 {
 	public class TimeBetweenSongChecker
 	{
 		private int invokeCount;
-		private readonly int maxCount;
+		private readonly int maxCount = 1;
 
-		public TimeBetweenSongChecker(int _count)
+		public TimeBetweenSongChecker()
 		{
 			invokeCount = 0;
-			maxCount = _count;
 		}
 
 		public void CheckTime(Object _stateInfo)

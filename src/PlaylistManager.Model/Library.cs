@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagLib.Flac;
 using PlaylistManager.Model.Properties;
 
@@ -56,6 +53,10 @@ namespace PlaylistManager.Model
 			LoadSongs();
 		}
 
+		/// <summary>
+		/// Load songs from folder (set in settings) into library
+		/// TODO: see how to do it async???
+		/// </summary>
 		public void LoadSongs()
 		{
 			this.Songs = new List<Song>();
@@ -122,6 +123,10 @@ namespace PlaylistManager.Model
 
 		#region NowPlayingList
 
+		/// <summary>
+		/// Generate random now playing list
+		/// </summary>
+		/// <param name="_shuffled">is shuffled or not</param>
 		public void GenerateNowPlayingList(bool _shuffled)
 		{
 			if (!_shuffled)
@@ -144,6 +149,11 @@ namespace PlaylistManager.Model
 			PrintPlayingNowList();
 		}
 
+		/// <summary>
+		/// Generate now playing list starting from song
+		/// </summary>
+		/// <param name="_song">song to start with</param>
+		/// <param name="_shuffled">is shuffled or not</param>
 		public void GenerateNowPlayingList(Song _song, bool _shuffled)
 		{
 			NowPlayingList = new List<Song>(Songs.Count);
@@ -174,6 +184,8 @@ namespace PlaylistManager.Model
 			}
 			else
 			{
+				//TODO: repeat once
+
 				Random rnd = new Random();
 
 				while (songsCopy.Count > 0)
@@ -187,6 +199,11 @@ namespace PlaylistManager.Model
 			PrintPlayingNowList();
 		}
 
+		/// <summary>
+		/// Generate now playing list from list of songs
+		/// </summary>
+		/// <param name="_songs">the list of songs</param>
+		/// <param name="_shuffled">is shuffled or not</param>
 		public void GenerateNowPlayingList(List<Song> _songs, bool _shuffled)
 		{
 			if (!_shuffled)

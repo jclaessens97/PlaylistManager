@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using PlaylistManager.Model;
 using PlaylistManager.ViewModel.Presenters;
 
@@ -24,14 +14,22 @@ namespace PlaylistManager.View.UserControls
     /// </summary>
     public partial class LibraryControl : UserControl
     {
+		#region Attributes
+
 	    private LibraryPresenter libraryPresenter;
-		private ICollectionView librarySongSource;
+	    private ICollectionView librarySongSource;
+
+		#endregion
 
 		public LibraryControl()
         {
             InitializeComponent();
 		}
 
+		/// <summary>
+		/// Fills grid with songs from library
+		/// Called after datacontext is set to librarypresenter
+		/// </summary>
 	    public void LoadLibrary()
 	    {
 			if (DataContext != null)
@@ -46,6 +44,12 @@ namespace PlaylistManager.View.UserControls
 		    }
 		}
 
+		/// <summary>
+		/// Method from CustomDataGrid.cs
+		/// Event fired after sorting is complete
+		/// </summary>
+		/// <param name="_sender"></param>
+		/// <param name="_e"></param>
 	    private void LibraryDataGrid_OnSorted(object _sender, RoutedEventArgs _e)
 	    {
 		    var sortedList = new ObservableCollection<Song>();

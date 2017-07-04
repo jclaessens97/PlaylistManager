@@ -1,25 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MaterialDesignThemes.Wpf;
-using PlaylistManager.ViewModel;
 using PlaylistManager.Model;
 using PlaylistManager.Model.Other;
-using PlaylistManager.ViewModel.Other;
 using PlaylistManager.ViewModel.Presenters;
 
 
@@ -32,8 +18,12 @@ namespace PlaylistManager.View.UserControls
 	/// </summary>
 	public partial class AudioPlayerControl : UserControl
 	{
+		#region Attributes
+
 		private AudioplayerPresenter audioplayerPresenter;
 		private SettingsPresenter settingsPresenter;
+
+		#endregion
 
 		public AudioPlayerControl()
 		{
@@ -71,6 +61,11 @@ namespace PlaylistManager.View.UserControls
 
 		#region PropertyChanged Events
 
+		/// <summary>
+		/// Called in constructor of the main window
+		/// After datacontext is set to the presenter
+		/// Registers all needed events to the methods below
+		/// </summary>
 		public void RegisterEvents()
 		{
 			audioplayerPresenter = DataContext as AudioplayerPresenter;
@@ -86,6 +81,11 @@ namespace PlaylistManager.View.UserControls
 			}
 		}
 
+		/// <summary>
+		/// Fired each time current seconds changes
+		/// </summary>
+		/// <param name="_sender"></param>
+		/// <param name="_e"></param>
 		private void OnCurrentSecondsChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is double)
@@ -98,7 +98,7 @@ namespace PlaylistManager.View.UserControls
 					int waitInMillis = (int) (settingsPresenter.TimeBetweenSongs * 1000);
 					Debug.WriteLine("Wait for " + waitInMillis + "ms");
 					var autoEvent = new AutoResetEvent(false);
-					var timeBetweenSongsChecker = new TimeBetweenSongChecker(1);
+					var timeBetweenSongsChecker = new TimeBetweenSongChecker();
 					var timer = new Timer(timeBetweenSongsChecker.CheckTime, autoEvent, waitInMillis, (int)(waitInMillis * 0.25));
 
 					autoEvent.WaitOne();
@@ -109,6 +109,12 @@ namespace PlaylistManager.View.UserControls
 				}
 			}
 		}
+
+		/// <summary>
+		/// Fired when song changes
+		/// </summary>
+		/// <param name="_sender"></param>
+		/// <param name="_e"></param>
 		private void OnSongChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is Song)
@@ -120,6 +126,13 @@ namespace PlaylistManager.View.UserControls
 				ToggleEnable(false);
 			}
 		}
+
+		/// <summary>
+		/// Fired when playstate changes
+		/// (Stopped, Paused, Playing)
+		/// </summary>
+		/// <param name="_sender"></param>
+		/// <param name="_e"></param>
 		private void OnStateChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is PlayState )
@@ -143,6 +156,13 @@ namespace PlaylistManager.View.UserControls
 				}
 			}
 		}
+
+		/// <summary>
+		/// Fired when shuffle state changes
+		/// (True, False)
+		/// </summary>
+		/// <param name="_sender"></param>
+		/// <param name="_e"></param>
 		private void OnShuffleChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is bool)
@@ -159,6 +179,13 @@ namespace PlaylistManager.View.UserControls
 				}
 			}
 		}
+
+		/// <summary>
+		/// Fired when repeatmode changes
+		/// (Off, Once, On)
+		/// </summary>
+		/// <param name="_sender"></param>
+		/// <param name="_e"></param>
 		private void OnRepeatChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is RepeatMode)
@@ -184,6 +211,12 @@ namespace PlaylistManager.View.UserControls
 				OnStateChanged(_sender, _e);
 			}
 		}
+
+		/// <summary>
+		/// Fired each time volume changes
+		/// </summary>
+		/// <param name="_sender"></param>
+		/// <param name="_e"></param>
 		private void OnVolumeChanged(object _sender, EventArgs _e)
 		{
 			if (_sender is float)
@@ -213,88 +246,53 @@ namespace PlaylistManager.View.UserControls
 
 		#region Auxilary
 
+		/// <summary>
+		/// Enables/disables all buttons according to state
+		/// </summary>
+		/// <param name="_state"></param>
 		private void ToggleEnable(bool _state)
 		{
-			//TODO: cleanup
-
-			if (btnStop.Dispatcher.CheckAccess())
-			{
-				btnStop.IsEnabled = _state;
-			}
-			else
-			{
-				btnStop.Dispatcher.Invoke(() => btnStop.IsEnabled = _state);
-			}
-
-			if (sliderTime.Dispatcher.CheckAccess())
-			{
-				sliderTime.IsEnabled = _state;
-			}
-			else
-			{
-				sliderTime.Dispatcher.Invoke(() => sliderTime.IsEnabled = _state);
-			}
-
-			if (btnVolume.Dispatcher.CheckAccess())
-			{
-				btnVolume.IsEnabled = _state;
-			}
-			else
-			{
-				btnVolume.Dispatcher.Invoke(() => btnVolume.IsEnabled = _state);
-			}
-
-			if (sliderVolume.Dispatcher.CheckAccess())
-			{
-				sliderVolume.IsEnabled = _state;
-			}
-			else
-			{
-				sliderVolume.Dispatcher.Invoke(() => sliderVolume.IsEnabled = _state);
-			}
+			ToggleEnableControl(btnStop, _state);
+			ToggleEnableControl(sliderTime, _state);
+			ToggleEnableControl(btnVolume, _state);
+			ToggleEnableControl(sliderVolume, _state);
 
 			if (audioplayerPresenter != null && audioplayerPresenter.CurrentSong != null)
 			{
-				if (btnPrev.Dispatcher.CheckAccess())
-				{
-					btnPrev.IsEnabled = audioplayerPresenter.HasPrev();
-				}
-				else
-				{
-					btnPrev.Dispatcher.Invoke(() => btnPrev.IsEnabled = audioplayerPresenter.HasPrev());
-				}
-
-				if (btnNext.Dispatcher.CheckAccess())
-				{
-					btnNext.IsEnabled = audioplayerPresenter.HasNext();
-				}
-				else
-				{
-					btnNext.Dispatcher.Invoke(() => btnNext.IsEnabled = audioplayerPresenter.HasNext());
-				}
+				ToggleEnableControl(btnPrev, audioplayerPresenter.HasPrev());
+				ToggleEnableControl(btnNext, audioplayerPresenter.HasNext());
 			}
 			else
 			{
-				if (btnPrev.Dispatcher.CheckAccess())
-				{
-					btnPrev.IsEnabled = false;
-				}
-				else
-				{
-					btnPrev.Dispatcher.Invoke(() => btnPrev.IsEnabled = false);
-				}
-
-				if (btnNext.Dispatcher.CheckAccess())
-				{
-					btnNext.IsEnabled = false;
-				}
-				else
-				{
-					btnNext.Dispatcher.Invoke(() => btnNext.IsEnabled = false);
-				}
+				ToggleEnableControl(btnPrev, false);
+				ToggleEnableControl(btnNext, false);
 			}
 		}
 
+		/// <summary>
+		/// Auxilary method to change the enabled attribute of the control
+		/// First checks if the thread has access to the control, 
+		/// if not, invoke it from there
+		/// </summary>
+		/// <param name="_control"></param>
+		/// <param name="_state"></param>
+		private void ToggleEnableControl(Control _control, bool _state)
+		{
+			if (_control.Dispatcher.CheckAccess())
+			{
+				_control.IsEnabled = _state;
+			}
+			else
+			{
+				_control.Dispatcher.Invoke(() => _control.IsEnabled = false);
+			}
+		}
+
+		/// <summary>
+		/// Changes icon (source) to specified icon (target)
+		/// </summary>
+		/// <param name="_icon">(source)</param>
+		/// <param name="_iconKind">(target)</param>
 		private void ChangeIcon(PackIcon _icon, PackIconKind _iconKind)
 		{
 			if (_icon.Dispatcher.CheckAccess())
@@ -311,6 +309,15 @@ namespace PlaylistManager.View.UserControls
 
 		#region Other
 
+		/// <summary>
+		/// Load implicit settings when starting window
+		/// Called in constructor of main window
+		/// Implicit settings:
+		///		- Volume
+		///		- ShuffleEnabled
+		///		- RepeatMode
+		/// </summary>
+		/// <param name="_settingsPresenter"></param>
 		public void LoadImplicits(SettingsPresenter _settingsPresenter)
 		{
 			this.settingsPresenter = _settingsPresenter;
@@ -323,7 +330,6 @@ namespace PlaylistManager.View.UserControls
 				presenter.RepeatMode = _settingsPresenter.RepeatMode;
 			}
 		}
-
 
 		#endregion
 	}

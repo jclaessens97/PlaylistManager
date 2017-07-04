@@ -1,5 +1,4 @@
-﻿using System;
-using NAudio.Wave;
+﻿using NAudio.Wave;
 using PlaylistManager.Model.Extensions;
 
 namespace PlaylistManager.Model
@@ -9,12 +8,16 @@ namespace PlaylistManager.Model
 	/// </summary>
 	public class AudioPlayer
 	{
+		#region Attributes
+
 		private AudioFileReader audioFileReader;
 		private IWavePlayer wavePlayer;
 
 		private float volume;
 		private float lastVolumeLevel = -1f;
 		private bool isMuted;
+
+		#endregion
 
 		#region Navigation actions
 
@@ -55,6 +58,10 @@ namespace PlaylistManager.Model
 			Play(_song);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="_stopBetween">Check if stop is called in next method</param>
 		public void Stop(bool _stopBetween = false)
 		{
 			wavePlayer?.Stop();
@@ -67,8 +74,9 @@ namespace PlaylistManager.Model
 
 			if (wavePlayer != null)
 			{
-				if (!_stopBetween)
-					wavePlayer.Dispose();
+				//TODO: fix dispose of wavePlayer
+				//if (!_stopBetween)
+				//wavePlayer.Dispose();
 				wavePlayer = null;
 			}
 		}
@@ -129,15 +137,6 @@ namespace PlaylistManager.Model
 			audioFileReader?.SetPosition(_position);
 		}
 
-		public bool IsFinished()
-		{
-			if (audioFileReader != null)
-				return audioFileReader.CurrentTime == audioFileReader.TotalTime;
-
-			return false;
-		}
-
 		#endregion
-
 	}
 }

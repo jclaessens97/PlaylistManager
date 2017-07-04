@@ -12,6 +12,9 @@ using PlaylistManager.ViewModel.Other;
 
 namespace PlaylistManager.ViewModel.Presenters
 {
+	/// <summary>
+	/// Class that interacts between view & model
+	/// </summary>
 	public class LibraryPresenter : ObservableObject
 	{
 		#region Attributes
@@ -63,7 +66,6 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#endregion
 
-
 		public LibraryPresenter()
 		{	
 			library = Library.Instance;
@@ -81,6 +83,11 @@ namespace PlaylistManager.ViewModel.Presenters
 			AudioplayerPresenter.Start(_selectedSong);
 		}
 
+		/// <summary>
+		/// If folder is changed, reload songs
+		/// </summary>
+		/// <param name="_sender"></param>
+		/// <param name="_e"></param>
 		private void OnFolderChanged(object _sender, EventArgs _e)
 		{
 			//reload songs

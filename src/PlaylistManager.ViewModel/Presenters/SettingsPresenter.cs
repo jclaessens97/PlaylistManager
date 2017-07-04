@@ -12,6 +12,9 @@ using Settings = PlaylistManager.Model.Properties.Settings;
 
 namespace PlaylistManager.ViewModel.Presenters
 {
+	/// <summary>
+	/// Class that interacts between view & model
+	/// </summary>
 	public class SettingsPresenter : ObservableObject
 	{
 		#region Attributes
@@ -142,6 +145,9 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#region Save
 
+		/// <summary>
+		/// Saves explicit settings (set in settings tab)
+		/// </summary>
 		private void SaveExplicitSettings()
 		{
 			settings.Folder = Folder;
@@ -152,6 +158,9 @@ namespace PlaylistManager.ViewModel.Presenters
 			Debug.WriteLine("Settings saved!");
 		}
 
+		/// <summary>
+		/// Saves implicit settings (set when window closes)
+		/// </summary>
 		public void SaveImplicitSettings()
 		{
 			settings.Volume = Volume;
@@ -166,6 +175,9 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#region Load
 
+		/// <summary>
+		/// Load all settings
+		/// </summary>
 		private void LoadSettings()
 		{
 			//Implicit settings
@@ -179,6 +191,9 @@ namespace PlaylistManager.ViewModel.Presenters
 			this.TimeBetweenSongs = settings.TimeBetweenSongs;
 		}
 
+		/// <summary>
+		/// Reset to default
+		/// </summary>
 		private void LoadDefaultSettings()
 		{
 			this.Folder = DefaultSettings.Folder;

@@ -4,8 +4,8 @@ using NAudio.Wave;
 namespace PlaylistManager.Model.Extensions
 {
 	/// <summary>
-	///     Extension methods to navigate trough a song in a proper way (extension on the AudioFileReader object in
-	///     AudioPlayer)
+	///     Extension methods to navigate trough a song in a proper way 
+	///		(extension on the AudioFileReader object in AudioPlayer)
 	/// </summary>
 	public static class WaveStreamExtensions
 	{
