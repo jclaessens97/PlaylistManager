@@ -55,6 +55,8 @@ namespace PlaylistManager.ViewModel.Presenters
 			}
 		}
 
+		public bool SettingsChanged { get; set; }
+
 		//Implicit settings
 		public float Volume
 		{
@@ -92,7 +94,6 @@ namespace PlaylistManager.ViewModel.Presenters
 			{
 				folder = value;
 				RaisePropertyChangedEvent(nameof(Folder));
-				OnFolderChanged(EventArgs.Empty);
 			}
 		}
 		public bool IncludeSubdirs
@@ -123,18 +124,6 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		#endregion
 
-		#region Events
-
-		public EventHandler FolderChanged;
-
-		private void OnFolderChanged(EventArgs _e)
-		{
-			EventHandler handler = FolderChanged;
-			handler?.Invoke(Folder, _e);
-		}
-		
-		#endregion
-
 		private SettingsPresenter()
 		{
 			settings = Settings.Default;
@@ -156,6 +145,8 @@ namespace PlaylistManager.ViewModel.Presenters
 
 			settings.Save();
 			Debug.WriteLine("Settings saved!");
+
+			SettingsChanged = true;
 		}
 
 		/// <summary>

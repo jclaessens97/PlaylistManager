@@ -55,7 +55,6 @@ namespace PlaylistManager.Model
 
 		/// <summary>
 		/// Load songs from folder (set in settings) into library
-		/// TODO: see how to do it async???
 		/// </summary>
 		public void LoadSongs()
 		{

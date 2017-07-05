@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using PlaylistManager.ViewModel.Presenters;
@@ -64,17 +65,22 @@ namespace PlaylistManager.View
 				//Library tab
 				case 0:
 					libraryBottomBar.Visibility = Visibility.Visible;
-					//settingsBottomBar.Visibility = Visibility.Collapsed;
+
+					if (settingsPresenter.SettingsChanged)
+					{
+						libraryPresenter.ReloadSongs();
+						LibraryControl.LoadLibrary();
+						settingsPresenter.SettingsChanged = false;
+					}
+
 					break;
 				//Playlists tab
 				case 1:
 					libraryBottomBar.Visibility = Visibility.Collapsed;
-					//settingsBottomBar.Visibility = Visibility.Collapsed;
 					break;
 				//Settings tab
 				case 2:
 					libraryBottomBar.Visibility = Visibility.Collapsed;
-					//settingsBottomBar.Visibility = Visibility.Visible;
 					break;
 			}
 		}

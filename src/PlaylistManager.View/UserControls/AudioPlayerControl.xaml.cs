@@ -68,9 +68,7 @@ namespace PlaylistManager.View.UserControls
 		/// </summary>
 		public void RegisterEvents()
 		{
-			audioplayerPresenter = DataContext as AudioplayerPresenter;
-
-			if (audioplayerPresenter != null)
+			if (DataContext is AudioplayerPresenter audioplayerPresenter)
 			{
 				audioplayerPresenter.CurrentSecondsChanged += OnCurrentSecondsChanged;
 				audioplayerPresenter.SongChanged += OnSongChanged;
@@ -135,10 +133,8 @@ namespace PlaylistManager.View.UserControls
 		/// <param name="_e"></param>
 		private void OnStateChanged(object _sender, EventArgs _e)
 		{
-			if (_sender is PlayState )
+			if (_sender is PlayState state)
 			{
-				PlayState state = (PlayState) _sender;
-
 				switch (state)
 				{
 					case PlayState.Stopped:
@@ -165,10 +161,8 @@ namespace PlaylistManager.View.UserControls
 		/// <param name="_e"></param>
 		private void OnShuffleChanged(object _sender, EventArgs _e)
 		{
-			if (_sender is bool)
+			if (_sender is bool shuffleEnabled)
 			{
-				bool shuffleEnabled = (bool)_sender;
-
 				if (shuffleEnabled)
 				{
 					ShuffleIcon.Kind = PackIconKind.Shuffle;
@@ -188,10 +182,8 @@ namespace PlaylistManager.View.UserControls
 		/// <param name="_e"></param>
 		private void OnRepeatChanged(object _sender, EventArgs _e)
 		{
-			if (_sender is RepeatMode)
+			if (_sender is RepeatMode mode)
 			{
-				RepeatMode mode = (RepeatMode)_sender;
-
 				switch (mode)
 				{
 					case RepeatMode.Off:
@@ -219,10 +211,8 @@ namespace PlaylistManager.View.UserControls
 		/// <param name="_e"></param>
 		private void OnVolumeChanged(object _sender, EventArgs _e)
 		{
-			if (_sender is float)
+			if (_sender is float volume)
 			{
-				float volume = (float) _sender;
-
 				if (volume < 1)
 				{
 					VolumeIcon.Kind = PackIconKind.VolumeOff;
@@ -257,7 +247,7 @@ namespace PlaylistManager.View.UserControls
 			ToggleEnableControl(btnVolume, _state);
 			ToggleEnableControl(sliderVolume, _state);
 
-			if (audioplayerPresenter != null && audioplayerPresenter.CurrentSong != null)
+			if (audioplayerPresenter?.CurrentSong != null)
 			{
 				ToggleEnableControl(btnPrev, audioplayerPresenter.HasPrev());
 				ToggleEnableControl(btnNext, audioplayerPresenter.HasNext());
@@ -321,9 +311,8 @@ namespace PlaylistManager.View.UserControls
 		public void LoadImplicits(SettingsPresenter _settingsPresenter)
 		{
 			this.settingsPresenter = _settingsPresenter;
-			var presenter = DataContext as AudioplayerPresenter;
 
-			if (presenter != null)
+			if (DataContext is AudioplayerPresenter presenter)
 			{
 				presenter.Volume = _settingsPresenter.Volume;
 				presenter.ShuffleEnabled = _settingsPresenter.ShuffleEnabled;

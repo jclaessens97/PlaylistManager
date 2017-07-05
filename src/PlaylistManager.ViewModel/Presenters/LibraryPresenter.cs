@@ -72,8 +72,6 @@ namespace PlaylistManager.ViewModel.Presenters
 			settings = SettingsPresenter.Instance;
 
 			LoadSongs();
-
-			settings.FolderChanged += OnFolderChanged;
 		}
 
 		#region LibraryGrid Events
@@ -83,18 +81,6 @@ namespace PlaylistManager.ViewModel.Presenters
 			AudioplayerPresenter.Start(_selectedSong);
 		}
 
-		/// <summary>
-		/// If folder is changed, reload songs
-		/// </summary>
-		/// <param name="_sender"></param>
-		/// <param name="_e"></param>
-		private void OnFolderChanged(object _sender, EventArgs _e)
-		{
-			//reload songs
-			library.LoadSongs();
-			LoadSongs();
-		}
-
 		#endregion
 
 		#region Auxilary
@@ -102,6 +88,12 @@ namespace PlaylistManager.ViewModel.Presenters
 		private void LoadSongs()
 		{
 			SongsInLibrary = new ObservableCollection<Song>(library.Songs);
+		}
+
+		public void ReloadSongs()
+		{
+			library.LoadSongs();
+			this.LoadSongs();
 		}
 
 		#endregion

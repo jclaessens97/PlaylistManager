@@ -32,16 +32,12 @@ namespace PlaylistManager.View.UserControls
 		/// </summary>
 	    public void LoadLibrary()
 	    {
-			if (DataContext != null)
+		    if (DataContext is LibraryPresenter libraryPresenter)
 		    {
-			    libraryPresenter = DataContext as LibraryPresenter;
-		    }
-
-		    if (libraryPresenter != null)
-		    {
-			    librarySongSource = CollectionViewSource.GetDefaultView(libraryPresenter.SongsInLibrary);
+			    this.libraryPresenter = libraryPresenter;
+				librarySongSource = CollectionViewSource.GetDefaultView(libraryPresenter.SongsInLibrary);
 			    libraryDataGrid.ItemsSource = librarySongSource;
-		    }
+			}
 		}
 
 		/// <summary>
