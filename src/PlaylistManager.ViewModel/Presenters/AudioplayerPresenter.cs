@@ -318,6 +318,7 @@ namespace PlaylistManager.ViewModel.Presenters
 			updateTimer.Elapsed += UpdateTimer_Elapsed;
 			updateTimer.Start();
 
+			CurrentSong.IsPlaying = true;
 			audioPlayer.SetVolume(volume, false);
 			audioPlayer.Play(CurrentSong);
 			TotalSeconds = audioPlayer.GetLengthInSeconds();
@@ -331,6 +332,10 @@ namespace PlaylistManager.ViewModel.Presenters
 		/// <param name="_song"></param>
 		internal void Start(Song _song)
 		{
+			if (CurrentSong != null && State == PlayState.Playing)
+			{
+				Stop();
+			}
 			library.GenerateNowPlayingList(_song, shuffleEnabled);
 			CurrentSong = library.NowPlayingList.First();
 			Start();
@@ -381,6 +386,8 @@ namespace PlaylistManager.ViewModel.Presenters
 			if (State == PlayState.Stopped) return;
 			State = PlayState.Stopped;
 
+			CurrentSong.IsPlaying = false;
+
 			updateTimer.Stop();
 			updateTimer.Dispose();
 			updateTimer = null;
@@ -405,7 +412,9 @@ namespace PlaylistManager.ViewModel.Presenters
 			updateTimer.Dispose();
 			updateTimer = null;
 
+			CurrentSong.IsPlaying = false;
 			CurrentSong = null;
+
 			audioPlayer.Stop(_stopBetween: true);
 		}
 

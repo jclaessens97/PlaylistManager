@@ -51,20 +51,19 @@
                     <Setter Property="FontWeight" Value="Regular" />
                 </Style>
             </DataGrid.CellStyle>
-            <!--TODO: add is playing icon 
-                        <DataGridTemplateColumn>
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Image Name="IsPlayingImage"/>
-                                    <DataTemplate.Triggers>
-                                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                                            <Setter TargetName="IsPlayingImage" Property="Source" Value="/Images/speaker_33.png" />
-                                        </DataTrigger>
-                                    </DataTemplate.Triggers>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>-->
             <DataGrid.Columns>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <materialDesign:PackIcon x:Name="IsPlayingIcon" Kind="VolumeLow" Visibility="Hidden" />
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                    <Setter TargetName="IsPlayingIcon" Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <materialDesign:MaterialDataGridTextColumn x:Name="TitleColumn"
                                                            Binding="{Binding Title}"
                                                            Header="Title"                                                        
