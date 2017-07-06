@@ -24,13 +24,15 @@ namespace PlaylistManager.ViewModel.Presenters
 
 		private readonly Settings settings;
 
+		private bool settingsChanged;
+
 		private float volume;
 		private bool shuffleEnabled;
 		private RepeatMode repeatMode;
 
 		private string folder;
 		private bool includeSubdirs;
-		private float timeBetweenSongs;
+		private double timeBetweenSongs;
 
 		#endregion
 
@@ -55,7 +57,18 @@ namespace PlaylistManager.ViewModel.Presenters
 			}
 		}
 
-		public bool SettingsChanged { get; set; }
+		/// <summary>
+		/// True if settings are changed while not saved
+		/// False if settings are not changed or settings are changed & saved
+		/// </summary>
+		public bool SettingsChanged {
+			get => settingsChanged;
+			set
+			{
+				settingsChanged = value;
+				RaisePropertyChangedEvent(nameof(SettingsChanged));
+			}
+		}
 
 		//Implicit settings
 		public float Volume
@@ -105,7 +118,7 @@ namespace PlaylistManager.ViewModel.Presenters
 				RaisePropertyChangedEvent(nameof(includeSubdirs));
 			}
 		}
-		public float TimeBetweenSongs
+		public double TimeBetweenSongs
 		{
 			get => timeBetweenSongs;
 			set
@@ -144,9 +157,9 @@ namespace PlaylistManager.ViewModel.Presenters
 			settings.TimeBetweenSongs = TimeBetweenSongs;
 
 			settings.Save();
-			Debug.WriteLine("Settings saved!");
+			SettingsChanged = false;
 
-			SettingsChanged = true;
+			Debug.WriteLine("Settings saved!");
 		}
 
 		/// <summary>

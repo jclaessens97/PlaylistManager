@@ -8,7 +8,7 @@
     <Setting Name="IncludeSubdirs" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="TimeBetweenSongs" Type="System.Single" Scope="User">
+    <Setting Name="TimeBetweenSongs" Type="System.Double" Scope="User">
       <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="Volume" Type="System.Single" Scope="User">

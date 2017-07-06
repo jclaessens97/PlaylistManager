@@ -50,9 +50,9 @@ namespace PlaylistManager.Model.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public float TimeBetweenSongs {
+        public double TimeBetweenSongs {
             get {
-                return ((float)(this["TimeBetweenSongs"]));
+                return ((double)(this["TimeBetweenSongs"]));
             }
             set {
                 this["TimeBetweenSongs"] = value;

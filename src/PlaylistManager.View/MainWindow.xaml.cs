@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using PlaylistManager.ViewModel.Presenters;
 
 namespace PlaylistManager.View
@@ -58,30 +59,35 @@ namespace PlaylistManager.View
 
 		private void TabControl_OnSelectionChanged(object _sender, SelectionChangedEventArgs _e)
 		{
-			TabControl tabControl = _sender as TabControl;
-
-			switch (tabControl.SelectedIndex)
+			if (_sender is TabControl tabControl)
 			{
-				//Library tab
-				case 0:
-					libraryBottomBar.Visibility = Visibility.Visible;
+				//Switch tabs
+				switch (tabControl.SelectedIndex)
+				{
+					//Library tab
+					case 0:
+						libraryBottomBar.Visibility = Visibility.Visible;
 
-					if (settingsPresenter.SettingsChanged)
-					{
-						libraryPresenter.ReloadSongs();
-						LibraryControl.LoadLibrary();
-						settingsPresenter.SettingsChanged = false;
-					}
+						if (settingsPresenter.SettingsChanged)
+						{
+							libraryPresenter.ReloadSongs();
+							LibraryControl.LoadLibrary();
+							settingsPresenter.SettingsChanged = false;
+						}
 
-					break;
-				//Playlists tab
-				case 1:
-					libraryBottomBar.Visibility = Visibility.Collapsed;
-					break;
-				//Settings tab
-				case 2:
-					libraryBottomBar.Visibility = Visibility.Collapsed;
-					break;
+						SettingsControl.StopValidationTimer();
+						break;
+					//Playlists tab
+					case 1:
+						libraryBottomBar.Visibility = Visibility.Collapsed;
+						SettingsControl.StopValidationTimer();
+						break;
+					//Settings tab
+					case 2:
+						libraryBottomBar.Visibility = Visibility.Collapsed;
+						SettingsControl.StartValidationTimer();
+						break;
+				}
 			}
 		}
 

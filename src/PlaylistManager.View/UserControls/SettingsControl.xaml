@@ -49,8 +49,8 @@
                     Margin="5,8"
                     FontSize="12"
                     materialDesign:HintAssist.Hint="Fill in path to your music folder"
-                    Text="{Binding Folder}"
-                    LostFocus="TbFolder_OnLostFocus"/>
+                    Text="{Binding Folder}" 
+                    IsReadOnly="True"/>
         <Button x:Name="btnBrowseFolder"
                 Foreground="{StaticResource PrimaryHueDarkBrush}"
                 Grid.Row="0" Grid.Column="2"
@@ -62,7 +62,8 @@
             Browse...
         </Button>
 
-        <CheckBox Grid.Row="1" Grid.Column="1"
+        <CheckBox   x:Name="cbSubdirs"
+                    Grid.Row="1" Grid.Column="1"
                     Style="{StaticResource MaterialDesignCheckBox}"
                     FontSize="12"
                     VerticalAlignment="Top"
@@ -87,7 +88,8 @@
                         Foreground="White">
                 Light
             </TextBlock>
-            <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}" 
+            <ToggleButton x:Name="toggleTheme"
+                          Style="{StaticResource MaterialDesignSwitchToggleButton}" 
                           IsChecked="True"
                           Foreground="{StaticResource SecondaryAccentBrush}"
                           Background="{StaticResource SecondaryAccentBrush}"
@@ -107,16 +109,17 @@
                         Foreground="White">
                 Time between songs:
             </TextBlock>
-            <Slider x:Name="settingsSliderTimeBetween"
+            <Slider x:Name="sliderTimeBetweenSongs"
                     VerticalAlignment="Center" 
                     Foreground="{StaticResource SecondaryAccentBrush}"
                     Maximum="10" Value="{Binding TimeBetweenSongs, UpdateSourceTrigger=PropertyChanged}"
                     Margin="5"
                     Width="100"/>
-            <TextBox x:Name="settingsTextBoxTimeBetween"
+            <TextBox x:Name="tbTimeBetweenSongs"
                      VerticalAlignment="Center"
                      Margin="5"
                      Width="55"
+                     IsReadOnly="True"
                      Text="{Binding TimeBetweenSongs, StringFormat=N2}">
             </TextBox>
         </StackPanel>
@@ -129,17 +132,21 @@
             </Grid.ColumnDefinitions>
 
             <!--Savebutton-->
-            <Button Grid.Column="0"
+            <Button x:Name="btnSave"
+                    Grid.Column="0"
                     Width="75"
                     Style="{DynamicResource MaterialDesignRaisedButton}"
                     HorizontalAlignment="Right"
                     Margin="5"
-                    Command="{Binding SaveCommand}">
+                    Command="{Binding SaveCommand}"
+                    IsEnabled="{Binding SettingsChanged}"
+                    Click="BtnSave_OnClick">
                 Save
             </Button>
 
             <!--DefaultButton-->
-            <Button Grid.Column="1"
+            <Button x:Name="btnDefaults"
+                    Grid.Column="1"
                     Width="140"
                     Style="{DynamicResource MaterialDesignRaisedButton}"
                     HorizontalAlignment="Left"

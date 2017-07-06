@@ -116,20 +116,6 @@
                                  GroupName="LibraryMode"
                                  Content="Edit mode" />
                 </StackPanel>
-
-<!--                <StackPanel x:Name="settingsBottomBar"-->
-<!--                            Orientation="Horizontal"-->
-<!--                            Visibility="Collapsed"-->
-<!--                            >-->
-<!--                    <Button x:Name="btnSettingsSave"-->
-<!--                            Style="{StaticResource MaterialDesignRaisedAccentButton}"-->
-<!--                            Foreground="{StaticResource PrimaryHueDarkBrush}"-->
-<!--                            IsEnabled="False"-->
-<!--                            Margin="8">-->
-<!--                        Save-->
-<!--                    </Button>-->
-<!--                </StackPanel>-->
-
             </StackPanel>
         </Grid>
     </DockPanel>
