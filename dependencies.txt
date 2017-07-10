@@ -1,0 +1,14 @@
+[Model]
+https://www.nuget.org/packages/NAudio/
+https://www.nuget.org/packages/taglib/2.1.0
+
+[ViewModel]
+PlaylistManager.Model
+https://www.nuget.org/packages/MaterialDesignThemes/2.3.0.823
+
+
+[View]
+https://www.nuget.org/packages/MaterialDesignThemes/2.3.0.823
+https://www.nuget.org/packages/System.Windows.Interactivity.WPF/
+https://www.nuget.org/packages/MicrosoftExpressionInteractions/
+PlaylistManager.ViewModel
