@@ -54,7 +54,6 @@
     <Compile Include="Other\DefaultSettings.cs" />
     <Compile Include="Other\Globals.cs" />
     <Compile Include="Library.cs" />
-    <Compile Include="Other\ObservableObject.cs" />
     <Compile Include="Other\TimeBetweenSongChecker.cs" />
     <Compile Include="Other\Tools.cs" />
     <Compile Include="Extensions\WaveStreamExtensions.cs" />

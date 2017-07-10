@@ -1,105 +1,87 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Deployment.Application;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using PlaylistManager.ViewModel.Presenters;
+using PlaylistManager.ViewModel.Interfaces;
+using PlaylistManager.ViewModel.ViewModels;
 
 namespace PlaylistManager.View
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class MainWindow : Window, IMainWindow
 	{
-		#region Attributes
+        #region Attributes
 
-		private AudioplayerPresenter audioplayerPresenter;
-		private LibraryPresenter libraryPresenter;
-		private SettingsPresenter settingsPresenter;
+	    private readonly string applicationName = "PlaylistManager";
+	    private Version applicationVersion()
+	    {
+	        try
+	        {
+	            return ApplicationDeployment.CurrentDeployment.CurrentVersion;
+	        }
+	        catch
+	        {
+	            return Assembly.GetExecutingAssembly().GetName().Version;
+	        }
+	    }
 
-		#endregion
+        #endregion
 
-		public MainWindow()
+        public MainWindow()
 		{
 			InitializeComponent();
 
-			InitSettings();
-			InitAudioPlayer();
-			InitLibrary();
+		    DataContext = new MainWindowViewModel();
+            (DataContext as MainWindowViewModel).MainWindow = this;
+
+            Title = $"{applicationName} - v{applicationVersion()}";
 		}
 
-		#region Init
+        #region GUI
 
-		private void InitSettings()
-		{
-			settingsPresenter = SettingsPresenter.Instance;
-			SettingsControl.DataContext = settingsPresenter;
-		}
+	    /// <summary>
+	    /// Changes bottombar according to selected tab index
+	    /// </summary>
+	    /// <param name="_tabIndex">Selected Tab Index</param>
+	    public void SetBottomBar(int _tabIndex)
+	    {
+	        switch (_tabIndex)
+	        {
+	            //library tab selected
+	            case 0:
+	                LibraryBottomBar.Visibility = Visibility.Visible;
+                    SettingsControlViewModel.Instance.StopValidationTimer();
 
-		private void InitAudioPlayer()
-		{
-			audioplayerPresenter = new AudioplayerPresenter();
-			AudioPlayerControl.DataContext = audioplayerPresenter;
-			AudioPlayerControl.RegisterEvents();
-			AudioPlayerControl.LoadImplicits(SettingsPresenter.Instance);
-		}
+                    //TODO: reload on save instead of tabswitch
+	                //if (SettingsControlViewModel.Instance.SettingsChanged)
+	                //{
+	                    //libraryPresenter.ReloadSongs();
+	                    //LibraryControl.LoadLibrary();
+	                    //settingsPresenter.SettingsChanged = false;
+                    //}
+                    break;
 
-		private void InitLibrary()
-		{
-			libraryPresenter = new LibraryPresenter();
-			LibraryControl.DataContext = libraryPresenter;
-			LibraryControl.LoadLibrary();
-			libraryPresenter.AudioplayerPresenter = audioplayerPresenter;
-		}
+	            //playlists tab selected
+	            case 1:
+	                LibraryBottomBar.Visibility = Visibility.Collapsed;
+	                SettingsControlViewModel.Instance.StopValidationTimer();
+                    break;
 
-		#endregion
 
-		#region Events
+	            //settings tab selected
+	            case 2:
+	                LibraryBottomBar.Visibility = Visibility.Collapsed;
+	                SettingsControlViewModel.Instance.StartValidationTimer();
+                    break;
+	        }
+	    }
 
-		private void TabControl_OnSelectionChanged(object _sender, SelectionChangedEventArgs _e)
-		{
-			if (_sender is TabControl tabControl)
-			{
-				//Switch tabs
-				switch (tabControl.SelectedIndex)
-				{
-					//Library tab
-					case 0:
-						libraryBottomBar.Visibility = Visibility.Visible;
-
-						if (settingsPresenter.SettingsChanged)
-						{
-							libraryPresenter.ReloadSongs();
-							LibraryControl.LoadLibrary();
-							settingsPresenter.SettingsChanged = false;
-						}
-
-						SettingsControl.StopValidationTimer();
-						break;
-					//Playlists tab
-					case 1:
-						libraryBottomBar.Visibility = Visibility.Collapsed;
-						SettingsControl.StopValidationTimer();
-						break;
-					//Settings tab
-					case 2:
-						libraryBottomBar.Visibility = Visibility.Collapsed;
-						SettingsControl.StartValidationTimer();
-						break;
-				}
-			}
-		}
-
-		private void MainWindow_OnClosing(object _sender, CancelEventArgs _e)
-		{
-			settingsPresenter.Volume = audioplayerPresenter.Volume;
-			settingsPresenter.ShuffleEnabled = audioplayerPresenter.ShuffleEnabled;
-			settingsPresenter.RepeatMode = audioplayerPresenter.RepeatMode;
-
-			settingsPresenter.SaveImplicitSettings();
-		}
-
-		#endregion
-	}
+        #endregion
+    }
 }

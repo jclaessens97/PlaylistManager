@@ -9,10 +9,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:PlaylistManager.View"
-        xmlns:custom="clr-namespace:PlaylistManager.View.Custom"
+        xmlns:viewModel="clr-namespace:PlaylistManager.ViewModel;assembly=PlaylistManager.ViewModel"
         xmlns:usercontrols="clr-namespace:PlaylistManager.View.UserControls"
+        xmlns:custom="clr-namespace:PlaylistManager.View.Custom"
         xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -23,29 +25,28 @@
         
         Background="{DynamicResource MaterialDesignDarkBackground}"
         
-        Title="PlaylistManager v0.1" 
         MinHeight="400"
         MinWidth="525"
         WindowStartupLocation="CenterScreen"
-        WindowState="Maximized"
-        
-        Closing="MainWindow_OnClosing">
+        WindowState="Maximized">
 
     <Window.Resources>
-
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/ResourceDictionaries/CustomResourceDictionary.xaml" />
-
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-
     </Window.Resources>
 
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding CloseCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <DockPanel>
         <Menu IsMainMenu="True" DockPanel.Dock="Top">
@@ -64,10 +65,6 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <!--<ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="1*" />-->
-            </Grid.ColumnDefinitions>
 
             <usercontrols:AudioPlayerControl x:Name="AudioPlayerControl" 
                                        HorizontalAlignment="Stretch" VerticalAlignment="Top" 
@@ -77,22 +74,20 @@
             <TabControl x:Name="TabControl"
                         Grid.Row="1" Grid.ColumnSpan="2"
                         Background="Transparent"
-                        SelectionChanged="TabControl_OnSelectionChanged">
-
+                        SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+                
                 <TabItem Header="Library">
                     
                     <!--TODO: only enable edit when edit mode is checked -->
                     <usercontrols:LibraryControl x:Name="LibraryControl"/>
                     
                 </TabItem>
-
                 <TabItem Header="Playlists">
 
 
                 </TabItem>
-
                 <TabItem Header="Settings">
-
+                    
                     <usercontrols:SettingsControl x:Name="SettingsControl" />
                     
                 </TabItem>
@@ -102,7 +97,7 @@
                         Background="{DynamicResource PrimaryHueDarkBrush}"
                         Orientation="Horizontal">
 
-                <StackPanel x:Name="libraryBottomBar"
+                <StackPanel x:Name="LibraryBottomBar"
                             Orientation="Horizontal">
                     <RadioButton Margin="8 0 8 5"
                                  VerticalAlignment="Center"

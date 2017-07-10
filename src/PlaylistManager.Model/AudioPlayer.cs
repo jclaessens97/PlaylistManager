@@ -1,10 +1,11 @@
 ﻿using NAudio.Wave;
 using PlaylistManager.Model.Extensions;
 
+
 namespace PlaylistManager.Model
 {
 	/// <summary>
-	///     Backend class that interacts with NAudio classes and handles the media player methods
+	/// Backend class that interacts with NAudio classes and handles the media player methods
 	/// </summary>
 	public class AudioPlayer
 	{
@@ -30,8 +31,8 @@ namespace PlaylistManager.Model
 				wavePlayer = new WaveOut();
 			}
 
-			audioFileReader = new AudioFileReader(_song.Path);
-			wavePlayer.Init(audioFileReader);
+		    audioFileReader = new AudioFileReader(_song.Path);
+		    wavePlayer.Init(audioFileReader);
 			audioFileReader.Volume = volume;
 			wavePlayer.Play();
 		}

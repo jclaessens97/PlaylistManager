@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 
-namespace PlaylistManager.Model.Other
+namespace PlaylistManager.ViewModel.Other
 {
 	public class ObservableObject : INotifyPropertyChanged
 	{

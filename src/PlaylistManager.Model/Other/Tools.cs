@@ -28,5 +28,5 @@ namespace PlaylistManager.Model.Other
 			TimeSpan ts = TimeSpan.FromSeconds(_duration);
 			return FormatDuration(ts);
 		}
-	}
+    }
 }

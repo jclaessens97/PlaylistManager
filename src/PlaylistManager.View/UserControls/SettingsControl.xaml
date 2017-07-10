@@ -58,10 +58,9 @@
                 Margin="5"
                 Height="20"
                 FontSize="10"
-                Click="BtnBrowseFolder_OnClick">
+                Command="{Binding BrowseCommand}">
             Browse...
         </Button>
-
         <CheckBox   x:Name="cbSubdirs"
                     Grid.Row="1" Grid.Column="1"
                     Style="{StaticResource MaterialDesignCheckBox}"
@@ -139,8 +138,7 @@
                     HorizontalAlignment="Right"
                     Margin="5"
                     Command="{Binding SaveCommand}"
-                    IsEnabled="{Binding SettingsChanged}"
-                    Click="BtnSave_OnClick">
+                    IsEnabled="{Binding SettingsChanged}">
                 Save
             </Button>
 

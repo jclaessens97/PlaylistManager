@@ -6,7 +6,7 @@ namespace PlaylistManager.View.Custom
 	/// <summary>
 	/// Adds sorted event when sorting is complete
 	/// </summary>
-	public class CustomDataGrid : DataGrid
+	public sealed class CustomDataGrid : DataGrid
 	{
 		/// <summary>
 		/// Create a custom routed event by first registering a RoutedEventID

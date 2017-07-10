@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:PlaylistManager.View.UserControls"
              xmlns:custom="clr-namespace:PlaylistManager.View.Custom"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d"
              Width="Auto"
              Height="Auto">
@@ -14,7 +15,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../ResourceDictionaries/CustomResourceDictionary.xaml" />
-
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -25,17 +25,23 @@
                                AutoGenerateColumns="False"
                                GridLinesVisibility="Horizontal"
                                CanUserResizeRows="False"
-                               Sorted="LibraryDataGrid_OnSorted"
                                IsReadOnly="True"
                                materialDesign:DataGridAssist.ColumnHeaderPadding="5"
                                materialDesign:DataGridAssist.CellPadding="8">
+            
             <DataGrid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick"
                               Command="{Binding DoubleClickRowCommand}"
                               CommandParameter="{Binding ElementName=libraryDataGrid, Path=SelectedItem}"
                 />
             </DataGrid.InputBindings>
-            <!--TODO: move to CustomResourceDictionary???????-->
+            
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Sorted">
+                    <i:InvokeCommandAction Command="{Binding SortedCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}"
                        BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">

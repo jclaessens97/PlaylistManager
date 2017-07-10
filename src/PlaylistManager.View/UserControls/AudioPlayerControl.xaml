@@ -9,8 +9,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PlaylistManager.View.UserControls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d"
              Background="{DynamicResource PrimaryHueDarkBrush}" 
              Height="110">
@@ -19,7 +20,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../ResourceDictionaries/CustomResourceDictionary.xaml" />
-                
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Slider.xaml" />
@@ -30,7 +30,6 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60" />
-
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -47,6 +46,7 @@
             <ColumnDefinition Width="120" />
         </Grid.ColumnDefinitions>
 
+        <!--Title, Artist, Album-->
         <StackPanel Grid.Row="0" Grid.Column="5"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center">
@@ -55,12 +55,14 @@
             <TextBlock HorizontalAlignment="Center" FontSize="12" Text="{Binding Album, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
         
+        <!--Navigation-->
         <Button x:Name="btnPrev"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
                 Grid.Row="1" Grid.Column="0" 
                 Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Previous"
-                Command="{Binding PrevCommand}">
+                Command="{Binding PrevCommand}"
+                IsEnabled="{Binding HasPrev, UpdateSourceTrigger=PropertyChanged}">
                 <materialDesign:PackIcon Kind="SkipPrevious" />
         </Button>
         <Button x:Name="btnPausePlay"
@@ -69,7 +71,7 @@
                 Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Pause/Play"
                 Command="{Binding ToggleResumePauseCommand}">
-                <materialDesign:PackIcon x:Name="PlayPauseIcon" Kind="Play" />
+                <materialDesign:PackIcon x:Name="playPauseIcon" Kind="Play" />
         </Button>
         <Button x:Name="btnStop"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
@@ -84,7 +86,8 @@
                 Grid.Row="1" Grid.Column="3" 
                 Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Next"
-                Command="{Binding NextCommand}">
+                Command="{Binding NextCommand}"
+                IsEnabled="{Binding HasNext, UpdateSourceTrigger=PropertyChanged}">
             <materialDesign:PackIcon Kind="SkipNext" />
         </Button>
         
@@ -97,9 +100,18 @@
                 VerticalAlignment="Center" 
                 Foreground="{StaticResource SecondaryAccentBrush}"
                 Maximum="{Binding TotalSeconds, UpdateSourceTrigger=PropertyChanged}"
-                Value="{Binding CurrentSeconds, UpdateSourceTrigger=PropertyChanged}"
-                PreviewMouseDown="SliderTime_OnPreviewMouseDown"
-                PreviewMouseUp="SliderTime_OnPreviewMouseUp" />
+                Value="{Binding CurrentSeconds, UpdateSourceTrigger=PropertyChanged}">
+            
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewMouseDown">
+                    <i:InvokeCommandAction Command="{Binding PreviewMouseDownCommand}" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="PreviewMouseUp">
+                    <i:InvokeCommandAction Command="{Binding PreviewMouseUpCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            
+        </Slider>
         <TextBlock Grid.Row="1" Grid.Column="6" 
                    VerticalAlignment="Center" 
                    HorizontalAlignment="Center"
@@ -111,7 +123,7 @@
                 Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Repeat"
                 Command="{Binding ToggleRepeatCommand}">
-            <materialDesign:PackIcon x:Name="RepeatIcon" Kind="RepeatOff" />
+            <materialDesign:PackIcon x:Name="repeatIcon" Kind="RepeatOff" />
         </Button>
         <Button x:Name="btnShuffle"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
@@ -119,7 +131,7 @@
                 Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Shuffle"
                 Command="{Binding ToggleShuffleCommand}">
-            <materialDesign:PackIcon x:Name="ShuffleIcon" Kind="ShuffleDisabled" />
+            <materialDesign:PackIcon x:Name="shuffleIcon" Kind="ShuffleDisabled" />
         </Button>
         <Button x:Name="btnVolume"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
@@ -127,7 +139,7 @@
                 Height="{StaticResource AudioButtonSize}" Width="{StaticResource AudioButtonSize}"
                 ToolTip="Mute/Unmute"
                 Command="{Binding ToggleMuteCommand}">
-            <materialDesign:PackIcon x:Name="VolumeIcon" Kind="VolumeHigh"  />
+            <materialDesign:PackIcon x:Name="volumeIcon" Kind="VolumeHigh"  />
         </Button>
         <Slider x:Name="sliderVolume"
                 Grid.Row="1" Grid.Column="10"

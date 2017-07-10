@@ -8,47 +8,17 @@ using PlaylistManager.Model.Properties;
 
 namespace PlaylistManager.Model
 {
-	/// <summary>
-	/// Library
-	/// Singleton class
-	/// </summary>
 	public class Library
 	{
-		#region Attributes
-
-		private static volatile Library instance;
-		private static readonly object syncRoot = new Object();
-
-		#endregion
-
 		#region Properties
 
-		public static Library Instance
-		{
-			get
-			{
-				if (instance == null)
-				{
-					lock (syncRoot)
-					{
-						if (instance == null)
-						{
-							instance = new Library();
-						}
-					}
-				}
-
-				return instance;
-			}
-		}
-
-		public List<Song> Songs { get; set; }
+        public List<Song> Songs { get; set; }
 		public List<Playlist> Playlists { get; set; }
 		public List<Song> NowPlayingList { get; set; }
 
 		#endregion
 
-		private Library()
+		public Library()
 		{	
 			LoadSongs();
 		}
@@ -58,6 +28,7 @@ namespace PlaylistManager.Model
 		/// </summary>
 		public void LoadSongs()
 		{
+            //TODO: Async
 			this.Songs = new List<Song>();
 
 			try
@@ -95,13 +66,13 @@ namespace PlaylistManager.Model
 						AlbumArt = file.Tag.Pictures.Length > 0 ? new Picture(file.Tag.Pictures[0]) : null
 					};
 
-					if (!string.IsNullOrEmpty(song.Artist))
+					if (!string.IsNullOrWhiteSpace(song.Artist))
 						song.Artist = song.Artist.Trim();
 
-					if (!string.IsNullOrEmpty(song.Title))
+					if (!string.IsNullOrWhiteSpace(song.Title))
 						song.Title = song.Title.Trim();
 
-					if (!string.IsNullOrEmpty(song.Album))
+					if (!string.IsNullOrWhiteSpace(song.Album))
 						song.Album = song.Album.Trim();
 
 					if (song.Year == 0)
