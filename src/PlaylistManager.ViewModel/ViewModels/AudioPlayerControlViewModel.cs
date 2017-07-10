@@ -532,6 +532,8 @@ namespace PlaylistManager.ViewModel.ViewModels
             State = PlayState.Stopped;
 
             CurrentSong.IsPlaying = false;
+            HasPrev = false;
+            HasNext = false;
 
             updateTimer.Stop();
             updateTimer.Dispose();
@@ -560,7 +562,7 @@ namespace PlaylistManager.ViewModel.ViewModels
             CurrentSong.IsPlaying = false;
             CurrentSong = null;
 
-            audioPlayer.Stop(_stopBetween: true);
+            audioPlayer.Stop();
         }
 
         /// <summary>

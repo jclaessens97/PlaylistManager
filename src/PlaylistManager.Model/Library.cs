@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using PlaylistManager.Model.Other;
 using TagLib.Flac;
 using PlaylistManager.Model.Properties;
 
@@ -23,75 +25,96 @@ namespace PlaylistManager.Model
 			LoadSongs();
 		}
 
-		/// <summary>
-		/// Load songs from folder (set in settings) into library
-		/// </summary>
-		public void LoadSongs()
-		{
-            //TODO: Async
-			this.Songs = new List<Song>();
+        #region Load
 
-			try
-			{
-				string[] files;
-				if (Settings.Default.IncludeSubdirs)
-				{
-					files = Directory.GetFiles(Settings.Default.Folder, "*.*", SearchOption.AllDirectories);
-				}
-				else
-				{
-					files = Directory.GetFiles(Settings.Default.Folder);
-				}
+	    //TODO: Async
+        
+        /// <summary>
+        /// Load songs from folder (set in settings) into library
+        /// </summary>
+        public void LoadSongs()
+	    {
+	        this.Songs = new List<Song>();
 
-				foreach (var filename in files)
-				{
-					if (!filename.EndsWith(".mp3")) continue;
-					
-					//TODO: Remove doubles
-					
-					TagLib.File file = TagLib.File.Create(filename);
-					Song song = new Song()
-					{
-						IsPlaying = false,
+            try
+	        {
+	            string[] files;
+	            if (Settings.Default.IncludeSubdirs)
+	            {
+	                files = Directory.GetFiles(Settings.Default.Folder, "*.*", SearchOption.AllDirectories);
+	            }
+	            else
+	            {
+	                files = Directory.GetFiles(Settings.Default.Folder);
+	            }
 
-						Artist = file.Tag.Performers.Length > 0 ? file.Tag.Performers[0] : null,
-						Title = file.Tag.Title,
-						Album = file.Tag.Album,
-						Duration = file.Properties.Duration,
-						Path = filename,
-						//Genres = file.Tag.Genres, //TODO: issue #8
-						Genres = null,
-						Year = file.Tag.Year,
-						TrackNumber = file.Tag.Track,
-						AlbumArt = file.Tag.Pictures.Length > 0 ? new Picture(file.Tag.Pictures[0]) : null
-					};
+	            foreach (var filename in files)
+	            {
+                    //Only load mp3 files
+	                if (!filename.EndsWith(".mp3")) continue;
 
-					if (!string.IsNullOrWhiteSpace(song.Artist))
-						song.Artist = song.Artist.Trim();
+                    //Create taglib file to access ID3 tags
+	                TagLib.File file = TagLib.File.Create(filename);
 
-					if (!string.IsNullOrWhiteSpace(song.Title))
-						song.Title = song.Title.Trim();
+                    //skip doubles
+                    int currentHashCode = Tools.GenerateHashCode(file);
+	                bool exists = false;
 
-					if (!string.IsNullOrWhiteSpace(song.Album))
-						song.Album = song.Album.Trim();
+	                for (int i = 0; i < Songs.Count; i++)
+	                {
+                        //Song exists
+	                    exists = (currentHashCode == Songs[i].HashCode);
+	                }
 
-					if (song.Year == 0)
-						song.Year = null;
+	                if (exists) continue;
 
-					if (song.TrackNumber == 0)
-						song.TrackNumber = null;
+                    //Create new song object
+                    Song song = new Song()
+	                {
+	                    IsPlaying = false,
 
-					this.Songs.Add(song);
-				}
+	                    Artist = file.Tag.Performers.Length > 0 ? file.Tag.Performers[0] : null,
+	                    Title = file.Tag.Title,
+	                    Album = file.Tag.Album,
+	                    Duration = file.Properties.Duration,
+	                    Path = filename,
+	                    //Genres = file.Tag.Genres, //TODO: issue #8
+	                    Genres = null,
+	                    Year = file.Tag.Year,
+	                    TrackNumber = file.Tag.Track,
+	                    AlbumArt = file.Tag.Pictures.Length > 0 ? new Picture(file.Tag.Pictures[0]) : null,
 
-			}
-			catch (IOException ex)
-			{
-				Debug.WriteLine(ex.Message);
-			}
-		}
+                        HashCode = currentHashCode
+	                };
 
-		#region NowPlayingList
+                    //Check for empty's & trim the attributes
+	                if (!string.IsNullOrWhiteSpace(song.Artist))
+	                    song.Artist = song.Artist.Trim();
+
+	                if (!string.IsNullOrWhiteSpace(song.Title))
+	                    song.Title = song.Title.Trim();
+
+	                if (!string.IsNullOrWhiteSpace(song.Album))
+	                    song.Album = song.Album.Trim();
+
+	                if (song.Year == 0)
+	                    song.Year = null;
+
+	                if (song.TrackNumber == 0)
+	                    song.TrackNumber = null;
+
+	                this.Songs.Add(song);
+	            }
+            }
+	        catch (IOException ex)
+	        {
+	            Debug.WriteLine(ex.Message);
+	        }
+	    }
+
+	    #endregion
+
+	    #region NowPlayingList
 
 		/// <summary>
 		/// Generate random now playing list

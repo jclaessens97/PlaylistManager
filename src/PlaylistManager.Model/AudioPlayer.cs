@@ -59,11 +59,7 @@ namespace PlaylistManager.Model
 			Play(_song);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="_stopBetween">Check if stop is called in next method</param>
-		public void Stop(bool _stopBetween = false)
+		public void Stop()
 		{
 			wavePlayer?.Stop();
 
@@ -75,9 +71,7 @@ namespace PlaylistManager.Model
 
 			if (wavePlayer != null)
 			{
-				//TODO: fix dispose of wavePlayer
-				//if (!_stopBetween)
-				//wavePlayer.Dispose();
+				wavePlayer.Dispose();
 				wavePlayer = null;
 			}
 		}

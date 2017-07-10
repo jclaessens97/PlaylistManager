@@ -9,24 +9,37 @@ namespace PlaylistManager.Model.Other
 	/// </summary>
 	public static class Tools
 	{
-		private static string FormatDuration(TimeSpan _duration)
-		{
-			var durationStr = _duration.ToString();
+        #region Formatting
 
-			if (durationStr.StartsWith("00:"))
-			{
-				return durationStr.Substring(3, 5);
-			}
-			else
-			{
-				return durationStr.Substring(0, 8);
-			}
-		}
+	    private static string FormatDuration(TimeSpan _duration)
+	    {
+	        var durationStr = _duration.ToString();
 
-		public static string FormatDuration(double _duration)
-		{
-			TimeSpan ts = TimeSpan.FromSeconds(_duration);
-			return FormatDuration(ts);
-		}
+	        if (durationStr.StartsWith("00:"))
+	        {
+	            return durationStr.Substring(3, 5);
+	        }
+	        else
+	        {
+	            return durationStr.Substring(0, 8);
+	        }
+	    }
+
+	    public static string FormatDuration(double _duration)
+	    {
+	        TimeSpan ts = TimeSpan.FromSeconds(_duration);
+	        return FormatDuration(ts);
+	    }
+
+	    #endregion
+
+	    public static int GenerateHashCode(TagLib.File _file)
+	    {
+	        var title = _file.Tag.Title;
+	        var artist = _file.Tag.Performers[0];
+	        var duration = _file.Properties.Duration;
+
+            return (title.GetHashCode() * 7) + (artist.GetHashCode() * 11) + (duration.GetHashCode() * 13);
+	    }
     }
 }
