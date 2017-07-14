@@ -52,6 +52,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Other\MessageContext.cs" />
+    <Compile Include="Other\Messenger.cs" />
     <Compile Include="Other\DispatcherTools.cs" />
     <Compile Include="ViewModels\AudioPlayerControlViewModel.cs" />
     <Compile Include="Interfaces\IAudioPlayerControl.cs" />

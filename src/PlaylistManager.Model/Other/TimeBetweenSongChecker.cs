@@ -14,7 +14,7 @@ namespace PlaylistManager.Model.Other
 			invokeCount = 0;
 		}
 
-		public void CheckTime(Object _stateInfo)
+		public void CheckTime(object _stateInfo)
 		{
 			AutoResetEvent autoEvent = (AutoResetEvent) _stateInfo;
 			invokeCount++;

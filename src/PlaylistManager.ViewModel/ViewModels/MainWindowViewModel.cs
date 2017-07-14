@@ -56,20 +56,27 @@ namespace PlaylistManager.ViewModel.ViewModels
 
 		private void OnRequestClose()
 		{
-		    var settings = SettingsControlViewModel.Instance;
-		    var player = AudioPlayerControlViewModel.Instance;
+		    var player = AudioPlayerControlViewModel.audioPlayer;
+            SettingsControlViewModel.SaveImplicitSettings(player.Volume * 100, player.ShuffleEnabled, (byte)player.RepeatMode);
 
-		    settings.Volume = player.Volume;
-		    settings.ShuffleEnabled = player.ShuffleEnabled;
-		    settings.RepeatMode = player.RepeatMode;
-
-            settings.SaveImplicitSettings();
             Debug.WriteLine("Closing!");
 		}
 
 	    private void SelectionChanged()
 	    {
 	        MainWindow.SetBottomBar(SelectedTabIndex);
+
+            //Settingstab
+	        if (SelectedTabIndex == 2)
+	        {
+                //Start validation timer
+	            Messenger.Instance.Send(true, MessageContext.ToggleValidationTimer);
+            }
+	        else
+	        {
+                //Stop validation timer
+	            Messenger.Instance.Send(false, MessageContext.ToggleValidationTimer);
+	        }
 	    }
 
         #endregion

@@ -60,5 +60,6 @@ namespace PlaylistManager.Model
 			return $"{Artist} - {Title} ({Duration:hh\\:mm\\:ss})";
 		}
 
+        //TODO: return hashcode?
 	}
 }

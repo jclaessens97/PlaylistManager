@@ -9,6 +9,7 @@ using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
 using PlaylistManager.Model;
 using PlaylistManager.Model.Other;
+using PlaylistManager.Model.Properties;
 using PlaylistManager.ViewModel.Interfaces;
 using PlaylistManager.ViewModel.Other;
 using Timer = System.Timers.Timer;
@@ -20,9 +21,6 @@ namespace PlaylistManager.ViewModel.ViewModels
     {
         #region Attributes
 
-        private static volatile AudioPlayerControlViewModel instance;
-        private static readonly object syncRoot = new object();
-
         private IAudioPlayerControl audioPlayerControl;
 
         private readonly IDictionary repeatModeMap = new Dictionary<RepeatMode, RepeatMode>
@@ -31,7 +29,7 @@ namespace PlaylistManager.ViewModel.ViewModels
             {RepeatMode.Once, RepeatMode.On},
             {RepeatMode.On, RepeatMode.Off}
         };
-        private readonly AudioPlayer audioPlayer;
+        public static readonly AudioPlayer audioPlayer;
         private readonly SettingsControlViewModel settingsViewModel;
 
         private Song currentSong;
@@ -57,25 +55,6 @@ namespace PlaylistManager.ViewModel.ViewModels
         #endregion
 
         #region Properties
-
-        public static AudioPlayerControlViewModel Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    lock (syncRoot)
-                    {
-                        if (instance == null)
-                        {
-                            instance = new AudioPlayerControlViewModel();
-                        }
-                    }
-                }
-
-                return instance;
-            }
-        }
 
         public IAudioPlayerControl AudioPlayerControl
         {
@@ -306,6 +285,8 @@ namespace PlaylistManager.ViewModel.ViewModels
             {
                 AudioPlayerControl.ShuffleIcon.Kind = PackIconKind.ShuffleDisabled;
             }
+
+            audioPlayer.ShuffleEnabled = shuffleEnabled;
         }
         private void OnRepeatChanged()
         {
@@ -321,6 +302,8 @@ namespace PlaylistManager.ViewModel.ViewModels
                     AudioPlayerControl.RepeatIcon.Kind = PackIconKind.Repeat;
                     break;
             }
+
+            audioPlayer.RepeatMode = repeatMode;
         }
         private void OnCurrentSecondsChanged()
         {
@@ -375,13 +358,30 @@ namespace PlaylistManager.ViewModel.ViewModels
 
         #endregion
 
-        private AudioPlayerControlViewModel()
+        #region MessagingEvents
+
+        /// <summary>
+        /// Callback from message that is registered in constructor
+        /// </summary>
+        /// <param name="_song"></param>
+        private void PlaySelectedSong(Song _song)
         {
-            audioPlayer = new AudioPlayer();
-            settingsViewModel = SettingsControlViewModel.Instance;
-            
-            //Needed to initialize bindings
-            Reset();
+            Debug.WriteLine("Double click registered!");
+            Start(_song);
+        }
+
+        #endregion
+
+        public AudioPlayerControlViewModel()
+        {
+            Reset(); //Needed to initialize bindings
+
+            Messenger.Instance.Register<Song>(this, PlaySelectedSong, MessageContext.PlayOneSongDoubleClick);
+        }
+
+        static AudioPlayerControlViewModel()
+        {
+            audioPlayer = AudioPlayer.Instance;
         }
 
         #region Init
@@ -396,9 +396,9 @@ namespace PlaylistManager.ViewModel.ViewModels
         /// </summary>
         private void LoadImplicits()
         {
-            Volume = settingsViewModel.Volume;
-            ShuffleEnabled = settingsViewModel.ShuffleEnabled;
-            RepeatMode = settingsViewModel.RepeatMode;
+            Volume = Settings.Default.Volume;
+            ShuffleEnabled = Settings.Default.ShuffleEnabled;
+            RepeatMode = (RepeatMode) Settings.Default.RepeatMode;
         }
 
         #endregion
@@ -433,7 +433,7 @@ namespace PlaylistManager.ViewModel.ViewModels
         /// </summary>
         private void Start()
         {
-            var library = LibraryControlViewModel.Instance.Library;
+            var library = Library.Instance;
             
             State = PlayState.Playing;
 
@@ -470,14 +470,14 @@ namespace PlaylistManager.ViewModel.ViewModels
         /// Called when double click on song or when a song is selected & play is pressed
         /// </summary>
         /// <param name="_song"></param>
-        internal void Start(Song _song)
+        private void Start(Song _song)
         {
             if (CurrentSong != null && State == PlayState.Playing)
             {
                 Stop();
             }
 
-            var library = LibraryControlViewModel.Instance.Library;
+            var library = Library.Instance;
 
             library.GenerateNowPlayingList(_song, shuffleEnabled);
             CurrentSong = library.NowPlayingList.First();
@@ -491,9 +491,9 @@ namespace PlaylistManager.ViewModel.ViewModels
         /// TODO list of songs
         /// </summary>
         /// <param name="_songs"></param>
-        internal void Start(List<Song> _songs)
+        private void Start(List<Song> _songs)
         {
-            var library = LibraryControlViewModel.Instance.Library;
+            var library = Library.Instance;
 
             library.GenerateNowPlayingList(_songs, shuffleEnabled);
             CurrentSong = library.NowPlayingList.First();
@@ -572,7 +572,7 @@ namespace PlaylistManager.ViewModel.ViewModels
         public void Next()
         {
             Debug.WriteLine("Next");
-            var library = LibraryControlViewModel.Instance.Library;
+            var library = Library.Instance;
             
             if (HasNextSong())
             {
@@ -610,8 +610,8 @@ namespace PlaylistManager.ViewModel.ViewModels
         private void Prev()
         {
             Debug.WriteLine("Prev");
-            var library = LibraryControlViewModel.Instance.Library;
-            
+            var library = Library.Instance;
+
             if (HasPrevSong())
             {
                 int index = library.NowPlayingList.IndexOf(CurrentSong) - 1;
@@ -640,10 +640,11 @@ namespace PlaylistManager.ViewModel.ViewModels
         /// </summary>
         private void ToggleShuffle()
         {
+            var library = Library.Instance;
+            
             ShuffleEnabled = !ShuffleEnabled;
             Debug.WriteLine("Shuffle is " + ShuffleEnabled);
-            var library = LibraryControlViewModel.Instance.Library;
-
+            
             if (shuffleEnabled)
             {
                 if (State == PlayState.Playing || State == PlayState.Paused)
@@ -737,7 +738,7 @@ namespace PlaylistManager.ViewModel.ViewModels
 
             if (RepeatMode == RepeatMode.Off)
             {
-                var library = LibraryControlViewModel.Instance.Library;
+                var library = Library.Instance;
                 int index = library.NowPlayingList.IndexOf(CurrentSong);
 
                 if (index < library.NowPlayingList.Count - 1)
@@ -764,7 +765,7 @@ namespace PlaylistManager.ViewModel.ViewModels
 
             if (RepeatMode == RepeatMode.Off)
             {
-                var library = LibraryControlViewModel.Instance.Library;
+                var library = Library.Instance;
                 int index = library.NowPlayingList.IndexOf(CurrentSong);
 
                 if (index > 0)

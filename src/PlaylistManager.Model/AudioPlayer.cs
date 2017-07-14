@@ -5,24 +5,58 @@ using PlaylistManager.Model.Extensions;
 namespace PlaylistManager.Model
 {
 	/// <summary>
-	/// Backend class that interacts with NAudio classes and handles the media player methods
+	/// Backend class that interacts with NAudio classes and handles the media player methods 
+	/// Singleton pattern
 	/// </summary>
 	public class AudioPlayer
 	{
 		#region Attributes
 
+	    private static AudioPlayer instance;
+        private static readonly object lockObject = new object();
+
 		private AudioFileReader audioFileReader;
 		private IWavePlayer wavePlayer;
 
-		private float volume;
-		private float lastVolumeLevel = -1f;
+		private float lastVolumeLevel = -1f;    //remembers value what the volume was before mute, -1 on init
 		private bool isMuted;
 
-		#endregion
+        #endregion
 
-		#region Navigation actions
+	    #region Properties
 
-		public void Play(Song _song)
+	    public static AudioPlayer Instance
+	    {
+	        get
+	        {
+	            if (instance == null)
+	            {
+	                lock (lockObject)
+	                {
+	                    if (instance == null)
+	                    {
+	                        instance = new AudioPlayer();
+	                    }
+	                }
+	            }
+
+	            return instance;
+	        }
+	    }
+
+	    public float Volume { get; set; }
+	    public bool ShuffleEnabled { get; set; }
+	    public RepeatMode RepeatMode { get; set; }
+
+	    #endregion
+
+	    private AudioPlayer()
+	    {
+	    }
+
+        #region Navigation actions
+
+        public void Play(Song _song)
 		{
 			if (_song == null) return;
 
@@ -33,7 +67,7 @@ namespace PlaylistManager.Model
 
 		    audioFileReader = new AudioFileReader(_song.Path);
 		    wavePlayer.Init(audioFileReader);
-			audioFileReader.Volume = volume;
+			audioFileReader.Volume = Volume;
 			wavePlayer.Play();
 		}
 
@@ -82,11 +116,11 @@ namespace PlaylistManager.Model
 
 		public void SetVolume(float _newVolume, bool _songPlaying)
 		{
-			volume = (_newVolume / 100);
+			Volume = (_newVolume / 100);
 
 			if (_songPlaying)
 			{
-				audioFileReader.Volume = volume;
+				audioFileReader.Volume = Volume;
 
 				if (audioFileReader.Volume > 0)
 					isMuted = false;

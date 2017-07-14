@@ -39,7 +39,7 @@ namespace PlaylistManager.Model.Other
 	        var artist = _file.Tag.Performers[0];
 	        var duration = _file.Properties.Duration;
 
-            return (title.GetHashCode() * 7) + (artist.GetHashCode() * 11) + (duration.GetHashCode() * 13);
+            return (title.GetHashCode() * 7) + (artist.GetHashCode() * 11) + (duration.GetHashCode() * 13) * 397;
 	    }
     }
 }

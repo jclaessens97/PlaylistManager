@@ -4,7 +4,7 @@
 namespace PlaylistManager.Model.Other
 {
 	/// <summary>
-	/// Class with global contants
+	/// Class with global constants
 	/// </summary>
 	public static class Globals
 	{

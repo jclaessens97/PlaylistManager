@@ -19,36 +19,12 @@ namespace PlaylistManager.ViewModel.ViewModels
     {
         #region Attributes
         
-        private static volatile LibraryControlViewModel instance;
-        private static readonly object syncRoot = new object();
-
-        private readonly AudioPlayerControlViewModel audioPlayerControlViewModel;
-
         private ObservableCollection<Song> songsInLibrary;
         private ICollectionView librarySongsource;
 
         #endregion
 
         #region Properties
-
-        public static LibraryControlViewModel Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    lock (syncRoot)
-                    {
-                        if (instance == null)
-                        {
-                            instance = new LibraryControlViewModel();
-                        }
-                    }
-                }
-
-                return instance;
-            }
-        }
 
         public ILibraryControl LibraryControl { get; set; }
         public Library Library { get; }
@@ -72,7 +48,7 @@ namespace PlaylistManager.ViewModel.ViewModels
         {
             get
             {
-                var doubleClickRowCommand = new RelayCommand(item => PlaySelectedSong(item as Song));
+                var doubleClickRowCommand = new RelayCommand(item => Messenger.Instance.Send(item as Song, MessageContext.PlayOneSongDoubleClick));
                 return doubleClickRowCommand;
             }
         }
@@ -92,18 +68,11 @@ namespace PlaylistManager.ViewModel.ViewModels
             SongsInLibrary = sortedList;
         }
 
-        private void PlaySelectedSong(Song _selectedSong)
-        {
-            Debug.WriteLine("Double click registered!");
-            audioPlayerControlViewModel.Start(_selectedSong);
-        }
-
         #endregion
 
-        private LibraryControlViewModel()
+        public LibraryControlViewModel()
         {
-            Library = new Library();
-            audioPlayerControlViewModel = AudioPlayerControlViewModel.Instance;
+            Library = Library.Instance;
         }
 
         #region Load

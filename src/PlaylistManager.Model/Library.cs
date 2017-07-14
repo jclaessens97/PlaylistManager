@@ -10,24 +10,54 @@ using PlaylistManager.Model.Properties;
 
 namespace PlaylistManager.Model
 {
+    /// <summary>
+    /// Library 
+    /// Singleton pattern
+    /// </summary>
 	public class Library
 	{
-		#region Properties
+        #region Attributes
 
-        public List<Song> Songs { get; set; }
+	    private static Library instance;
+        private static readonly object lockObject = new object();
+
+        #endregion
+
+        #region Properties
+
+	    public static Library Instance
+	    {
+	        get
+	        {
+	            if (instance == null)
+	            {
+	                lock (lockObject)
+	                {
+	                    if (instance == null)
+	                    {
+	                        instance = new Library();
+	                    }
+	                }
+	            }
+
+	            return instance;
+	        }
+	    }
+
+	    public List<Song> Songs { get; set; }
 		public List<Playlist> Playlists { get; set; }
 		public List<Song> NowPlayingList { get; set; }
 
 		#endregion
 
-		public Library()
+		private Library()
 		{	
 			LoadSongs();
 		}
 
         #region Load
 
-	    //TODO: Async
+        //TODO: async ??
         
         /// <summary>
         /// Load songs from folder (set in settings) into library
@@ -138,8 +168,6 @@ namespace PlaylistManager.Model
 				NowPlayingList.Add(songToAdd);
 				songsCopy.Remove(songToAdd);
 			}
-
-			PrintPlayingNowList();
 		}
 
 		/// <summary>
@@ -188,8 +216,6 @@ namespace PlaylistManager.Model
 					songsCopy.Remove(songToAdd);
 				}
 			}
-
-			PrintPlayingNowList();
 		}
 
 		/// <summary>
@@ -215,18 +241,6 @@ namespace PlaylistManager.Model
 				NowPlayingList.Add(songToAdd);
 				songsCopy.Remove(songToAdd);
 			}
-
-			PrintPlayingNowList();
-		}
-
-		#endregion
-
-		#region Debug
-
-		[System.Diagnostics.Conditional("DEBUG")]
-		private void PrintPlayingNowList()
-		{
-			//NowPlayingList.ForEach(s => Debug.WriteLine(s));
 		}
 
 		#endregion

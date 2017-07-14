@@ -12,6 +12,7 @@ namespace PlaylistManager.View.UserControls
     {
         #region Properties
 
+        public LibraryControlViewModel ViewModel { get; }
         public DataGrid LibraryDataGrid => libraryDataGrid;
 
         #endregion
@@ -20,9 +21,11 @@ namespace PlaylistManager.View.UserControls
         {
             InitializeComponent();
 
-            DataContext = LibraryControlViewModel.Instance;
-            (DataContext as LibraryControlViewModel).LibraryControl = this;
-            (DataContext as LibraryControlViewModel).FillLibraryGrid();
+            ViewModel = new LibraryControlViewModel();
+            ViewModel.LibraryControl = this;
+            ViewModel.FillLibraryGrid();
+
+            DataContext = ViewModel;
         }
 	}
 }

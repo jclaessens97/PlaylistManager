@@ -20,10 +20,7 @@ namespace PlaylistManager.ViewModel.ViewModels
     {
         #region Attributes
 
-        private static volatile SettingsControlViewModel instance;
-        private static readonly object syncRoot = new object();
-
-        private readonly Settings settings;
+        public static readonly Settings settings;
 
         private bool settingsChanged;
 
@@ -44,25 +41,6 @@ namespace PlaylistManager.ViewModel.ViewModels
         #endregion
 
         #region Properties
-
-        public static SettingsControlViewModel Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    lock (syncRoot)
-                    {
-                        if (instance == null)
-                        {
-                            instance = new SettingsControlViewModel();
-                        }
-                    }
-                }
-
-                return instance;
-            }
-        }
 
         public ISettingsControl SettingsControl { get; set; }
 
@@ -172,11 +150,37 @@ namespace PlaylistManager.ViewModel.ViewModels
 
         #endregion
 
-        private SettingsControlViewModel()
+        #region Messaging Events
+
+        /// <summary>
+        /// Callback from message that is registered in constructor
+        /// </summary>
+        /// <param name="_state"></param>
+        private void ToggleValidationTimer(bool _state)
         {
-            settings = Settings.Default;
+            if (_state)
+            {
+                StartValidationTimer();
+            }
+            else
+            {
+                StopValidationTimer();
+            }
+        }
+   
+        #endregion
+
+        public SettingsControlViewModel()
+        {
             LoadSettings();
             //LoadAllDefaults(); //debug method
+
+            Messenger.Instance.Register<bool>(this, ToggleValidationTimer, MessageContext.ToggleValidationTimer);
+        }
+
+        static SettingsControlViewModel()
+        {
+            settings = Settings.Default;
         }
 
         #region Validation
@@ -260,11 +264,11 @@ namespace PlaylistManager.ViewModel.ViewModels
         /// <summary>
         /// Saves implicit settings (set when window closes)
         /// </summary>
-        internal void SaveImplicitSettings()
+        internal static void SaveImplicitSettings(float _volume, bool _shuffleEnabled, byte _repeatmode)
         {
-            settings.Volume = Volume;
-            settings.ShuffleEnabled = ShuffleEnabled;
-            settings.RepeatMode = (byte) RepeatMode;
+            settings.Volume = _volume;
+            settings.ShuffleEnabled = _shuffleEnabled;
+            settings.RepeatMode = _repeatmode;
             
             settings.Save();
             Debug.WriteLine("Implicit settings saved!");

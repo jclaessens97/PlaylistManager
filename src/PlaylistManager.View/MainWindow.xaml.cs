@@ -33,14 +33,21 @@ namespace PlaylistManager.View
 
         #endregion
 
+        #region Properties
+
+	    public MainWindowViewModel ViewModel { get; }
+
+        #endregion
+
         public MainWindow()
 		{
 			InitializeComponent();
 
-		    DataContext = new MainWindowViewModel();
-            (DataContext as MainWindowViewModel).MainWindow = this;
+            ViewModel = new MainWindowViewModel();
+		    ViewModel.MainWindow = this;
+		    DataContext = ViewModel;
 
-            Title = $"{applicationName} - v{applicationVersion()}";
+		    Title = $"{applicationName} - v{applicationVersion()}";
 		}
 
         #region GUI
@@ -56,8 +63,6 @@ namespace PlaylistManager.View
 	            //library tab selected
 	            case 0:
 	                LibraryBottomBar.Visibility = Visibility.Visible;
-                    SettingsControlViewModel.Instance.StopValidationTimer();
-
                     //TODO: reload on save instead of tabswitch
 	                //if (SettingsControlViewModel.Instance.SettingsChanged)
 	                //{
@@ -70,14 +75,12 @@ namespace PlaylistManager.View
 	            //playlists tab selected
 	            case 1:
 	                LibraryBottomBar.Visibility = Visibility.Collapsed;
-	                SettingsControlViewModel.Instance.StopValidationTimer();
                     break;
 
 
 	            //settings tab selected
 	            case 2:
 	                LibraryBottomBar.Visibility = Visibility.Collapsed;
-	                SettingsControlViewModel.Instance.StartValidationTimer();
                     break;
 	        }
 	    }

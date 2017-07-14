@@ -11,6 +11,7 @@ namespace PlaylistManager.View.UserControls
 	{
         #region Properties
 
+	    public AudioPlayerControlViewModel ViewModel { get; }
 	    public PackIcon PlayPauseIcon => playPauseIcon;
 	    public PackIcon RepeatIcon => repeatIcon;
         public PackIcon ShuffleIcon => shuffleIcon;
@@ -22,12 +23,13 @@ namespace PlaylistManager.View.UserControls
 		{
 			InitializeComponent();
 
-		    DataContext = AudioPlayerControlViewModel.Instance;
-		    (DataContext as AudioPlayerControlViewModel).AudioPlayerControl = this;
+            ViewModel = new AudioPlayerControlViewModel();
+		    ViewModel.AudioPlayerControl = this;
+		    DataContext = ViewModel;
 
             ToggleEnable(false);
-		    (DataContext as AudioPlayerControlViewModel).HasPrev = false;
-		    (DataContext as AudioPlayerControlViewModel).HasNext = false;
+		    ViewModel.HasPrev = false;
+		    ViewModel.HasNext = false;
 		}
 
         #region GUI
