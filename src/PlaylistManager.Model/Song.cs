@@ -37,10 +37,6 @@ namespace PlaylistManager.Model
 	        }
 	    }
 
-        //I use a custom method in Model.Other.Tools to calculate some sort of hashcode.
-        //This way I can compare a song & see if there are doubles in the list or not.
-	    public int HashCode { get; set; }
-
         #endregion
 
         #region Events
@@ -59,7 +55,5 @@ namespace PlaylistManager.Model
 		{
 			return $"{Artist} - {Title} ({Duration:hh\\:mm\\:ss})";
 		}
-
-        //TODO: return hashcode?
 	}
 }

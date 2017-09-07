@@ -12,6 +12,9 @@ namespace PlaylistManager.ViewModel.Other
         PlayOneSongDoubleClick = 0,
 
         //MainVM -> SettingsVM
-        ToggleValidationTimer
+        ToggleValidationTimer,
+
+        //SettingsVM -> LibraryVM
+        ReloadLibraryGridAfterSettingsUpdate
     }
 }

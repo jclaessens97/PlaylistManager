@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.ComponentModel;
+using System.Windows.Controls;
 using PlaylistManager.ViewModel.Interfaces;
 using PlaylistManager.ViewModel.ViewModels;
 
@@ -24,6 +25,7 @@ namespace PlaylistManager.View.UserControls
             ViewModel = new LibraryControlViewModel();
             ViewModel.LibraryControl = this;
             ViewModel.FillLibraryGrid();
+            this.TitleColumn.SortDirection = ListSortDirection.Ascending;
 
             DataContext = ViewModel;
         }

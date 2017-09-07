@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,6 +71,7 @@ namespace PlaylistManager.ViewModel.ViewModels
         public LibraryControlViewModel()
         {
             Library = Library.Instance;
+            Messenger.Instance.Register<object>(this, ReloadSongs, MessageContext.ReloadLibraryGridAfterSettingsUpdate);
         }
 
         #region Load
@@ -80,9 +79,12 @@ namespace PlaylistManager.ViewModel.ViewModels
         /// <summary>
         /// Fill library grid after converting to collectionviewsource
         /// </summary>
-        public void FillLibraryGrid()
+        public void FillLibraryGrid(bool _reload = false)
         {
-            LoadSongs();
+            if (!_reload)
+            {
+                LoadSongs();
+            }
             librarySongsource = CollectionViewSource.GetDefaultView(SongsInLibrary);
             LibraryControl.LibraryDataGrid.ItemsSource = librarySongsource;
         }
@@ -98,10 +100,12 @@ namespace PlaylistManager.ViewModel.ViewModels
         /// <summary>
         /// Reload songs (after change in settings)
         /// </summary>
-        public void ReloadSongs()
+        /// <param name="_obj">Not used, but needed for format callback method</param>
+        public void ReloadSongs(object _obj)
         {
             Library.LoadSongs();
             this.LoadSongs();
+            FillLibraryGrid(_reload: true);
         }
 
         #endregion

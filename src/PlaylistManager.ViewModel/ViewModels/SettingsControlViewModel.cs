@@ -256,8 +256,14 @@ namespace PlaylistManager.ViewModel.ViewModels
             settings.TimeBetweenSongs = TimeBetweenSongs;
 
             settings.Save();
-            LoadSettingsDictionary(); //Update dictionary
-            settingsChanged = false;
+
+            if (settingsChanged)
+            {
+                Messenger.Instance.Send<object>(new object(), MessageContext.ReloadLibraryGridAfterSettingsUpdate);
+                settingsChanged = false;
+                LoadSettingsDictionary(); //Update dictionary
+            }
+
             Debug.WriteLine("Settings Saved!");
         }
 
@@ -269,6 +275,7 @@ namespace PlaylistManager.ViewModel.ViewModels
             settings.Volume = _volume;
             settings.ShuffleEnabled = _shuffleEnabled;
             settings.RepeatMode = _repeatmode;
+            //TODO: add implicit setting: sorting direction & sorting column
             
             settings.Save();
             Debug.WriteLine("Implicit settings saved!");

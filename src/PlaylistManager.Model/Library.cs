@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -44,8 +45,8 @@ namespace PlaylistManager.Model
 	        }
 	    }
 
-	    public List<Song> Songs { get; set; }
-		public List<Playlist> Playlists { get; set; }
+        public List<Song> Songs { get; set; }
+        public List<Playlist> Playlists { get; set; }
 		public List<Song> NowPlayingList { get; set; }
 
 		#endregion
@@ -57,18 +58,16 @@ namespace PlaylistManager.Model
 
         #region Load
 
-        //TODO: async ??
-        
         /// <summary>
-        /// Load songs from folder (set in settings) into library
+        /// Load songs from folder (set in settings) asynchronously
         /// </summary>
-        public void LoadSongs()
+	    public void LoadSongs()
 	    {
-	        this.Songs = new List<Song>();
-
             try
 	        {
-	            string[] files;
+                Songs = new List<Song>();
+
+                string[] files;
 	            if (Settings.Default.IncludeSubdirs)
 	            {
 	                files = Directory.GetFiles(Settings.Default.Folder, "*.*", SearchOption.AllDirectories);
@@ -78,71 +77,22 @@ namespace PlaylistManager.Model
 	                files = Directory.GetFiles(Settings.Default.Folder);
 	            }
 
-	            foreach (var filename in files)
-	            {
-                    //Only load mp3 files
-	                if (!filename.EndsWith(".mp3")) continue;
-
-                    //Create taglib file to access ID3 tags
-	                TagLib.File file = TagLib.File.Create(filename);
-
-                    //skip doubles
-                    int currentHashCode = Tools.GenerateHashCode(file);
-	                bool exists = false;
-
-	                for (int i = 0; i < Songs.Count; i++)
-	                {
-                        //Song exists
-	                    exists = (currentHashCode == Songs[i].HashCode);
-	                }
-
-	                if (exists) continue;
-
-                    //Create new song object
-                    Song song = new Song()
-	                {
-	                    IsPlaying = false,
-
-	                    Artist = file.Tag.Performers.Length > 0 ? file.Tag.Performers[0] : null,
-	                    Title = file.Tag.Title,
-	                    Album = file.Tag.Album,
-	                    Duration = file.Properties.Duration,
-	                    Path = filename,
-	                    //Genres = file.Tag.Genres, //TODO: issue #8
-	                    Genres = null,
-	                    Year = file.Tag.Year,
-	                    TrackNumber = file.Tag.Track,
-	                    AlbumArt = file.Tag.Pictures.Length > 0 ? new Picture(file.Tag.Pictures[0]) : null,
-
-                        HashCode = currentHashCode
-	                };
-
-                    //Check for empty's & trim the attributes
-	                if (!string.IsNullOrWhiteSpace(song.Artist))
-	                    song.Artist = song.Artist.Trim();
-
-	                if (!string.IsNullOrWhiteSpace(song.Title))
-	                    song.Title = song.Title.Trim();
-
-	                if (!string.IsNullOrWhiteSpace(song.Album))
-	                    song.Album = song.Album.Trim();
-
-	                if (song.Year == 0)
-	                    song.Year = null;
-
-	                if (song.TrackNumber == 0)
-	                    song.TrackNumber = null;
-
-	                this.Songs.Add(song);
-	            }
-            }
+	            Debug.WriteLine("Starting to read files!");
+                Parallel.ForEach(files, InitSong);
+	            Songs = Songs.OrderBy(s => s.Title).ToList();
+                Debug.WriteLine("Finished!");
+	        }
 	        catch (IOException ex)
 	        {
-	            Debug.WriteLine(ex.Message);
+	            Debug.WriteLine(ex);
+	        }
+	        catch (Exception ex)
+	        {
+	            Debug.WriteLine(ex);
 	        }
 	    }
 
-	    #endregion
+        #endregion
 
 	    #region NowPlayingList
 
@@ -243,6 +193,53 @@ namespace PlaylistManager.Model
 			}
 		}
 
-		#endregion
-	}
+        #endregion
+
+        #region Auxilary methods
+
+	    /// <summary>
+	    /// Auxilary method to make song object based on filename and add it to the Songs list
+	    /// </summary>
+	    /// <param name="_filename"></param>
+	    private void InitSong(string _filename)
+	    {
+	        if (!_filename.EndsWith(".mp3")) return;
+
+	        TagLib.File file = TagLib.File.Create(_filename);
+	        Song song = new Song()
+	        {
+	            IsPlaying = false,
+	            Artist = file.Tag.Performers.Length > 0 ? file.Tag.Performers[0] : null,
+	            Title = file.Tag.Title,
+	            Album = file.Tag.Album,
+	            Duration = file.Properties.Duration,
+	            Path = _filename,
+	            //Genres = file.Tag.Genres, //TODO: issue #8
+	            Genres = null,
+	            Year = file.Tag.Year,
+	            TrackNumber = file.Tag.Track,
+	            AlbumArt = file.Tag.Pictures.Length > 0 ? new Picture(file.Tag.Pictures[0]) : null
+	        };
+
+	        //Check for empty's & trim the attributes
+	        if (!string.IsNullOrWhiteSpace(song.Artist))
+	            song.Artist = song.Artist.Trim();
+
+	        if (!string.IsNullOrWhiteSpace(song.Title))
+	            song.Title = song.Title.Trim();
+
+	        if (!string.IsNullOrWhiteSpace(song.Album))
+	            song.Album = song.Album.Trim();
+
+	        if (song.Year == 0)
+	            song.Year = null;
+
+	        if (song.TrackNumber == 0)
+	            song.TrackNumber = null;
+
+	        Songs.Add(song);
+	    }
+
+        #endregion
+    }
 }

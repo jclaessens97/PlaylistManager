@@ -32,14 +32,5 @@ namespace PlaylistManager.Model.Other
 	    }
 
 	    #endregion
-
-	    public static int GenerateHashCode(TagLib.File _file)
-	    {
-	        var title = _file.Tag.Title;
-	        var artist = _file.Tag.Performers[0];
-	        var duration = _file.Properties.Duration;
-
-            return (title.GetHashCode() * 7) + (artist.GetHashCode() * 11) + (duration.GetHashCode() * 13) * 397;
-	    }
     }
 }

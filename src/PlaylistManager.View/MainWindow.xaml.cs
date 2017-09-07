@@ -63,20 +63,12 @@ namespace PlaylistManager.View
 	            //library tab selected
 	            case 0:
 	                LibraryBottomBar.Visibility = Visibility.Visible;
-                    //TODO: reload on save instead of tabswitch
-	                //if (SettingsControlViewModel.Instance.SettingsChanged)
-	                //{
-	                    //libraryPresenter.ReloadSongs();
-	                    //LibraryControl.LoadLibrary();
-	                    //settingsPresenter.SettingsChanged = false;
-                    //}
                     break;
 
 	            //playlists tab selected
 	            case 1:
 	                LibraryBottomBar.Visibility = Visibility.Collapsed;
                     break;
-
 
 	            //settings tab selected
 	            case 2:
